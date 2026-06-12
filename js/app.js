@@ -47,6 +47,7 @@ let pickedCount = 0;
 let picked = new Set();
 let rerolls = MAX_REROLLS;
 let currentClub = null;
+let pendingPick = null;
 let spinTimer = null, revealTimer = null, tableTimer = null, replacedClub = null;
 
 const $ = id => document.getElementById(id);
@@ -177,6 +178,7 @@ function startDraft(){
   if(season === "__random__"){ season = rnd(Object.keys(SEASONS)); $("seasonsel").value = season; }
   picks = Array(11).fill(null); pickedCount = 0; picked = new Set(); replacedClub = null;
   rerolls = MAX_REROLLS;
+  pendingPick = null; clearPlacement();
   clearInterval(revealTimer); clearInterval(tableTimer);
   setLocked(true);
   $("season").classList.remove("show");
@@ -258,25 +260,49 @@ function showSquad(club){
       b.className = "pchoice";
       b.disabled = used || !fits;
       b.innerHTML = "<span class='pp'>" + o.pl[1] + "</span><span class='nm'>" + esc(o.pl[0]) + (used ? " \u00B7 al gekozen" : "") + "</span><span class='rt'>" + o.pl[2] + "</span>";
-      if(!b.disabled) b.onclick = () => pickPlayer(club, o.i);
+      if(!b.disabled) b.onclick = () => choosePlayer(club, o.i);
       g.appendChild(b);
     });
     wrap.appendChild(g);
   });
   box.appendChild(wrap);
 }
-function pickPlayer(club, i){
+function choosePlayer(club, i){
   const pl = club.p[i];
   const opts = openSlotsFor(pl[1]);
   if(!opts.length) return;
-  const natural = opts.find(o => COMPAT[o.pos][0] === pl[1]);
-  const slot = (natural || opts[0]).i;
-  picked.add(club.n+"#"+i);
-  picks[slot] = { pos: pl[1], name: pl[0], rating: pl[2], clubN: club.n, clubA: club.a };
-  fillSlot(slot, picks[slot]);
-  pickedCount++;
+  pendingPick = { club, idx: i, pl };
   $("overlay").classList.remove("show");
+  $("pbplayer").innerHTML = esc(pl[0]) + ' <span class="pb-meta">' + club.a + ' · ' + POSNL[pl[1]] + ' · ' + pl[2] + '</span>';
+  $("placebar").classList.add("show");
+  $("pitch").classList.add("placing");
+  opts.forEach(o => {
+    const d = $("slot"+o.i);
+    d.classList.add("open");
+    d.onclick = () => placeAt(o.i);
+  });
+}
+function clearPlacement(){
+  document.querySelectorAll(".slot.open").forEach(d => { d.classList.remove("open"); d.onclick = null; });
+  $("placebar").classList.remove("show");
+  $("pitch").classList.remove("placing");
+}
+function placeAt(slotIdx){
+  if(!pendingPick) return;
+  const { club, idx, pl } = pendingPick;
+  pendingPick = null;
+  clearPlacement();
+  picked.add(club.n+"#"+idx);
+  picks[slotIdx] = { pos: pl[1], name: pl[0], rating: pl[2], clubN: club.n, clubA: club.a };
+  fillSlot(slotIdx, picks[slotIdx]);
+  pickedCount++;
   nextRoll();
+}
+function backToSquad(){
+  if(!pendingPick) return;
+  pendingPick = null;
+  clearPlacement();
+  $("overlay").classList.add("show");
 }
 function finishDraft(){
   phase = "done";
@@ -416,6 +442,7 @@ function resetAll(){
   phase = "setup";
   picks = Array(11).fill(null); pickedCount = 0; picked = new Set();
   rerolls = MAX_REROLLS;
+  pendingPick = null; clearPlacement();
   setLocked(false);
   $("overlay").classList.remove("show");
   $("season").classList.remove("show");
@@ -426,12 +453,13 @@ function resetAll(){
   $("rollbtn").disabled = false;
   $("rollbtn").innerHTML = "Rol &#127922;";
   $("phaseline").textContent = "Fase: seizoen en opstelling kiezen";
-  $("hint").textContent = "Rol een club en kies een speler uit de selectie van dat seizoen. Spelers passen alleen op hun eigen positie.";
+  $("hint").textContent = "Rol een club, kies een speler uit de selectie en zet hem zelf op een oplichtende positie op het veld.";
   refreshSetup();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 $("rollbtn").onclick = roll;
 $("rerollbtn").onclick = reroll;
+$("pbback").onclick = backToSquad;
 $("resetbtn").onclick = resetAll;
 $("simbtn").onclick = () => { if(pickedCount === 11) simulate(); };
 $("againbtn").onclick = resetAll;

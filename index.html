@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>34–0 · De Eredivisie draft challenge</title>
+<title>34–0–0 · De Eredivisie draft challenge</title>
 <meta name="description" content="Rol clubs, stel je elftal samen uit Eredivisie-selecties (2010–nu) en simuleer een volledig seizoen met eindstand.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,7 @@
 
 <div class="topbar"></div>
 <header class="anim-fadeup">
-  <div class="logo disp">34–0</div>
+  <div class="logo disp">34–0–0</div>
   <div class="wordmark">
     <h1>De Eredivisie<br>draft challenge</h1>
     <p class="eyebrow">Rol · Kies · Simuleer</p>
@@ -39,7 +39,7 @@
       <h2>Speelstijl</h2>
       <div class="optgrid" id="stijlen"></div>
     </div>
-    <div class="hint" id="hint">Rol een club en kies een speler uit de selectie van dat seizoen. Spelers passen alleen op hun eigen positie.</div>
+    <div class="hint" id="hint">Rol een club, kies een speler uit de selectie en zet hem zelf op een oplichtende positie op het veld.</div>
     <button class="rollbtn" id="rollbtn">Rol &#127922;</button>
     <button class="smallbtn" id="resetbtn" style="display:none;width:100%;margin-top:12px">Opnieuw beginnen</button>
   </div>
@@ -47,6 +47,13 @@
   <!-- veld -->
   <div class="col anim-fadeup" style="animation-delay:.1s">
     <div class="pitchwrap">
+      <div class="placebar" id="placebar">
+        <div class="pb-info">
+          <span class="eyebrow">Kies een positie op het veld</span>
+          <span class="pb-player" id="pbplayer"></span>
+        </div>
+        <button class="smallbtn" id="pbback">&#8592; Terug naar selectie</button>
+      </div>
       <div class="pitch" id="pitch">
         <div class="pl pl-mid"></div>
         <div class="pl pl-circle"></div>
@@ -114,7 +121,7 @@
 </section>
 
 <footer>
-  <span class="tag disp">34–0</span>
+  <span class="tag disp">34–0–0</span>
   <span>Onofficieel fanproject, niet gelieerd aan de Eredivisie of clubs. Selecties zijn gecureerde kernselecties per seizoen (2010/11–2025/26), bij benadering.</span>
 </footer>
 

@@ -159,6 +159,36 @@ select{
 .slot.filled .nm{font-size:11.5px;font-weight:700;line-height:1.15;text-align:center;max-width:100px;color:#fff}
 .slot.filled .meta{font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--muted)}
 
+/* ---------- positie kiezen ---------- */
+.placebar{
+  display:none;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  background:var(--navy-2);
+  border:1px solid var(--line-strong);
+  border-left:6px solid var(--red);
+  padding:11px 16px;margin-bottom:14px;
+}
+.placebar.show{display:flex;animation:fadeUp .25s ease both}
+.pb-info{display:flex;flex-direction:column;gap:1px;min-width:0}
+.pb-player{
+  font-family:"Oswald",sans-serif;font-weight:600;
+  font-size:20px;text-transform:uppercase;letter-spacing:.03em;line-height:1.2;
+}
+.pb-meta{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:.06em;vertical-align:middle}
+.pitch.placing .slot:not(.open):not(.filled){opacity:.3}
+.pitch.placing .slot.filled{opacity:.45}
+.slot.open{
+  border:2px solid #fff;
+  background:rgba(228,4,40,.45);
+  color:#fff;cursor:pointer;
+  animation:slotGlow 1.1s ease-in-out infinite;
+  transition:background .12s,transform .12s;
+}
+.slot.open:hover{background:var(--red);transform:translate(-50%,-50%) scale(1.14)}
+@keyframes slotGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(228,4,40,0)}
+  50%{box-shadow:0 0 0 12px rgba(228,4,40,.35)}
+}
+
 /* ---------- overlay ---------- */
 .overlay{position:absolute;inset:0;background:rgba(4,8,22,.85);display:none;align-items:center;justify-content:center;padding:20px}
 .overlay.show{display:flex}

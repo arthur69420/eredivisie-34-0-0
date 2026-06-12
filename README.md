@@ -1,4 +1,4 @@
-# 34–0 · De Eredivisie draft challenge
+# 34–0–0 · De Eredivisie draft challenge
 
 Een browser-spel: rol per ronde een willekeurige Eredivisie-club, kies een speler die past op een nog open positie in je formatie, en simuleer daarna een volledig seizoen van 34 speelrondes tegen de 17 andere clubs van dat seizoen — inclusief eindstand 1 t/m 18. Het ultieme doel: een perfect seizoen, 34–0–0.
 
@@ -27,7 +27,7 @@ Zelf hosten kan natuurlijk ook (Nginx-container op een NAS, of elke andere stati
 ## Spelregels
 
 - **Setup**: kies teamnaam, seizoen (2010/11 t/m 2025/26 of willekeurig), formatie en speelstijl. Na de eerste rol staan deze vast.
-- **Draft**: 11 rondes. Per ronde wordt een club gespind en zie je de hele selectie. Een speler is alleen kiesbaar als er een veldpositie open is die bij zijn positie past (een spits past niet op het middenveld; een rechtsback mag wél als wingback spelen).
+- **Draft**: 11 rondes. Per ronde wordt een club gespind en zie je de hele selectie. Een speler is alleen kiesbaar als er een veldpositie open is die bij zijn positie past (een spits past niet op het middenveld; een rechtsback mag wél als wingback spelen). Na het kiezen van een speler lichten de passende open posities op het veld op en kies je zelf waar hij komt te staan — of ga terug naar de selectie voor een andere speler.
 - **Rerolls**: maximaal 3 per draft. Slechte club gerold? Eén klik en de trommel draait opnieuw.
 - **Seizoen**: alle 18 teams (jouw draftteam vervangt een willekeurige club) spelen een dubbele competitie. Doelpunten worden getrokken uit een Poisson-verdeling op basis van aanvals- en verdedigingsratings, met thuisvoordeel en je speelstijl als modifier — ratings bepalen dus echt de uitslag. Daarna volgt de eindstand 1–18.
 
