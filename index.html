@@ -39,10 +39,25 @@
         <h2 class="disp">Spelersdatabase</h2>
         <p class="eyebrow" id="dbstats">&mdash;</p>
       </div>
+      <input type="text" id="dbsearch" placeholder="Zoek speler in alle seizoenen..." autocomplete="off">
       <select id="dbseason"></select>
       <button class="smallbtn" id="dbclose">Sluiten &#10005;</button>
     </div>
     <div class="dbgrid" id="dbgrid"></div>
+  </div>
+</div>
+
+<!-- teamgeschiedenis -->
+<div class="dbmodal" id="histmodal">
+  <div class="dbcard">
+    <div class="dbhead">
+      <div class="dbtitle">
+        <h2 class="disp">Jouw teams</h2>
+        <p class="eyebrow">De laatste 10 gespeelde seizoenen</p>
+      </div>
+      <button class="smallbtn" id="histclose">Sluiten &#10005;</button>
+    </div>
+    <div class="dbgrid" id="histgrid"></div>
   </div>
 </div>
 
@@ -66,6 +81,9 @@
     <div class="panel recpanel" id="recordspanel" style="display:none">
       <h2>Jouw records</h2>
       <div id="recrows"></div>
+      <h2>Badges</h2>
+      <div class="achgrid" id="achgrid"></div>
+      <button class="smallbtn" id="histbtn" style="width:100%;margin-top:14px">Bekijk je teams</button>
     </div>
   </div>
 

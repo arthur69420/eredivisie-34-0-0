@@ -536,6 +536,19 @@ button{touch-action:manipulation}
 .dbrow .p{font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--muted);width:24px;flex:none}
 .dbrow .n{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dbrow .r{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;flex:none}
+.dbrow .c,.dbrow .s{font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--muted);flex:none}
+#dbsearch{width:auto;flex:1;min-width:150px;max-width:280px;text-transform:none;font-family:"Inter",sans-serif;font-size:13.5px}
+#dbsearch::placeholder{text-transform:none;font-family:"Inter",sans-serif}
+.dbsearchresults{grid-column:1/-1}
+
+.achgrid{display:flex;flex-wrap:wrap;gap:6px}
+.badge{
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;
+  letter-spacing:.06em;text-transform:uppercase;
+  border:1px solid var(--line-strong);color:var(--muted);
+  padding:4px 8px;opacity:.5;cursor:help;
+}
+.badge.earned{border-color:#F5C518;color:#F5C518;opacity:1}
 @media (max-width:760px){
   .dbmodal{padding:0}
   .dbcard{max-height:100vh;border-left:none;border-right:none}

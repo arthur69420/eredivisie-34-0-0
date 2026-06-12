@@ -472,7 +472,9 @@ function showFinale(teams, me, myPos, rig){
   $("sharebtn").style.display = rig ? "none" : "";
   if(!rig){
     lastMe = me; lastPos = myPos;
-    updateRecords(me, myPos);
+    const nieuweBadges = updateRecords(me, myPos);
+    pushHistory(me, myPos);
+    if(nieuweBadges.length) $("verdicttxt").textContent += " 🏅 Nieuwe badge: " + nieuweBadges.join(" · ");
   }
   if(perfect){
     sfx.perfect();
@@ -567,6 +569,16 @@ function confetti(colors, count){
 
 /* ================= records (localStorage) ================= */
 const RKEY = "e3400_records";
+const ACHIEVEMENTS = [
+  ["kampioen", "Kampioen", "Win de landstitel"],
+  ["perfect", "34–0–0", "Speel een perfect seizoen"],
+  ["underdog", "Underdog", "Word kampioen met een teamrating onder 70"],
+  ["tijdmachine", "Tijdmachine", "Stel een elftal op met spelers uit 11 verschillende seizoenen"],
+  ["clubliefde", "Clubliefde", "Zet 4 of meer spelers van dezelfde club in je elftal"],
+  ["zuinig", "Eerste keer goed", "Voltooi de draft zonder rerolls"],
+  ["machine", "Doelpuntenmachine", "Scoor 100 of meer goals in een seizoen"],
+  ["fort", "Het Fort", "Krijg hooguit 15 tegengoals in een seizoen"]
+];
 let lastOrder = null, lastMe = null, lastPos = 0;
 function loadRecords(){
   try { return JSON.parse(localStorage.getItem(RKEY)); } catch(e){ return null; }
@@ -583,8 +595,30 @@ function updateRecords(me, myPos){
     r.bestSeason = season;
   }
   if(myPos < r.bestPos) r.bestPos = myPos;
+
+  // badges
+  if(!r.ach) r.ach = {};
+  const nieuw = [];
+  const grant = id => {
+    if(r.ach[id]) return;
+    r.ach[id] = true;
+    nieuw.push(ACHIEVEMENTS.find(a => a[0] === id)[1]);
+  };
+  const xi = picks.filter(Boolean);
+  if(myPos === 1) grant("kampioen");
+  if(me.w === 34) grant("perfect");
+  if(myPos === 1 && ratings().tot < 70) grant("underdog");
+  if(new Set(xi.map(p => p.season)).size === 11) grant("tijdmachine");
+  const perClub = {};
+  xi.forEach(p => { perClub[p.clubN] = (perClub[p.clubN] || 0) + 1; });
+  if(Object.keys(perClub).some(k => perClub[k] >= 4)) grant("clubliefde");
+  if(rerolls === MAX_REROLLS) grant("zuinig");
+  if(me.gf >= 100) grant("machine");
+  if(me.ga <= 15) grant("fort");
+
   try { localStorage.setItem(RKEY, JSON.stringify(r)); } catch(e){}
   renderRecords();
+  return nieuw;
 }
 function renderRecords(){
   const r = loadRecords();
@@ -598,6 +632,40 @@ function renderRecords(){
     + row("Perfecte seizoenen", r.perfects, r.perfects > 0)
     + (r.bestRec ? row("Beste record", r.bestRec + " (" + r.bestSeason + ")") : "")
     + (r.bestPos < 99 ? row("Beste eindpositie", r.bestPos + "e") : "");
+  const ach = r.ach || {};
+  $("achgrid").innerHTML = ACHIEVEMENTS.map(a =>
+    "<span class='badge" + (ach[a[0]] ? " earned" : "") + "' title=\"" + a[2] + "\">" + a[1] + "</span>"
+  ).join("");
+}
+
+/* ================= teamgeschiedenis (localStorage) ================= */
+const HKEY = "e3400_history";
+function loadHistory(){
+  try { return JSON.parse(localStorage.getItem(HKEY)) || []; } catch(e){ return []; }
+}
+function pushHistory(me, myPos){
+  const h = loadHistory();
+  h.unshift({
+    team: teamName, season, formation, stijl,
+    pos: myPos, rec: me.w + "–" + me.d + "–" + me.l, pts: me.pts,
+    rating: Math.round(ratings().tot * 10) / 10,
+    xi: picks.map((p, i) => ({ slot: FORMATIONS[formation][i][0], name: p.name, clubA: p.clubA, season: p.season, rating: p.rating }))
+  });
+  if(h.length > 10) h.length = 10;
+  try { localStorage.setItem(HKEY, JSON.stringify(h)); } catch(e){}
+}
+function renderHistory(){
+  const h = loadHistory();
+  const grid = $("histgrid");
+  grid.innerHTML = h.length ? "" : "<p class='eyebrow'>Nog geen seizoenen gespeeld.</p>";
+  h.forEach(t => {
+    const card = document.createElement("div");
+    card.className = "dbclub";
+    card.innerHTML = "<div class='dbclubhead'><div class='dbclubinfo'><div class='dbname'>" + esc(t.team) + " · " + t.season + "</div>"
+      + "<div class='dbmeta'>" + t.pos + "e · " + t.rec + " · " + t.pts + " ptn · " + t.formation + " · " + t.stijl + " · rating " + t.rating + "</div></div></div>"
+      + t.xi.map(p => "<div class='dbrow'><span class='p'>" + p.slot + "</span><span class='n'>" + esc(p.name) + "</span><span class='c'>" + p.clubA + " " + p.season.slice(2) + "</span><span class='r'>" + p.rating + "</span></div>").join("");
+    grid.appendChild(card);
+  });
 }
 
 /* ================= seizoen delen ================= */
@@ -725,13 +793,40 @@ function renderDb(s){
     o.value = s; o.textContent = s;
     sel.appendChild(o);
   });
-  sel.onchange = () => renderDb(sel.value);
+  sel.onchange = () => { $("dbsearch").value = ""; renderDb(sel.value); };
 })();
+function renderDbSearch(q){
+  const hits = [];
+  Object.keys(SEASONS).forEach(s => SEASONS[s].forEach(c => c.p.forEach(pl => {
+    if(!isJeugd(pl) && pl[0].toLowerCase().includes(q)) hits.push({ s, c, pl });
+  })));
+  hits.sort((a, b) => a.pl[0].localeCompare(b.pl[0]) || a.s.localeCompare(b.s));
+  const grid = $("dbgrid");
+  grid.innerHTML = "";
+  $("dbstats").textContent = hits.length + (hits.length === 1 ? " resultaat" : " resultaten") + " in alle seizoenen";
+  if(!hits.length) return;
+  const card = document.createElement("div");
+  card.className = "dbclub dbsearchresults";
+  card.innerHTML = hits.slice(0, 250).map(h =>
+    "<div class='dbrow'><span class='p'>" + h.pl[1] + "</span><span class='n'>" + esc(h.pl[0]) + "</span><span class='c'>" + h.c.a + "</span><span class='s'>" + h.s + "</span><span class='r'>" + h.pl[2] + "</span></div>"
+  ).join("");
+  grid.appendChild(card);
+}
+function refreshDb(){
+  const q = $("dbsearch").value.trim().toLowerCase();
+  if(q.length >= 2) renderDbSearch(q);
+  else renderDb($("dbseason").value);
+}
+$("dbsearch").oninput = refreshDb;
 function closeDb(){ $("dbmodal").classList.remove("show"); }
-$("dbbtn").onclick = () => { $("dbmodal").classList.add("show"); renderDb($("dbseason").value); };
+$("dbbtn").onclick = () => { $("dbmodal").classList.add("show"); refreshDb(); };
 $("dbclose").onclick = closeDb;
 $("dbmodal").onclick = e => { if(e.target === $("dbmodal")) closeDb(); };
-document.addEventListener("keydown", e => { if(e.key === "Escape") closeDb(); });
+function closeHist(){ $("histmodal").classList.remove("show"); }
+$("histbtn").onclick = () => { $("histmodal").classList.add("show"); renderHistory(); };
+$("histclose").onclick = closeHist;
+$("histmodal").onclick = e => { if(e.target === $("histmodal")) closeHist(); };
+document.addEventListener("keydown", e => { if(e.key === "Escape"){ closeDb(); closeHist(); } });
 
 refreshSetup();
 setMuteIcon();
