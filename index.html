@@ -27,8 +27,24 @@
     <p class="eyebrow" id="configline">—</p>
     <p class="eyebrow" id="phaseline">Fase: seizoen en opstelling kiezen</p>
   </div>
+  <button class="mutebtn" id="dbbtn" title="Spelersdatabase">&#128203;</button>
   <button class="mutebtn" id="mutebtn" title="Geluid">&#128266;</button>
 </header>
+
+<!-- databaseviewer -->
+<div class="dbmodal" id="dbmodal">
+  <div class="dbcard">
+    <div class="dbhead">
+      <div class="dbtitle">
+        <h2 class="disp">Spelersdatabase</h2>
+        <p class="eyebrow" id="dbstats">&mdash;</p>
+      </div>
+      <select id="dbseason"></select>
+      <button class="smallbtn" id="dbclose">Sluiten &#10005;</button>
+    </div>
+    <div class="dbgrid" id="dbgrid"></div>
+  </div>
+</div>
 
 <div class="shell">
 

@@ -680,6 +680,59 @@ $("mutebtn").onclick = () => {
   if(!muted) tone(660, .09, "sine", .1);
 };
 
+/* ================= databaseviewer ================= */
+const DB_REQ = [["GK",1],["RB",1],["CB",2],["LB",1],["CM",2],["LW",1],["RW",1],["ST",1]];
+const POSORDER = ["GK","RB","CB","LB","DM","CM","AM","LW","RW","ST"];
+const isJeugd = pl => String(pl[0]).indexOf("Jeugdspeler") === 0;
+function dbMissing(realP){
+  const cnt = {};
+  realP.forEach(pl => { cnt[pl[1]] = (cnt[pl[1]] || 0) + 1; });
+  const mis = [];
+  DB_REQ.forEach(([pos, n]) => {
+    const t = n - (cnt[pos] || 0);
+    if(t > 0) mis.push(t > 1 ? t + "× " + pos : pos);
+  });
+  return mis;
+}
+function renderDb(s){
+  const grid = $("dbgrid");
+  grid.innerHTML = "";
+  let compleet = 0, totaal = 0;
+  SEASONS[s].forEach(c => {
+    const real = c.p.filter(pl => !isJeugd(pl));
+    const mis = dbMissing(real);
+    if(!mis.length) compleet++;
+    totaal += real.length;
+    const rows = real.slice()
+      .sort((a, b) => POSORDER.indexOf(a[1]) - POSORDER.indexOf(b[1]) || b[2] - a[2])
+      .map(pl => "<div class='dbrow'><span class='p'>" + pl[1] + "</span><span class='n'>" + esc(pl[0]) + "</span><span class='r'>" + pl[2] + "</span></div>")
+      .join("");
+    const card = document.createElement("div");
+    card.className = "dbclub" + (mis.length ? "" : " done");
+    card.innerHTML = "<div class='dbclubhead'>" + shirtSVG(c.a, 34)
+      + "<div class='dbclubinfo'><div class='dbname'>" + esc(c.n) + "</div>"
+      + "<div class='dbmeta'>" + real.length + " spelers · "
+      + (mis.length ? "<span class='mis'>mist " + mis.join(", ") + "</span>" : "<span class='ok'>compleet</span>")
+      + "</div></div></div>" + rows;
+    grid.appendChild(card);
+  });
+  $("dbstats").textContent = s + " · " + compleet + "/" + SEASONS[s].length + " clubs compleet · " + totaal + " spelers";
+}
+(function initDb(){
+  const sel = $("dbseason");
+  Object.keys(SEASONS).slice().reverse().forEach(s => {
+    const o = document.createElement("option");
+    o.value = s; o.textContent = s;
+    sel.appendChild(o);
+  });
+  sel.onchange = () => renderDb(sel.value);
+})();
+function closeDb(){ $("dbmodal").classList.remove("show"); }
+$("dbbtn").onclick = () => { $("dbmodal").classList.add("show"); renderDb($("dbseason").value); };
+$("dbclose").onclick = closeDb;
+$("dbmodal").onclick = e => { if(e.target === $("dbmodal")) closeDb(); };
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeDb(); });
+
 refreshSetup();
 setMuteIcon();
 renderRecords();
