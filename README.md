@@ -26,10 +26,10 @@ Zelf hosten kan natuurlijk ook (Nginx-container op een NAS, of elke andere stati
 
 ## Spelregels
 
-- **Setup**: kies teamnaam, seizoen (2010/11 t/m 2025/26 of willekeurig), formatie en speelstijl. Na de eerste rol staan deze vast.
-- **Draft**: 11 rondes. Per ronde wordt een club gespind en zie je de hele selectie. Een speler is alleen kiesbaar als er een veldpositie open is die bij zijn positie past (een spits past niet op het middenveld; een rechtsback mag wél als wingback spelen). Na het kiezen van een speler lichten de passende open posities op het veld op en kies je zelf waar hij komt te staan — of ga terug naar de selectie voor een andere speler.
+- **Setup**: kies teamnaam, formatie en speelstijl. Na de eerste rol staan deze vast. De speelstijl verschuift de linies op het veld (aanvallend hoger, verdedigend dieper) en weegt mee in de seizoenssimulatie: aanvallend scoort meer maar geeft ook meer weg, verdedigend andersom.
+- **Draft**: 11 rondes. Per ronde wordt een willekeurige club uit een willekeurig seizoen (2010/11 t/m 2025/26) gespind en zie je de hele selectie. Een speler is alleen kiesbaar als er een veldpositie open is die bij zijn positie past (een spits past niet op het middenveld; een rechtsback mag wél als wingback spelen). Na het kiezen van een speler lichten de passende open posities op het veld op en kies je zelf waar hij komt te staan — of ga terug naar de selectie voor een andere speler.
 - **Rerolls**: maximaal 3 per draft. Slechte club gerold? Eén klik en de trommel draait opnieuw.
-- **Seizoen**: alle 18 teams (jouw draftteam vervangt een willekeurige club) spelen een dubbele competitie. Doelpunten worden getrokken uit een Poisson-verdeling op basis van aanvals- en verdedigingsratings, met thuisvoordeel en je speelstijl als modifier — ratings bepalen dus echt de uitslag. Daarna volgt de eindstand 1–18.
+- **Seizoen**: er wordt een willekeurig seizoen geloot en alle 18 teams van die jaargang (jouw draftteam vervangt een willekeurige club) spelen een dubbele competitie. Doelpunten worden getrokken uit een Poisson-verdeling op basis van aanvals- en verdedigingsratings, met thuisvoordeel en je speelstijl als modifier — ratings bepalen dus echt de uitslag. Daarna volgt de eindstand 1–18.
 - **Records**: je gespeelde seizoenen, landstitels, perfecte seizoenen, beste record en beste eindpositie worden lokaal bewaard (localStorage) en verschijnen in het records-paneel.
 - **Delen**: na een seizoen kopieert "Deel je seizoen" een tekst met je record en alle 34 uitslagen als 🟩🟨🟥-raster naar het klembord.
 - **Geluid**: de trommel, het plaatsen van spelers en een titel of perfect seizoen hebben geluidseffecten (uit te zetten met de knop rechtsboven). Bij een kampioenschap valt er confetti; bij 34–0–0 in het goud.

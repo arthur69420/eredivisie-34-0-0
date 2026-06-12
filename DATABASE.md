@@ -347,31 +347,31 @@ Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities 
 | AZ | 13 | — compleet |
 | FC Utrecht | 13 | — compleet |
 
-## 2025/26 — 3/18 clubs compleet
+## 2025/26 — 6/18 clubs compleet
 
 | Club | Spelers | Ontbrekend |
 |---|---|---|
-| Telstar | 5 | RB, CB, LB, CM, LW |
-| Fortuna Sittard | 7 | 2× CB, LB, CM, RW |
+| Telstar | 6 | RB, CB, LB, CM |
+| Fortuna Sittard | 7 | GK, 2× CB, CM, RW |
 | NAC Breda | 7 | RB, CM, LW, RW |
-| Heracles Almelo | 7 | CB, LB, CM, LW, RW |
 | Excelsior | 7 | RB, LB, CM, LW, RW |
-| sc Heerenveen | 8 | RB, LB, LW, RW |
-| NEC | 8 | RB, LB, RW |
 | FC Groningen | 8 | RB, LB, CM, RW |
+| Go Ahead Eagles | 8 | CB, CM, LW, RW |
 | PEC Zwolle | 8 | RB, LB, LW, RW |
+| Heracles Almelo | 8 | CB, LB, LW, RW |
 | FC Volendam | 8 | RB, LB, CM, LW |
-| Go Ahead Eagles | 9 | CB, CM, RW |
-| Sparta Rotterdam | 9 | LB, CM |
-| FC Twente | 11 | 2× CM |
+| sc Heerenveen | 9 | RB, LB, LW, RW |
+| NEC | 10 | RB, RW |
+| Sparta Rotterdam | 10 | LB |
 | FC Utrecht | 12 | — compleet |
-| Feyenoord | 13 | — compleet |
-| AZ | 13 | — compleet |
-| Ajax | 14 | CM |
-| PSV | 14 | CM |
+| FC Twente | 13 | — compleet |
+| AZ | 15 | — compleet |
+| Feyenoord | 16 | — compleet |
+| PSV | 18 | — compleet |
+| Ajax | 19 | — compleet |
 
 ## Totaal
 
 - Clubs in database: 288 (over 16 seizoenen)
-- Spelers in database: 2437
-- Clubs compleet: 23 / 288
+- Spelers in database: 2458
+- Clubs compleet: 26 / 288

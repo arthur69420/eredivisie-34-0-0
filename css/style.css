@@ -494,6 +494,14 @@ button{touch-action:manipulation}
 
 .confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:99}
 
+.seasonnote{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;
+  color:var(--muted);
+  border:1px dashed var(--line-strong);
+  padding:9px 11px;
+}
+.logo.gold{background:#F5C518;color:var(--navy)}
+
 @media (max-width:760px){
   .slot{width:54px;height:54px;font-size:10.5px}
   .slot.filled{min-width:58px;padding:4px 6px}

@@ -62,7 +62,7 @@ Object.values(SEASONS).forEach(clubsArr => clubsArr.forEach(c => {
 }));
 
 /* ================= state ================= */
-let season = Object.keys(SEASONS)[Object.keys(SEASONS).length - 1];
+let season = "?";
 let formation = "4-3-3";
 let stijl = "Gebalanceerd";
 let phase = "setup";
@@ -72,7 +72,9 @@ let pickedCount = 0;
 let picked = new Set();
 let rerolls = MAX_REROLLS;
 let currentClub = null;
+let currentSeason = null;
 let pendingPick = null;
+let rigArmed = false;
 let spinTimer = null, revealTimer = null, tableTimer = null, replacedClub = null;
 
 const $ = id => document.getElementById(id);
@@ -93,30 +95,15 @@ function buildOptions(containerId, items, current, onpick){
     el.appendChild(b);
   });
 }
-function buildSeasonSelect(){
-  const sel = $("seasonsel");
-  sel.innerHTML = "";
-  const rOpt = document.createElement("option");
-  rOpt.value = "__random__"; rOpt.textContent = "Willekeurig seizoen";
-  sel.appendChild(rOpt);
-  Object.keys(SEASONS).slice().reverse().forEach(s => {
-    const o = document.createElement("option");
-    o.value = s; o.textContent = s;
-    sel.appendChild(o);
-  });
-  sel.value = season;
-  sel.onchange = () => { if(phase !== "setup"){ sel.value = season; return; } season = sel.value; refreshSetup(); };
-}
 function refreshSetup(){
   buildOptions("formaties", Object.keys(FORMATIONS), formation, v => formation = v);
   buildOptions("stijlen", STIJLEN, stijl, v => stijl = v);
-  $("configline").textContent = (season === "__random__" ? "Seizoen ?" : season) + " \u00B7 " + formation + " \u00B7 " + stijl;
+  $("configline").textContent = formation + " \u00B7 " + stijl;
   drawPitchSlots();
   drawBoxScore();
 }
 function setLocked(lock){
   $("setuppanel").classList.toggle("locked", lock);
-  $("seasonsel").disabled = lock;
   $("teamname").disabled = lock;
 }
 function getTeamName(){
@@ -127,12 +114,14 @@ function getTeamName(){
 /* ================= veld ================= */
 function drawPitchSlots(){
   document.querySelectorAll(".slot").forEach(e => e.remove());
+  // speelstijl verschuift de veldspelers: aanvallend hoger, verdedigend dieper
+  const shift = stijl === "Aanvallend" ? -4 : (stijl === "Verdedigend" ? 4 : 0);
   FORMATIONS[formation].forEach((p,i) => {
     const d = document.createElement("div");
     d.className = "slot";
     d.id = "slot"+i;
     d.style.left = p[1] + "%";
-    d.style.top = p[2] + "%";
+    d.style.top = (p[0] === "GK" ? p[2] : Math.max(8, Math.min(92, p[2] + shift))) + "%";
     d.textContent = p[0];
     $("pitch").appendChild(d);
   });
@@ -154,7 +143,7 @@ function drawBoxScore(){
     div.className = "bsrow" + (pk ? " filled" : "");
     div.innerHTML = '<span class="p">'+p[0]+'</span>'
       + '<span class="n">'+(pk ? esc(pk.name) : "\u2014")+'</span>'
-      + (pk ? '<span class="c">'+clubDot(pk.clubA)+pk.clubA+'</span><span class="r">'+pk.rating+'</span>' : '');
+      + (pk ? '<span class="c">'+clubDot(pk.clubA)+pk.clubA+" "+pk.season.slice(2)+'</span><span class="r">'+pk.rating+'</span>' : '');
     rows.appendChild(div);
   });
   $("bscount").textContent = pickedCount + "/11";
@@ -188,20 +177,13 @@ function openSlotsFor(playerPos){
   return FORMATIONS[formation].map((p,i) => ({pos: p[0], i}))
     .filter(o => !picks[o.i] && COMPAT[o.pos].includes(playerPos));
 }
-function eligiblePlayers(club){
+function eligiblePlayers(s, club){
   return club.p.map((pl,i) => ({pl, i}))
-    .filter(o => !picked.has(club.n+"#"+o.i) && openSlotsFor(o.pl[1]).length > 0);
-}
-function needText(){
-  const counts = {};
-  FORMATIONS[formation].forEach((p,i) => { if(!picks[i]) counts[p[0]] = (counts[p[0]]||0) + 1; });
-  const parts = Object.keys(counts).map(k => (counts[k] > 1 ? counts[k] + "\u00D7 " : "") + k);
-  return parts.length ? "Nog open: " + parts.join(" \u00B7 ") : "";
+    .filter(o => !picked.has(s+"#"+club.n+"#"+o.i) && openSlotsFor(o.pl[1]).length > 0);
 }
 function startDraft(){
   phase = "draft";
   teamName = getTeamName();
-  if(season === "__random__"){ season = rnd(Object.keys(SEASONS)); $("seasonsel").value = season; }
   picks = Array(11).fill(null); pickedCount = 0; picked = new Set(); replacedClub = null;
   rerolls = MAX_REROLLS;
   pendingPick = null; clearPlacement();
@@ -212,8 +194,8 @@ function startDraft(){
   $("teamstats").classList.remove("show");
   $("simbtn").classList.remove("show");
   $("resetbtn").style.display = "block";
-  $("phaseline").textContent = "Fase: draften \u00B7 " + season;
-  $("hint").textContent = teamName + " draft uit seizoen " + season + ". Per ronde: rol een club, kies \u00E9\u00E9n speler. Max " + MAX_REROLLS + " rerolls.";
+  $("phaseline").textContent = "Fase: draften";
+  $("hint").textContent = teamName + " draft: elke ronde een club uit een willekeurig seizoen. Max " + MAX_REROLLS + " rerolls.";
   refreshSetup();
   nextRoll();
 }
@@ -223,10 +205,20 @@ function nextRoll(){
   $("rollbtn").disabled = false;
   $("rollbtn").innerHTML = "Rol &#127922;";
 }
+function rollSeasonClub(excludeClubName){
+  const seasons = Object.keys(SEASONS);
+  for(let tries = 0; tries < 80; tries++){
+    const s = rnd(seasons);
+    const pool = SEASONS[s].filter(c => eligiblePlayers(s, c).length > 0 && (tries >= 40 || c.n !== excludeClubName));
+    if(pool.length) return { s, club: rnd(pool) };
+  }
+  return null;
+}
 function spinTo(excludeClubName){
-  const pool = clubs().filter(c => eligiblePlayers(c).length > 0 && c.n !== excludeClubName);
-  const target = rnd(pool.length ? pool : clubs().filter(c => eligiblePlayers(c).length > 0));
-  currentClub = target;
+  const t = rollSeasonClub(excludeClubName);
+  if(!t) return;
+  currentClub = t.club;
+  currentSeason = t.s;
   $("choices").innerHTML = "";
   $("rerollbtn").classList.remove("show");
   const sn = $("spinname");
@@ -237,17 +229,20 @@ function spinTo(excludeClubName){
   spinTimer = setInterval(() => {
     ticks++;
     if(ticks < 16){
-      const c = rnd(clubs());
+      const rs = rnd(Object.keys(SEASONS));
+      const c = rnd(SEASONS[rs]);
       sn.textContent = c.n;
+      $("ovneed").textContent = rs;
       $("spinshirt").innerHTML = shirtSVG(c.a, 44);
       sfx.tick(ticks);
     } else {
       clearInterval(spinTimer);
-      sn.textContent = target.n;
-      $("spinshirt").innerHTML = shirtSVG(target.a, 52);
+      sn.textContent = t.club.n;
+      $("ovneed").textContent = "Seizoen " + t.s;
+      $("spinshirt").innerHTML = shirtSVG(t.club.a, 52);
       sn.className = "spinname landed";
       sfx.land();
-      showSquad(target);
+      showSquad(t.s, t.club);
       updateRerollBtn();
     }
   }, 70);
@@ -257,8 +252,8 @@ function roll(){
   if(phase === "setup") startDraft();
   if(phase !== "draft") return;
   $("rollbtn").disabled = true;
-  $("ovstep").textContent = "Ronde " + (pickedCount+1) + " van 11 \u00B7 " + season;
-  $("ovneed").textContent = needText();
+  $("ovstep").textContent = "Ronde " + (pickedCount+1) + " van 11";
+  $("ovneed").textContent = "";
   $("overlay").classList.add("show");
   spinTo(null);
 }
@@ -273,7 +268,7 @@ function reroll(){
   rerolls--;
   spinTo(currentClub ? currentClub.n : null);
 }
-function showSquad(club){
+function showSquad(s, club){
   const box = $("choices");
   box.innerHTML = "";
   const wrap = document.createElement("div");
@@ -281,31 +276,31 @@ function showSquad(club){
   GROUPS.forEach(([label, poss]) => {
     const members = club.p.map((pl,i) => ({pl,i})).filter(o => poss.includes(o.pl[1]));
     if(!members.length) return;
-    const anyOpen = members.some(o => openSlotsFor(o.pl[1]).length > 0 && !picked.has(club.n+"#"+o.i));
+    const anyOpen = members.some(o => openSlotsFor(o.pl[1]).length > 0 && !picked.has(s+"#"+club.n+"#"+o.i));
     const g = document.createElement("div");
     g.className = "sg";
     g.innerHTML = "<h3>" + label + (anyOpen ? "" : " <span class='full'>\u00B7 dicht</span>") + "</h3>";
     members.forEach(o => {
-      const used = picked.has(club.n+"#"+o.i);
+      const used = picked.has(s+"#"+club.n+"#"+o.i);
       const fits = openSlotsFor(o.pl[1]).length > 0;
       const b = document.createElement("button");
       b.className = "pchoice";
       b.disabled = used || !fits;
       b.innerHTML = "<span class='pp'>" + o.pl[1] + "</span><span class='nm'>" + esc(o.pl[0]) + (used ? " \u00B7 al gekozen" : "") + "</span><span class='rt'>" + o.pl[2] + "</span>";
-      if(!b.disabled) b.onclick = () => choosePlayer(club, o.i);
+      if(!b.disabled) b.onclick = () => choosePlayer(s, club, o.i);
       g.appendChild(b);
     });
     wrap.appendChild(g);
   });
   box.appendChild(wrap);
 }
-function choosePlayer(club, i){
+function choosePlayer(s, club, i){
   const pl = club.p[i];
   const opts = openSlotsFor(pl[1]);
   if(!opts.length) return;
-  pendingPick = { club, idx: i, pl };
+  pendingPick = { s, club, idx: i, pl };
   $("overlay").classList.remove("show");
-  $("pbplayer").innerHTML = esc(pl[0]) + ' <span class="pb-meta">' + club.a + ' · ' + POSNL[pl[1]] + ' · ' + pl[2] + '</span>';
+  $("pbplayer").innerHTML = esc(pl[0]) + ' <span class="pb-meta">' + club.a + ' ' + s + ' · ' + POSNL[pl[1]] + ' · ' + pl[2] + '</span>';
   $("placebar").classList.add("show");
   $("pitch").classList.add("placing");
   opts.forEach(o => {
@@ -321,11 +316,11 @@ function clearPlacement(){
 }
 function placeAt(slotIdx){
   if(!pendingPick) return;
-  const { club, idx, pl } = pendingPick;
+  const { s, club, idx, pl } = pendingPick;
   pendingPick = null;
   clearPlacement();
-  picked.add(club.n+"#"+idx);
-  picks[slotIdx] = { pos: pl[1], name: pl[0], rating: pl[2], clubN: club.n, clubA: club.a };
+  picked.add(s+"#"+club.n+"#"+idx);
+  picks[slotIdx] = { pos: pl[1], name: pl[0], rating: pl[2], clubN: club.n, clubA: club.a, season: s };
   fillSlot(slotIdx, picks[slotIdx]);
   pickedCount++;
   sfx.place();
@@ -347,8 +342,8 @@ function finishDraft(){
 
 /* ================= seizoenssimulatie (volledige competitie) ================= */
 function styleMods(){
-  if(stijl === "Aanvallend")  return { gf: 0.28, ga: 0.22 };
-  if(stijl === "Verdedigend") return { gf: -0.20, ga: -0.26 };
+  if(stijl === "Aanvallend")  return { gf: 0.35, ga: 0.28 };
+  if(stijl === "Verdedigend") return { gf: -0.24, ga: -0.34 };
   return { gf: 0, ga: 0 };
 }
 function poisson(lambda){
@@ -367,9 +362,11 @@ function playMatch(h, a, mods){
   if(a.mine){ la += mods.gf; lh += mods.ga; }
   return [poisson(lh), poisson(la)];
 }
-function simulate(){
+function simulate(rig){
   phase = "season";
-  $("phaseline").textContent = "Fase: seizoen bezig";
+  if(rig) disarmRig();
+  $("phaseline").textContent = "Fase: seizoen bezig" + (rig ? " · demo" : "");
+  season = rnd(Object.keys(SEASONS));
   replacedClub = rnd(clubs());
   const r = ratings();
   const mods = styleMods();
@@ -382,7 +379,9 @@ function simulate(){
     for(let j = 0; j < teams.length; j++){
       if(i === j) continue;
       const h = teams[i], a = teams[j];
-      const [gh, ga] = playMatch(h, a, mods);
+      let [gh, ga] = playMatch(h, a, mods);
+      if(rig && h.mine){ gh = 1 + poisson(1.4); ga = Math.min(ga, gh - 1); }
+      if(rig && a.mine){ ga = 1 + poisson(1.4); gh = Math.min(gh, ga - 1); }
       h.gf += gh; h.ga += ga; a.gf += ga; a.ga += gh;
       if(gh > ga){ h.w++; a.l++; h.pts += 3; }
       else if(gh < ga){ a.w++; h.l++; a.pts += 3; }
@@ -393,7 +392,7 @@ function simulate(){
   }
   const me = teams[0];
   const order = shuffle(myResults);
-  lastOrder = order;
+  if(!rig) lastOrder = order;
   teams.sort((x,y) => y.pts - x.pts || (y.gf - y.ga) - (x.gf - x.ga) || y.gf - x.gf);
   const myPos = teams.indexOf(me) + 1;
 
@@ -402,7 +401,7 @@ function simulate(){
   $("seasonteam").textContent = teamName;
   $("seasonyear").textContent = season;
   $("tableyear").textContent = season;
-  $("seasonsub").textContent = teamName + " neemt de plek in van " + replacedClub.n + " \u00B7 34 speelrondes";
+  $("seasonsub").textContent = teamName + " neemt de plek in van " + replacedClub.n + " \u00B7 34 speelrondes" + (rig ? " \u00B7 DEMO" : "");
   const grid = $("fixgrid");
   grid.innerHTML = "";
   $("season").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -412,7 +411,7 @@ function simulate(){
   revealTimer = setInterval(() => {
     if(i >= order.length){
       clearInterval(revealTimer);
-      showFinale(teams, me, myPos);
+      showFinale(teams, me, myPos, rig);
       return;
     }
     const x = order[i];
@@ -426,7 +425,7 @@ function simulate(){
     i++;
   }, 80);
 }
-function showFinale(teams, me, myPos){
+function showFinale(teams, me, myPos, rig){
   phase = "done";
   $("phaseline").textContent = "Fase: seizoen afgelopen";
   const stat = (lbl, val, accent) => '<div class="stat'+(accent ? " accent" : "")+'"><div class="l">'+lbl+'</div><div class="v">'+val+'</div></div>';
@@ -463,14 +462,18 @@ function showFinale(teams, me, myPos){
   else if(myPos <= 12)    msg = "Plek " + myPos + ": grijze middenmoot. De trommel was je niet gunstig gezind.";
   else if(myPos <= 15)    msg = "Plek " + myPos + ": lang kijken naar de onderkant van de ranglijst.";
   else                    msg = "Plek " + myPos + ": degradatiestress tot de laatste speeldag.";
+  if(rig) msg += " (Demo \u2014 telt niet mee voor je records.)";
 
   $("recordtxt").textContent = me.w + "\u2013" + me.d + "\u2013" + me.l;
   $("verdicttxt").textContent = msg;
   $("verdict").classList.toggle("perfect", perfect);
   $("finale").classList.add("show");
 
-  lastMe = me; lastPos = myPos;
-  updateRecords(me, myPos);
+  $("sharebtn").style.display = rig ? "none" : "";
+  if(!rig){
+    lastMe = me; lastPos = myPos;
+    updateRecords(me, myPos);
+  }
   if(perfect){
     sfx.perfect();
     confetti(["#F5C518","#FFE584","#FFFFFF","#E40428"], 280);
@@ -637,10 +640,11 @@ function resetAll(){
   $("teamstats").classList.remove("show");
   $("simbtn").classList.remove("show");
   $("resetbtn").style.display = "none";
+  disarmRig();
   $("rollbtn").disabled = false;
   $("rollbtn").innerHTML = "Rol &#127922;";
   $("phaseline").textContent = "Fase: seizoen en opstelling kiezen";
-  $("hint").textContent = "Rol een club, kies een speler uit de selectie en zet hem zelf op een oplichtende positie op het veld.";
+  $("hint").textContent = "Rol elke ronde een club uit een willekeurig seizoen, kies een speler en zet hem zelf op een oplichtende positie.";
   refreshSetup();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -648,9 +652,26 @@ $("rollbtn").onclick = roll;
 $("rerollbtn").onclick = reroll;
 $("pbback").onclick = backToSquad;
 $("resetbtn").onclick = resetAll;
-$("simbtn").onclick = () => { if(pickedCount === 11) simulate(); };
+$("simbtn").onclick = () => { if(pickedCount === 11) simulate(rigArmed); };
 $("againbtn").onclick = resetAll;
-$("rerunbtn").onclick = () => { if(pickedCount === 11) simulate(); };
+$("rerunbtn").onclick = () => { if(pickedCount === 11) simulate(rigArmed); };
+
+/* geheime demo-trigger: 5x snel op het 34-0-0-logo klikken wapent een
+   gegarandeerd perfect seizoen (telt niet mee voor records) */
+const logoEl = document.querySelector(".logo");
+let logoClicks = 0, logoTimer = null;
+function disarmRig(){ rigArmed = false; logoEl.classList.remove("gold"); }
+logoEl.onclick = () => {
+  logoClicks++;
+  clearTimeout(logoTimer);
+  logoTimer = setTimeout(() => { logoClicks = 0; }, 1600);
+  if(logoClicks >= 5){
+    logoClicks = 0;
+    rigArmed = !rigArmed;
+    logoEl.classList.toggle("gold", rigArmed);
+    if(rigArmed) tone(1047, .15, "triangle", .1);
+  }
+};
 $("sharebtn").onclick = shareSeason;
 $("mutebtn").onclick = () => {
   muted = !muted;
@@ -659,7 +680,6 @@ $("mutebtn").onclick = () => {
   if(!muted) tone(660, .09, "sine", .1);
 };
 
-buildSeasonSelect();
 refreshSetup();
 setMuteIcon();
 renderRecords();
