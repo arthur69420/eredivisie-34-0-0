@@ -324,28 +324,28 @@ Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities 
 | FC Twente | 12 | CM |
 | Ajax | 13 | — compleet |
 
-## 2024/25 — 3/18 clubs compleet
+## 2024/25 — 6/18 clubs compleet
 
 | Club | Spelers | Ontbrekend |
 |---|---|---|
+| Almere City | 6 | RB, LB, 2× CM, LW |
 | RKC Waalwijk | 7 | CB, LB, 2× CM |
-| Almere City | 7 | RB, CB, LB, 2× CM |
 | Heracles Almelo | 8 | CB, LB, LW, RW |
 | PEC Zwolle | 8 | RB, LB, CM, LW |
-| Fortuna Sittard | 8 | CB, LB, CM, RW |
+| Fortuna Sittard | 8 | GK, CB, CM, RW |
 | Willem II | 8 | CB, LB, LW |
-| sc Heerenveen | 9 | RB, LB, LW, RW |
-| Go Ahead Eagles | 9 | CB, CM, LW |
 | NAC Breda | 9 | RB, LW, RW |
-| FC Groningen | 10 | RB, CM, RW |
 | NEC | 10 | RB |
-| Sparta Rotterdam | 10 | LB |
-| PSV | 12 | CM |
-| Feyenoord | 12 | — compleet |
-| FC Twente | 12 | CM |
-| Ajax | 13 | CM |
-| AZ | 13 | — compleet |
-| FC Utrecht | 13 | — compleet |
+| sc Heerenveen | 11 | RB, LB, LW |
+| FC Groningen | 11 | RB, RW |
+| Sparta Rotterdam | 11 | LB |
+| Go Ahead Eagles | 12 | CB, LW |
+| FC Twente | 14 | — compleet |
+| FC Utrecht | 14 | — compleet |
+| Feyenoord | 15 | — compleet |
+| AZ | 15 | — compleet |
+| PSV | 16 | — compleet |
+| Ajax | 18 | — compleet |
 
 ## 2025/26 — 6/18 clubs compleet
 
@@ -373,5 +373,5 @@ Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities 
 ## Totaal
 
 - Clubs in database: 288 (over 16 seizoenen)
-- Spelers in database: 2458
-- Clubs compleet: 26 / 288
+- Spelers in database: 2481
+- Clubs compleet: 29 / 288
