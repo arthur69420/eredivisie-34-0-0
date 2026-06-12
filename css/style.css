@@ -471,3 +471,42 @@ input[type=text]:focus,select:focus{outline:2px solid var(--red);outline-offset:
 #season .yr{font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--muted);letter-spacing:.08em;margin-left:6px}
 
 @media (max-width:900px){.resultwrap{grid-template-columns:1fr}}
+
+/* ================= v3: shirts, records, geluid, mobiel/PWA ================= */
+button{touch-action:manipulation}
+.shirt{display:block;flex:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+.slot.filled .shirt{margin:-18px auto 2px}
+.spinshirt{display:flex;justify-content:center;margin-bottom:8px;min-height:48px}
+.clubdot{display:inline-block;width:9px;height:9px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.45)}
+
+.mutebtn{
+  flex:none;margin-left:16px;
+  background:transparent;border:1px solid var(--line-strong);color:var(--txt);
+  font-size:15px;padding:7px 11px;line-height:1;
+}
+.mutebtn:hover{background:var(--navy-3)}
+
+.recpanel{margin-top:14px;border-top-color:#F5C518}
+.recrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:1px solid var(--line);padding:7px 2px;font-size:12.5px;color:var(--muted)}
+.recrow:last-child{border-bottom:none}
+.recrow .v{font-family:"IBM Plex Mono",monospace;font-weight:600;color:#fff;text-align:right}
+.recrow.gold .v{color:#F5C518}
+
+.confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:99}
+
+@media (max-width:760px){
+  .slot{width:54px;height:54px;font-size:10.5px}
+  .slot.filled{min-width:58px;padding:4px 6px}
+  .slot.filled .nm{font-size:10px;max-width:80px}
+  .slot.filled .meta{font-size:8.5px}
+  .slot.filled .shirt{margin-top:-16px}
+  .pchoice{padding:11px 10px;font-size:13px}
+  .smallbtn{padding:11px 14px}
+  .rollbtn{font-size:24px;padding:14px 10px}
+  .placebar{position:sticky;top:8px;z-index:6;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+  .pb-player{font-size:17px}
+  .mutebtn{margin-left:auto}
+  .verdict .record{font-size:36px}
+  .statgrid{grid-template-columns:repeat(3,1fr)}
+  .stat .v{font-size:26px}
+}

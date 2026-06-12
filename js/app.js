@@ -22,6 +22,31 @@ const GROUPS = [["Keeper",["GK"]],["Verdediging",["RB","CB","LB"]],["Middenveld"
 const STIJLEN = ["Verdedigend","Gebalanceerd","Aanvallend"];
 const ATTPOS = ["AM","LW","RW","ST"], DEFPOS = ["GK","RB","CB","LB","DM"];
 const MAX_REROLLS = 3;
+const CLUBCOLORS = {
+  AJA:["#FFFFFF","#D2122E"], PSV:["#ED1C24","#FFFFFF"], FEY:["#E60000","#FFFFFF"],
+  AZ:["#DD0000","#FFFFFF"], TWE:["#E2001A","#FFFFFF"], UTR:["#E30613","#FFFFFF"],
+  HEE:["#1D5BA4","#FFFFFF"], GRO:["#009B58","#FFFFFF"], ROD:["#FFD400","#1A1A1A"],
+  NAC:["#FFD700","#1A1A1A"], ADO:["#F9E300","#006A38"], HER:["#1A1A1A","#FFFFFF"],
+  NEC:["#C8102E","#006837"], VIT:["#FFDD00","#1A1A1A"], VVV:["#FFE100","#1A1A1A"],
+  EXC:["#E30613","#1A1A1A"], GRA:["#0053A0","#FFFFFF"], WIL:["#E30613","#1D4F9F"],
+  RKC:["#FFD500","#004A99"], PEC:["#0069B4","#FFFFFF"], CAM:["#FFDD00","#003C7D"],
+  GAE:["#D50032","#FFD700"], DOR:["#FFFFFF","#007A3D"], SPA:["#E30613","#FFFFFF"],
+  FOR:["#F9D616","#007A53"], EMM:["#E30613","#FFFFFF"], VOL:["#F36C21","#1A1A1A"],
+  ALM:["#D50000","#1A1A1A"], TEL:["#FFFFFF","#E30613"]
+};
+function clubColors(abbr){ return CLUBCOLORS[abbr] || ["#16285A","#FFFFFF"]; }
+function shirtSVG(abbr, size){
+  const c = clubColors(abbr);
+  return '<svg class="shirt" width="'+size+'" height="'+Math.round(size*0.9)+'" viewBox="0 0 40 36" aria-hidden="true">'
+    + '<path d="M13 1 L2 7 L6.5 15 L10.5 12.5 L10.5 34 L29.5 34 L29.5 12.5 L33.5 15 L38 7 L27 1 Q20 6.5 13 1 Z" fill="'+c[0]+'" stroke="rgba(0,0,0,.45)" stroke-width="1.2"/>'
+    + '<path d="M16 6.8 H24 V33 H16 Z" fill="'+c[1]+'"/>'
+    + '<path d="M13 1 Q20 6.5 27 1 L25.3 2.2 Q20 6 14.7 2.2 Z" fill="rgba(0,0,0,.35)"/>'
+    + '</svg>';
+}
+function clubDot(abbr){
+  const c = clubColors(abbr);
+  return '<i class="clubdot" style="background:'+c[0]+';box-shadow:inset 0 -3px 0 '+c[1]+'"></i>';
+}
 
 /* ================= data voorbereiden ================= */
 const PAD_REQ = [["GK",1],["RB",1],["CB",2],["LB",1],["CM",2],["LW",1],["RW",1],["ST",1]];
@@ -115,7 +140,8 @@ function drawPitchSlots(){
 function fillSlot(i, pick){
   const d = $("slot"+i);
   d.className = "slot filled";
-  d.innerHTML = '<span class="nm">'+esc(pick.name)+'</span><span class="meta">'+pick.clubA+' \u00B7 '+pick.pos+' \u00B7 '+pick.rating+'</span>';
+  d.innerHTML = shirtSVG(pick.clubA, 30)
+    + '<span class="nm">'+esc(pick.name)+'</span><span class="meta">'+pick.clubA+' \u00B7 '+pick.pos+' \u00B7 '+pick.rating+'</span>';
 }
 
 /* ================= box score ================= */
@@ -128,7 +154,7 @@ function drawBoxScore(){
     div.className = "bsrow" + (pk ? " filled" : "");
     div.innerHTML = '<span class="p">'+p[0]+'</span>'
       + '<span class="n">'+(pk ? esc(pk.name) : "\u2014")+'</span>'
-      + (pk ? '<span class="c">'+pk.clubA+'</span><span class="r">'+pk.rating+'</span>' : '');
+      + (pk ? '<span class="c">'+clubDot(pk.clubA)+pk.clubA+'</span><span class="r">'+pk.rating+'</span>' : '');
     rows.appendChild(div);
   });
   $("bscount").textContent = pickedCount + "/11";
@@ -211,17 +237,23 @@ function spinTo(excludeClubName){
   spinTimer = setInterval(() => {
     ticks++;
     if(ticks < 16){
-      sn.textContent = rnd(clubs()).n;
+      const c = rnd(clubs());
+      sn.textContent = c.n;
+      $("spinshirt").innerHTML = shirtSVG(c.a, 44);
+      sfx.tick(ticks);
     } else {
       clearInterval(spinTimer);
       sn.textContent = target.n;
+      $("spinshirt").innerHTML = shirtSVG(target.a, 52);
       sn.className = "spinname landed";
+      sfx.land();
       showSquad(target);
       updateRerollBtn();
     }
   }, 70);
 }
 function roll(){
+  audio();
   if(phase === "setup") startDraft();
   if(phase !== "draft") return;
   $("rollbtn").disabled = true;
@@ -296,6 +328,7 @@ function placeAt(slotIdx){
   picks[slotIdx] = { pos: pl[1], name: pl[0], rating: pl[2], clubN: club.n, clubA: club.a };
   fillSlot(slotIdx, picks[slotIdx]);
   pickedCount++;
+  sfx.place();
   nextRoll();
 }
 function backToSquad(){
@@ -360,6 +393,7 @@ function simulate(){
   }
   const me = teams[0];
   const order = shuffle(myResults);
+  lastOrder = order;
   teams.sort((x,y) => y.pts - x.pts || (y.gf - y.ga) - (x.gf - x.ga) || y.gf - x.gf);
   const myPos = teams.indexOf(me) + 1;
 
@@ -434,6 +468,159 @@ function showFinale(teams, me, myPos){
   $("verdicttxt").textContent = msg;
   $("verdict").classList.toggle("perfect", perfect);
   $("finale").classList.add("show");
+
+  lastMe = me; lastPos = myPos;
+  updateRecords(me, myPos);
+  if(perfect){
+    sfx.perfect();
+    confetti(["#F5C518","#FFE584","#FFFFFF","#E40428"], 280);
+  } else if(myPos === 1){
+    sfx.fanfare();
+    confetti(["#E40428","#FFFFFF","#F5C518"], 160);
+  }
+}
+
+/* ================= geluid (WebAudio, geen bestanden) ================= */
+let AC = null;
+let muted = false;
+try { muted = localStorage.getItem("e3400_muted") === "1"; } catch(e){}
+function audio(){
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if(!Ctx) return null;
+  if(!AC) AC = new Ctx();
+  if(AC.state === "suspended") AC.resume();
+  return AC;
+}
+function tone(freq, dur, type, vol, delay){
+  if(muted) return;
+  const a = audio(); if(!a) return;
+  const t = a.currentTime + (delay || 0);
+  const o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g); g.connect(a.destination);
+  o.start(t); o.stop(t + dur + .03);
+}
+const sfx = {
+  tick: n => tone(n % 2 ? 740 : 620, .045, "square", .035),
+  land(){ tone(220, .22, "triangle", .12); tone(440, .3, "triangle", .09, .06); },
+  place(){ tone(523, .1, "sine", .12); tone(784, .16, "sine", .1, .06); },
+  fanfare(){ [523, 659, 784, 1047].forEach((f, i) => tone(f, .3, "triangle", .11, i * .14)); },
+  perfect(){
+    [392, 523, 659, 784, 1047, 1319].forEach((f, i) => {
+      tone(f, .34, "triangle", .12, i * .12);
+      tone(f * 2, .3, "sine", .05, i * .12);
+    });
+  }
+};
+function setMuteIcon(){
+  $("mutebtn").textContent = muted ? "\u{1F507}" : "\u{1F50A}";
+  $("mutebtn").title = muted ? "Geluid aanzetten" : "Geluid uitzetten";
+}
+
+/* ================= confetti ================= */
+function confetti(colors, count){
+  if(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const cv = document.createElement("canvas");
+  cv.className = "confetti";
+  document.body.appendChild(cv);
+  cv.width = innerWidth; cv.height = innerHeight;
+  const ctx = cv.getContext("2d");
+  const P = [];
+  for(let i = 0; i < count; i++){
+    P.push({
+      x: Math.random() * cv.width,
+      y: -20 - Math.random() * cv.height * .6,
+      vx: -1.2 + Math.random() * 2.4,
+      vy: 2 + Math.random() * 3.2,
+      w: 5 + Math.random() * 6,
+      h: 8 + Math.random() * 9,
+      rot: Math.random() * Math.PI,
+      vr: -.12 + Math.random() * .24,
+      c: rnd(colors)
+    });
+  }
+  function step(){
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    let alive = false;
+    P.forEach(p => {
+      p.x += p.vx + Math.sin(p.y * .02);
+      p.y += p.vy;
+      p.rot += p.vr;
+      if(p.y < cv.height + 30) alive = true;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    if(alive) requestAnimationFrame(step);
+    else cv.remove();
+  }
+  requestAnimationFrame(step);
+}
+
+/* ================= records (localStorage) ================= */
+const RKEY = "e3400_records";
+let lastOrder = null, lastMe = null, lastPos = 0;
+function loadRecords(){
+  try { return JSON.parse(localStorage.getItem(RKEY)); } catch(e){ return null; }
+}
+function updateRecords(me, myPos){
+  const r = loadRecords() || { seasons:0, titles:0, perfects:0, bestPts:-1, bestRec:"", bestTeam:"", bestSeason:"", bestPos:99 };
+  r.seasons++;
+  if(myPos === 1) r.titles++;
+  if(me.w === 34) r.perfects++;
+  if(me.pts > r.bestPts){
+    r.bestPts = me.pts;
+    r.bestRec = me.w + "–" + me.d + "–" + me.l;
+    r.bestTeam = teamName;
+    r.bestSeason = season;
+  }
+  if(myPos < r.bestPos) r.bestPos = myPos;
+  try { localStorage.setItem(RKEY, JSON.stringify(r)); } catch(e){}
+  renderRecords();
+}
+function renderRecords(){
+  const r = loadRecords();
+  const panel = $("recordspanel");
+  if(!r || !r.seasons){ panel.style.display = "none"; return; }
+  panel.style.display = "block";
+  const row = (l, v, gold) => '<div class="recrow'+(gold ? " gold" : "")+'"><span>'+l+'</span><span class="v">'+v+'</span></div>';
+  $("recrows").innerHTML =
+      row("Seizoenen gespeeld", r.seasons)
+    + row("Landstitels", r.titles)
+    + row("Perfecte seizoenen", r.perfects, r.perfects > 0)
+    + (r.bestRec ? row("Beste record", r.bestRec + " (" + r.bestSeason + ")") : "")
+    + (r.bestPos < 99 ? row("Beste eindpositie", r.bestPos + "e") : "");
+}
+
+/* ================= seizoen delen ================= */
+function shareSeason(){
+  if(!lastMe || !lastOrder) return;
+  const sq = lastOrder.map(x => x.mg > x.og ? "\u{1F7E9}" : (x.mg < x.og ? "\u{1F7E5}" : "\u{1F7E8}"));
+  const rows = [];
+  for(let i = 0; i < sq.length; i += 17) rows.push(sq.slice(i, i + 17).join(""));
+  const txt = "34–0–0 · " + teamName + " (" + season + ")\n"
+    + lastPos + "e plaats · " + lastMe.w + "–" + lastMe.d + "–" + lastMe.l + " · " + lastMe.pts + " punten\n"
+    + rows.join("\n");
+  const done = () => {
+    $("sharebtn").textContent = "Gekopieerd!";
+    setTimeout(() => { $("sharebtn").textContent = "Deel je seizoen"; }, 1600);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done, () => fallbackCopy(txt, done));
+  } else fallbackCopy(txt, done);
+}
+function fallbackCopy(txt, done){
+  const ta = document.createElement("textarea");
+  ta.value = txt;
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); done(); } catch(e){}
+  ta.remove();
 }
 
 /* ================= reset & events ================= */
@@ -464,6 +651,17 @@ $("resetbtn").onclick = resetAll;
 $("simbtn").onclick = () => { if(pickedCount === 11) simulate(); };
 $("againbtn").onclick = resetAll;
 $("rerunbtn").onclick = () => { if(pickedCount === 11) simulate(); };
+$("sharebtn").onclick = shareSeason;
+$("mutebtn").onclick = () => {
+  muted = !muted;
+  try { localStorage.setItem("e3400_muted", muted ? "1" : "0"); } catch(e){}
+  setMuteIcon();
+  if(!muted) tone(660, .09, "sine", .1);
+};
 
 buildSeasonSelect();
 refreshSetup();
+setMuteIcon();
+renderRecords();
+if("serviceWorker" in navigator && location.protocol !== "file:")
+  navigator.serviceWorker.register("sw.js").catch(() => {});

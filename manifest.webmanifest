@@ -1,0 +1,16 @@
+{
+  "name": "34–0–0 · De Eredivisie draft challenge",
+  "short_name": "34–0–0",
+  "description": "Rol clubs, draft je Eredivisie-elftal en jaag op het perfecte seizoen.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A1430",
+  "theme_color": "#0A1430",
+  "lang": "nl",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>34–0–0 · De Eredivisie draft challenge</title>
 <meta name="description" content="Rol clubs, stel je elftal samen uit Eredivisie-selecties (2010–nu) en simuleer een volledig seizoen met eindstand.">
+<meta name="theme-color" content="#0A1430">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -23,6 +27,7 @@
     <p class="eyebrow" id="configline">—</p>
     <p class="eyebrow" id="phaseline">Fase: seizoen en opstelling kiezen</p>
   </div>
+  <button class="mutebtn" id="mutebtn" title="Geluid">&#128266;</button>
 </header>
 
 <div class="shell">
@@ -42,6 +47,10 @@
     <div class="hint" id="hint">Rol een club, kies een speler uit de selectie en zet hem zelf op een oplichtende positie op het veld.</div>
     <button class="rollbtn" id="rollbtn">Rol &#127922;</button>
     <button class="smallbtn" id="resetbtn" style="display:none;width:100%;margin-top:12px">Opnieuw beginnen</button>
+    <div class="panel recpanel" id="recordspanel" style="display:none">
+      <h2>Jouw records</h2>
+      <div id="recrows"></div>
+    </div>
   </div>
 
   <!-- veld -->
@@ -64,6 +73,7 @@
       <div class="overlay" id="overlay">
         <div class="ovcard">
           <p class="eyebrow" id="ovstep">Ronde 1 van 11</p>
+          <div class="spinshirt" id="spinshirt"></div>
           <div class="spinname" id="spinname">&nbsp;</div>
           <p class="eyebrow needline" id="ovneed"></p>
           <div id="choices"></div>
@@ -114,6 +124,7 @@
         <div class="seasonactions">
           <button class="smallbtn" id="againbtn">Opnieuw draften</button>
           <button class="smallbtn" id="rerunbtn">Zelfde team, nieuw seizoen</button>
+          <button class="smallbtn" id="sharebtn">Deel je seizoen</button>
         </div>
       </div>
     </div>
