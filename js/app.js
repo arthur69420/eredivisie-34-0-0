@@ -32,7 +32,7 @@ const CLUBCOLORS = {
   RKC:["#FFD500","#004A99"], PEC:["#0069B4","#FFFFFF"], CAM:["#FFDD00","#003C7D"],
   GAE:["#D50032","#FFD700"], DOR:["#FFFFFF","#007A3D"], SPA:["#E30613","#FFFFFF"],
   FOR:["#F9D616","#007A53"], EMM:["#E30613","#FFFFFF"], VOL:["#F36C21","#1A1A1A"],
-  ALM:["#D50000","#1A1A1A"], TEL:["#FFFFFF","#E30613"]
+  ALM:["#D50000","#1A1A1A"], TEL:["#FFFFFF","#0095D8"]
 };
 function clubColors(abbr){ return CLUBCOLORS[abbr] || ["#16285A","#FFFFFF"]; }
 function shirtSVG(abbr, size){
