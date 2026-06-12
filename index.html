@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>34–0 · De Eredivisie draft challenge</title>
+<meta name="description" content="Rol clubs, stel je elftal samen uit Eredivisie-selecties (2010–nu) en simuleer een volledig seizoen met eindstand.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="topbar"></div>
+<header class="anim-fadeup">
+  <div class="logo disp">34–0</div>
+  <div class="wordmark">
+    <h1>De Eredivisie<br>draft challenge</h1>
+    <p class="eyebrow">Rol · Kies · Simuleer</p>
+  </div>
+  <div class="header-status">
+    <p class="eyebrow" id="configline">—</p>
+    <p class="eyebrow" id="phaseline">Fase: seizoen en opstelling kiezen</p>
+  </div>
+</header>
+
+<div class="shell">
+
+  <!-- instellingen -->
+  <div class="col anim-fadeup" style="animation-delay:.05s">
+    <div class="panel" id="setuppanel">
+      <h2>Teamnaam</h2>
+      <input type="text" id="teamname" maxlength="24" placeholder="Mijn XI" autocomplete="off">
+      <h2>Seizoen</h2>
+      <select id="seasonsel"></select>
+      <h2>Formatie</h2>
+      <div class="optgrid" id="formaties"></div>
+      <h2>Speelstijl</h2>
+      <div class="optgrid" id="stijlen"></div>
+    </div>
+    <div class="hint" id="hint">Rol een club en kies een speler uit de selectie van dat seizoen. Spelers passen alleen op hun eigen positie.</div>
+    <button class="rollbtn" id="rollbtn">Rol &#127922;</button>
+    <button class="smallbtn" id="resetbtn" style="display:none;width:100%;margin-top:12px">Opnieuw beginnen</button>
+  </div>
+
+  <!-- veld -->
+  <div class="col anim-fadeup" style="animation-delay:.1s">
+    <div class="pitchwrap">
+      <div class="pitch" id="pitch">
+        <div class="pl pl-mid"></div>
+        <div class="pl pl-circle"></div>
+        <div class="pl pl-spot"></div>
+        <div class="pl pl-box-t"></div><div class="pl pl-goal-t"></div>
+        <div class="pl pl-box-b"></div><div class="pl pl-goal-b"></div>
+      </div>
+      <div class="overlay" id="overlay">
+        <div class="ovcard">
+          <p class="eyebrow" id="ovstep">Ronde 1 van 11</p>
+          <div class="spinname" id="spinname">&nbsp;</div>
+          <p class="eyebrow needline" id="ovneed"></p>
+          <div id="choices"></div>
+          <button class="rerollbtn" id="rerollbtn">Opnieuw rollen <span id="rerollcount">(3)</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- box score -->
+  <div class="col col-right anim-fadeup" style="animation-delay:.15s">
+    <div class="bs-head">
+      <span class="eyebrow">Box score</span>
+      <span class="count" id="bscount">0/11</span>
+    </div>
+    <div class="legend">
+      <span class="att"><i></i>Aanval</span>
+      <span class="def"><i></i>Verdediging</span>
+    </div>
+    <div id="bsrows"></div>
+    <div class="teamstats" id="teamstats">
+      <div class="bar att"><div class="lbl"><span>Aanval</span><span id="attval">—</span></div><div class="track"><div class="fill" id="attbar"></div></div></div>
+      <div class="bar def"><div class="lbl"><span>Verdediging</span><span id="defval">—</span></div><div class="track"><div class="fill" id="defbar"></div></div></div>
+      <div class="bar tot"><div class="lbl"><span>Teamrating</span><span id="totval">—</span></div><div class="track"><div class="fill" id="totbar"></div></div></div>
+    </div>
+    <button class="simbtn disp" id="simbtn">Simuleer het seizoen</button>
+  </div>
+</div>
+
+<section id="season">
+  <div class="head">
+    <h2>Het seizoen van <em id="seasonteam"></em> <span class="yr" id="seasonyear"></span></h2>
+    <p class="eyebrow" id="seasonsub"></p>
+  </div>
+  <div class="fixgrid" id="fixgrid"></div>
+  <div id="finale">
+    <div class="statgrid" id="statgrid"></div>
+    <div class="resultwrap">
+      <div class="tablecard">
+        <p class="eyebrow" style="margin-bottom:10px">Eindstand Eredivisie <span id="tableyear"></span></p>
+        <table class="standings" id="standings"></table>
+      </div>
+      <div class="verdictcol">
+        <div class="verdict" id="verdict">
+          <span class="record" id="recordtxt"></span>
+          <span class="msg" id="verdicttxt"></span>
+        </div>
+        <div class="seasonactions">
+          <button class="smallbtn" id="againbtn">Opnieuw draften</button>
+          <button class="smallbtn" id="rerunbtn">Zelfde team, nieuw seizoen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="tag disp">34–0</span>
+  <span>Onofficieel fanproject, niet gelieerd aan de Eredivisie of clubs. Selecties zijn gecureerde kernselecties per seizoen (2010/11–2025/26), bij benadering.</span>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
