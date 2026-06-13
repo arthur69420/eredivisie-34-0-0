@@ -83,22 +83,153 @@ const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.f
 const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 const clubs = () => SEASONS[season];
 
+/* ================= taal / i18n ================= */
+let LANG = "nl";
+try { LANG = localStorage.getItem("e3400_lang") || "nl"; } catch(e){}
+const I18N = {
+  nl: {
+    apptitle:"De Eredivisie<br>draft challenge", tagline:"Rol · Kies · Simuleer",
+    db_title:"Spelersdatabase", sound_title:"Geluid",
+    db_heading:"Spelersdatabase", db_search:"Zoek speler in alle seizoenen...",
+    close:"Sluiten ✕", hist_heading:"Jouw teams", hist_sub:"De laatste 10 gespeelde seizoenen",
+    teamname:"Teamnaam", teamname_ph:"Mijn XI", formation:"Formatie", playstyle:"Speelstijl",
+    restart:"Opnieuw beginnen", your_records:"Jouw records", badges:"Badges", view_teams:"Bekijk je teams",
+    pick_position:"Kies een positie op het veld", back_squad:"← Terug naar selectie",
+    reroll:"Opnieuw rollen", box_score:"Box score", attack:"Aanval", defense:"Verdediging",
+    team_rating:"Teamrating", simulate:"Simuleer het seizoen", season_of:"Het seizoen van",
+    final_table:"Eindstand Eredivisie", draft_again:"Opnieuw draften", same_team:"Zelfde team, nieuw seizoen",
+    share:"Deel je seizoen",
+    footer:"Onofficieel fanproject, niet gelieerd aan de Eredivisie of clubs. Selecties zijn gecureerde kernselecties per seizoen (2010/11–2025/26), bij benadering.",
+    roll:"Rol &#127922;", squad_complete:"Elftal compleet",
+    sound_on:"Geluid aanzetten", sound_off:"Geluid uitzetten",
+    closed:"dicht", already:"al gekozen",
+    phase_setup:"Fase: seizoen en opstelling kiezen", phase_draft:"Fase: draften",
+    phase_ready:"Fase: klaar voor de aftrap", phase_season:"Fase: seizoen bezig",
+    phase_done:"Fase: seizoen afgelopen", demo:"demo",
+    hint_setup:"Rol elke ronde een club uit een willekeurig seizoen, kies een speler en zet hem zelf op een oplichtende positie.",
+    styles:{Verdedigend:"Verdedigend",Gebalanceerd:"Gebalanceerd",Aanvallend:"Aanvallend"},
+    groups:{Keeper:"Keeper",Verdediging:"Verdediging",Middenveld:"Middenveld",Aanval:"Aanval"},
+    pos:{GK:"Keeper",RB:"Rechtsback",LB:"Linksback",CB:"Centrale verdediger",DM:"Verdedigende middenvelder",CM:"Middenvelder",AM:"Aanvallende middenvelder",LW:"Linksbuiten",RW:"Rechtsbuiten",ST:"Spits"},
+    home:"T", away:"U",
+    st_pos:"Positie", st_won:"Gewonnen", st_draw:"Gelijk", st_lost:"Verloren", st_gd:"Doelsaldo", st_pts:"Punten",
+    th_club:"Club", th_w:"W", th_d:"G", th_l:"V", th_gd:"DS", th_pts:"Ptn",
+    rec_seasons:"Seizoenen gespeeld", rec_titles:"Landstitels", rec_perfect:"Perfecte seizoenen",
+    rec_best:"Beste record", rec_finish:"Beste eindpositie",
+    new_badge:" 🏅 Nieuwe badge: ", copied:"Gekopieerd!",
+    no_history:"Nog geen seizoenen gespeeld.",
+    missing:"mist", complete:"compleet", players:"spelers",
+    res1:"resultaat", resN:"resultaten", in_all:"in alle seizoenen",
+    demo_note:" (Demo — telt niet mee voor je records.)", demo_tag:" · DEMO",
+    round_of:n=>"Ronde "+n+" van 11", season_label:s=>"Seizoen "+s,
+    hint_draft:tn=>tn+" draft: elke ronde een club uit een willekeurig seizoen. Max "+MAX_REROLLS+" rerolls.",
+    ready_hint:tn=>tn+" staat. Simuleer het seizoen via de box score.",
+    replaces:(tn,c)=>tn+" neemt de plek in van "+c+" · 34 speelrondes",
+    v_perfect:"PERFECT SEIZOEN. Vierendertig uit vierendertig — onsterfelijk.",
+    v_champion:tn=>"Kampioen van Nederland. De schaal is voor "+tn+".",
+    v_cl:p=>"Plek "+p+": Champions League-voetbal volgend seizoen.",
+    v_eur:p=>"Plek "+p+": Europees voetbal in zicht. Keurig seizoen.",
+    v_mid:p=>"Plek "+p+": grijze middenmoot. De trommel was je niet gunstig gezind.",
+    v_low:p=>"Plek "+p+": lang kijken naar de onderkant van de ranglijst.",
+    v_releg:p=>"Plek "+p+": degradatiestress tot de laatste speeldag.",
+    ord:n=>n+"e",
+    db_stats:(c,tot,pl)=>c+"/"+tot+" clubs compleet · "+pl+" spelers",
+    hist_meta:tm=>ord(tm.pos)+" · "+tm.rec+" · "+tm.pts+" ptn · "+tm.formation+" · "+styleLabel(tm.stijl)+" · rating "+tm.rating,
+    share_line2:(pos,me)=>ord(pos)+" plaats · "+me.w+"–"+me.d+"–"+me.l+" · "+me.pts+" punten",
+    ach:{kampioen:["Kampioen","Win de landstitel"],perfect:["34–0–0","Speel een perfect seizoen"],underdog:["Underdog","Word kampioen met een teamrating onder 70"],tijdmachine:["Tijdmachine","Stel een elftal op met spelers uit 11 verschillende seizoenen"],clubliefde:["Clubliefde","Zet 4 of meer spelers van dezelfde club in je elftal"],zuinig:["Eerste keer goed","Voltooi de draft zonder rerolls"],machine:["Doelpuntenmachine","Scoor 100 of meer goals in een seizoen"],fort:["Het Fort","Krijg hooguit 15 tegengoals in een seizoen"]}
+  },
+  en: {
+    apptitle:"The Eredivisie<br>draft challenge", tagline:"Roll · Pick · Simulate",
+    db_title:"Player database", sound_title:"Sound",
+    db_heading:"Player database", db_search:"Search player across all seasons...",
+    close:"Close ✕", hist_heading:"Your teams", hist_sub:"The last 10 seasons played",
+    teamname:"Team name", teamname_ph:"My XI", formation:"Formation", playstyle:"Play style",
+    restart:"Start over", your_records:"Your records", badges:"Badges", view_teams:"View your teams",
+    pick_position:"Pick a position on the pitch", back_squad:"← Back to squad",
+    reroll:"Reroll", box_score:"Box score", attack:"Attack", defense:"Defense",
+    team_rating:"Team rating", simulate:"Simulate the season", season_of:"The season of",
+    final_table:"Eredivisie final table", draft_again:"Draft again", same_team:"Same team, new season",
+    share:"Share your season",
+    footer:"Unofficial fan project, not affiliated with the Eredivisie or its clubs. Squads are curated core selections per season (2010/11–2025/26), approximate.",
+    roll:"Roll &#127922;", squad_complete:"Squad complete",
+    sound_on:"Turn sound on", sound_off:"Turn sound off",
+    closed:"full", already:"already picked",
+    phase_setup:"Phase: choose season and line-up", phase_draft:"Phase: drafting",
+    phase_ready:"Phase: ready for kick-off", phase_season:"Phase: season in progress",
+    phase_done:"Phase: season finished", demo:"demo",
+    hint_setup:"Each round, roll a club from a random season, pick a player and place him on a highlighted position yourself.",
+    styles:{Verdedigend:"Defensive",Gebalanceerd:"Balanced",Aanvallend:"Attacking"},
+    groups:{Keeper:"Goalkeeper",Verdediging:"Defense",Middenveld:"Midfield",Aanval:"Attack"},
+    pos:{GK:"Goalkeeper",RB:"Right-back",LB:"Left-back",CB:"Centre-back",DM:"Defensive midfielder",CM:"Midfielder",AM:"Attacking midfielder",LW:"Left winger",RW:"Right winger",ST:"Striker"},
+    home:"H", away:"A",
+    st_pos:"Position", st_won:"Won", st_draw:"Drawn", st_lost:"Lost", st_gd:"Goal diff.", st_pts:"Points",
+    th_club:"Club", th_w:"W", th_d:"D", th_l:"L", th_gd:"GD", th_pts:"Pts",
+    rec_seasons:"Seasons played", rec_titles:"League titles", rec_perfect:"Perfect seasons",
+    rec_best:"Best record", rec_finish:"Best finish",
+    new_badge:" 🏅 New badge: ", copied:"Copied!",
+    no_history:"No seasons played yet.",
+    missing:"missing", complete:"complete", players:"players",
+    res1:"result", resN:"results", in_all:"across all seasons",
+    demo_note:" (Demo — does not count towards your records.)", demo_tag:" · DEMO",
+    round_of:n=>"Round "+n+" of 11", season_label:s=>"Season "+s,
+    hint_draft:tn=>tn+" draft: each round a club from a random season. Max "+MAX_REROLLS+" rerolls.",
+    ready_hint:tn=>tn+" is set. Simulate the season via the box score.",
+    replaces:(tn,c)=>tn+" takes the place of "+c+" · 34 matchdays",
+    v_perfect:"PERFECT SEASON. Thirty-four out of thirty-four — immortal.",
+    v_champion:tn=>"Champions of the Netherlands. The title goes to "+tn+".",
+    v_cl:p=>"Position "+p+": Champions League football next season.",
+    v_eur:p=>"Position "+p+": European football in sight. Solid season.",
+    v_mid:p=>"Position "+p+": grey mid-table. The drum wasn't kind to you.",
+    v_low:p=>"Position "+p+": staring at the bottom of the table for a while.",
+    v_releg:p=>"Position "+p+": relegation stress until the final matchday.",
+    ord:n=>n+(n%10===1&&n%100!==11?"st":n%10===2&&n%100!==12?"nd":n%10===3&&n%100!==13?"rd":"th"),
+    db_stats:(c,tot,pl)=>c+"/"+tot+" clubs complete · "+pl+" players",
+    hist_meta:tm=>ord(tm.pos)+" · "+tm.rec+" · "+tm.pts+" pts · "+tm.formation+" · "+styleLabel(tm.stijl)+" · rating "+tm.rating,
+    share_line2:(pos,me)=>ord(pos)+" place · "+me.w+"–"+me.d+"–"+me.l+" · "+me.pts+" points",
+    ach:{kampioen:["Champion","Win the league title"],perfect:["34–0–0","Play a perfect season"],underdog:["Underdog","Become champion with a team rating below 70"],tijdmachine:["Time machine","Field a XI with players from 11 different seasons"],clubliefde:["Club love","Field 4 or more players from the same club"],zuinig:["First time right","Complete the draft without rerolls"],machine:["Goal machine","Score 100 or more goals in a season"],fort:["The Fortress","Concede at most 15 goals in a season"]}
+  }
+};
+function t(k, ...a){ const v = I18N[LANG][k]; return typeof v === "function" ? v(...a) : v; }
+const styleLabel = v => I18N[LANG].styles[v] || v;
+const grpLabel = v => I18N[LANG].groups[v] || v;
+const posLabel = c => I18N[LANG].pos[c] || c;
+const ord = n => I18N[LANG].ord(n);
+const achName = id => I18N[LANG].ach[id][0];
+const achDesc = id => I18N[LANG].ach[id][1];
+function setPhaseUI(){
+  if(phase === "setup"){ $("phaseline").textContent = t("phase_setup"); $("hint").textContent = t("hint_setup"); $("rollbtn").innerHTML = t("roll"); }
+  else if(phase === "draft"){ $("phaseline").textContent = t("phase_draft"); $("hint").textContent = t("hint_draft", teamName); $("rollbtn").innerHTML = t("roll"); }
+}
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
+  document.querySelectorAll("[data-i18n-html]").forEach(el => el.innerHTML = t(el.dataset.i18nHtml));
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => el.placeholder = t(el.dataset.i18nPh));
+  document.querySelectorAll("[data-i18n-title]").forEach(el => el.title = t(el.dataset.i18nTitle));
+  $("langbtn").textContent = LANG === "nl" ? "EN" : "NL";
+  setMuteIcon();
+  refreshSetup();
+  setPhaseUI();
+  renderRecords();
+  if($("dbmodal").classList.contains("show")) refreshDb();
+  if($("histmodal").classList.contains("show")) renderHistory();
+}
+
 /* ================= setup UI ================= */
-function buildOptions(containerId, items, current, onpick){
+function buildOptions(containerId, items, current, onpick, label){
   const el = $(containerId);
   el.innerHTML = "";
   items.forEach(it => {
     const b = document.createElement("button");
     b.className = "opt" + (it === current ? " active" : "");
-    b.textContent = it;
+    b.textContent = label ? label(it) : it;
     b.onclick = () => { if(phase !== "setup") return; onpick(it); refreshSetup(); };
     el.appendChild(b);
   });
 }
 function refreshSetup(){
   buildOptions("formaties", Object.keys(FORMATIONS), formation, v => formation = v);
-  buildOptions("stijlen", STIJLEN, stijl, v => stijl = v);
-  $("configline").textContent = formation + " \u00B7 " + stijl;
+  buildOptions("stijlen", STIJLEN, stijl, v => stijl = v, styleLabel);
+  $("configline").textContent = formation + " \u00B7 " + styleLabel(stijl);
   drawPitchSlots();
   drawBoxScore();
 }
@@ -108,7 +239,7 @@ function setLocked(lock){
 }
 function getTeamName(){
   const v = $("teamname").value.trim();
-  return v ? v : "Mijn XI";
+  return v ? v : t("teamname_ph");
 }
 
 /* ================= veld ================= */
@@ -194,8 +325,8 @@ function startDraft(){
   $("teamstats").classList.remove("show");
   $("simbtn").classList.remove("show");
   $("resetbtn").style.display = "block";
-  $("phaseline").textContent = "Fase: draften";
-  $("hint").textContent = teamName + " draft: elke ronde een club uit een willekeurig seizoen. Max " + MAX_REROLLS + " rerolls.";
+  $("phaseline").textContent = t("phase_draft");
+  $("hint").textContent = t("hint_draft", teamName);
   refreshSetup();
   nextRoll();
 }
@@ -203,7 +334,7 @@ function nextRoll(){
   drawBoxScore();
   if(pickedCount >= 11){ finishDraft(); return; }
   $("rollbtn").disabled = false;
-  $("rollbtn").innerHTML = "Rol &#127922;";
+  $("rollbtn").innerHTML = t("roll");
 }
 function rollSeasonClub(excludeClubName){
   const seasons = Object.keys(SEASONS);
@@ -215,10 +346,10 @@ function rollSeasonClub(excludeClubName){
   return null;
 }
 function spinTo(excludeClubName){
-  const t = rollSeasonClub(excludeClubName);
-  if(!t) return;
-  currentClub = t.club;
-  currentSeason = t.s;
+  const tc = rollSeasonClub(excludeClubName);
+  if(!tc) return;
+  currentClub = tc.club;
+  currentSeason = tc.s;
   $("choices").innerHTML = "";
   $("rerollbtn").classList.remove("show");
   const sn = $("spinname");
@@ -237,12 +368,12 @@ function spinTo(excludeClubName){
       sfx.tick(ticks);
     } else {
       clearInterval(spinTimer);
-      sn.textContent = t.club.n;
-      $("ovneed").textContent = "Seizoen " + t.s;
-      $("spinshirt").innerHTML = shirtSVG(t.club.a, 52);
+      sn.textContent = tc.club.n;
+      $("ovneed").textContent = t("season_label", tc.s);
+      $("spinshirt").innerHTML = shirtSVG(tc.club.a, 52);
       sn.className = "spinname landed";
       sfx.land();
-      showSquad(t.s, t.club);
+      showSquad(tc.s, tc.club);
       updateRerollBtn();
     }
   }, 70);
@@ -252,7 +383,7 @@ function roll(){
   if(phase === "setup") startDraft();
   if(phase !== "draft") return;
   $("rollbtn").disabled = true;
-  $("ovstep").textContent = "Ronde " + (pickedCount+1) + " van 11";
+  $("ovstep").textContent = t("round_of", pickedCount+1);
   $("ovneed").textContent = "";
   $("overlay").classList.add("show");
   spinTo(null);
@@ -279,14 +410,14 @@ function showSquad(s, club){
     const anyOpen = members.some(o => openSlotsFor(o.pl[1]).length > 0 && !picked.has(s+"#"+club.n+"#"+o.i));
     const g = document.createElement("div");
     g.className = "sg";
-    g.innerHTML = "<h3>" + label + (anyOpen ? "" : " <span class='full'>\u00B7 dicht</span>") + "</h3>";
+    g.innerHTML = "<h3>" + grpLabel(label) + (anyOpen ? "" : " <span class='full'>\u00B7 " + t("closed") + "</span>") + "</h3>";
     members.forEach(o => {
       const used = picked.has(s+"#"+club.n+"#"+o.i);
       const fits = openSlotsFor(o.pl[1]).length > 0;
       const b = document.createElement("button");
       b.className = "pchoice";
       b.disabled = used || !fits;
-      b.innerHTML = "<span class='pp'>" + o.pl[1] + "</span><span class='nm'>" + esc(o.pl[0]) + (used ? " \u00B7 al gekozen" : "") + "</span><span class='rt'>" + o.pl[2] + "</span>";
+      b.innerHTML = "<span class='pp'>" + o.pl[1] + "</span><span class='nm'>" + esc(o.pl[0]) + (used ? " \u00B7 " + t("already") : "") + "</span><span class='rt'>" + o.pl[2] + "</span>";
       if(!b.disabled) b.onclick = () => choosePlayer(s, club, o.i);
       g.appendChild(b);
     });
@@ -300,7 +431,7 @@ function choosePlayer(s, club, i){
   if(!opts.length) return;
   pendingPick = { s, club, idx: i, pl };
   $("overlay").classList.remove("show");
-  $("pbplayer").innerHTML = esc(pl[0]) + ' <span class="pb-meta">' + club.a + ' ' + s + ' · ' + POSNL[pl[1]] + ' · ' + pl[2] + '</span>';
+  $("pbplayer").innerHTML = esc(pl[0]) + ' <span class="pb-meta">' + club.a + ' ' + s + ' · ' + posLabel(pl[1]) + ' · ' + pl[2] + '</span>';
   $("placebar").classList.add("show");
   $("pitch").classList.add("placing");
   opts.forEach(o => {
@@ -335,9 +466,9 @@ function backToSquad(){
 function finishDraft(){
   phase = "done";
   $("rollbtn").disabled = true;
-  $("rollbtn").textContent = "Elftal compleet";
-  $("phaseline").textContent = "Fase: klaar voor de aftrap";
-  $("hint").textContent = teamName + " staat. Simuleer het seizoen via de box score.";
+  $("rollbtn").innerHTML = t("squad_complete");
+  $("phaseline").textContent = t("phase_ready");
+  $("hint").textContent = t("ready_hint", teamName);
 }
 
 /* ================= seizoenssimulatie (volledige competitie) ================= */
@@ -365,7 +496,7 @@ function playMatch(h, a, mods){
 function simulate(rig){
   phase = "season";
   if(rig) disarmRig();
-  $("phaseline").textContent = "Fase: seizoen bezig" + (rig ? " · demo" : "");
+  $("phaseline").textContent = t("phase_season") + (rig ? " · " + t("demo") : "");
   season = rnd(Object.keys(SEASONS));
   replacedClub = rnd(clubs());
   const r = ratings();
@@ -401,7 +532,7 @@ function simulate(rig){
   $("seasonteam").textContent = teamName;
   $("seasonyear").textContent = season;
   $("tableyear").textContent = season;
-  $("seasonsub").textContent = teamName + " neemt de plek in van " + replacedClub.n + " \u00B7 34 speelrondes" + (rig ? " \u00B7 DEMO" : "");
+  $("seasonsub").textContent = t("replaces", teamName, replacedClub.n) + (rig ? t("demo_tag") : "");
   const grid = $("fixgrid");
   grid.innerHTML = "";
   $("season").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -418,7 +549,7 @@ function simulate(rig){
     const res = x.mg > x.og ? "W" : (x.mg < x.og ? "V" : "G");
     const div = document.createElement("div");
     div.className = "fix " + res;
-    div.innerHTML = '<div class="top"><span>R'+(i+1)+'</span><span>'+x.opp.a+' \u00B7 '+(x.home ? "T" : "U")+'</span></div>'
+    div.innerHTML = '<div class="top"><span>R'+(i+1)+'</span><span>'+x.opp.a+' \u00B7 '+(x.home ? t("home") : t("away"))+'</span></div>'
       + '<div class="sc">'+x.mg+'\u2013'+x.og+'</div>';
     grid.appendChild(div);
     requestAnimationFrame(() => div.classList.add("in"));
@@ -427,14 +558,14 @@ function simulate(rig){
 }
 function showFinale(teams, me, myPos, rig){
   phase = "done";
-  $("phaseline").textContent = "Fase: seizoen afgelopen";
+  $("phaseline").textContent = t("phase_done");
   const stat = (lbl, val, accent) => '<div class="stat'+(accent ? " accent" : "")+'"><div class="l">'+lbl+'</div><div class="v">'+val+'</div></div>';
   const saldo = me.gf - me.ga;
-  $("statgrid").innerHTML = stat("Positie", myPos + "e", true) + stat("Gewonnen", me.w) + stat("Gelijk", me.d)
-    + stat("Verloren", me.l) + stat("Doelsaldo", (saldo > 0 ? "+" : "") + saldo) + stat("Punten", me.pts, true);
+  $("statgrid").innerHTML = stat(t("st_pos"), ord(myPos), true) + stat(t("st_won"), me.w) + stat(t("st_draw"), me.d)
+    + stat(t("st_lost"), me.l) + stat(t("st_gd"), (saldo > 0 ? "+" : "") + saldo) + stat(t("st_pts"), me.pts, true);
 
   const tbl = $("standings");
-  tbl.innerHTML = "<tr><th class='l' colspan='2'>Club</th><th>W</th><th>G</th><th>V</th><th>DS</th><th>Ptn</th></tr>";
+  tbl.innerHTML = "<tr><th class='l' colspan='2'>" + t("th_club") + "</th><th>" + t("th_w") + "</th><th>" + t("th_d") + "</th><th>" + t("th_l") + "</th><th>" + t("th_gd") + "</th><th>" + t("th_pts") + "</th></tr>";
   teams.forEach((t, idx) => {
     const tr = document.createElement("tr");
     tr.className = (t.mine ? "mine " : "") + (idx < 3 ? "cl" : (idx >= 15 ? "deg" : ""));
@@ -455,14 +586,14 @@ function showFinale(teams, me, myPos, rig){
 
   let msg;
   const perfect = (me.w === 34);
-  if(perfect)             msg = "PERFECT SEIZOEN. Vierendertig uit vierendertig \u2014 onsterfelijk.";
-  else if(myPos === 1)    msg = "Kampioen van Nederland. De schaal is voor " + teamName + ".";
-  else if(myPos <= 3)     msg = "Plek " + myPos + ": Champions League-voetbal volgend seizoen.";
-  else if(myPos <= 7)     msg = "Plek " + myPos + ": Europees voetbal in zicht. Keurig seizoen.";
-  else if(myPos <= 12)    msg = "Plek " + myPos + ": grijze middenmoot. De trommel was je niet gunstig gezind.";
-  else if(myPos <= 15)    msg = "Plek " + myPos + ": lang kijken naar de onderkant van de ranglijst.";
-  else                    msg = "Plek " + myPos + ": degradatiestress tot de laatste speeldag.";
-  if(rig) msg += " (Demo \u2014 telt niet mee voor je records.)";
+  if(perfect)             msg = t("v_perfect");
+  else if(myPos === 1)    msg = t("v_champion", teamName);
+  else if(myPos <= 3)     msg = t("v_cl", myPos);
+  else if(myPos <= 7)     msg = t("v_eur", myPos);
+  else if(myPos <= 12)    msg = t("v_mid", myPos);
+  else if(myPos <= 15)    msg = t("v_low", myPos);
+  else                    msg = t("v_releg", myPos);
+  if(rig) msg += t("demo_note");
 
   $("recordtxt").textContent = me.w + "\u2013" + me.d + "\u2013" + me.l;
   $("verdicttxt").textContent = msg;
@@ -474,7 +605,7 @@ function showFinale(teams, me, myPos, rig){
     lastMe = me; lastPos = myPos;
     const nieuweBadges = updateRecords(me, myPos);
     pushHistory(me, myPos);
-    if(nieuweBadges.length) $("verdicttxt").textContent += " 🏅 Nieuwe badge: " + nieuweBadges.join(" · ");
+    if(nieuweBadges.length) $("verdicttxt").textContent += t("new_badge") + nieuweBadges.join(" · ");
   }
   if(perfect){
     sfx.perfect();
@@ -521,7 +652,7 @@ const sfx = {
 };
 function setMuteIcon(){
   $("mutebtn").textContent = muted ? "\u{1F507}" : "\u{1F50A}";
-  $("mutebtn").title = muted ? "Geluid aanzetten" : "Geluid uitzetten";
+  $("mutebtn").title = muted ? t("sound_on") : t("sound_off");
 }
 
 /* ================= confetti ================= */
@@ -569,16 +700,7 @@ function confetti(colors, count){
 
 /* ================= records (localStorage) ================= */
 const RKEY = "e3400_records";
-const ACHIEVEMENTS = [
-  ["kampioen", "Kampioen", "Win de landstitel"],
-  ["perfect", "34–0–0", "Speel een perfect seizoen"],
-  ["underdog", "Underdog", "Word kampioen met een teamrating onder 70"],
-  ["tijdmachine", "Tijdmachine", "Stel een elftal op met spelers uit 11 verschillende seizoenen"],
-  ["clubliefde", "Clubliefde", "Zet 4 of meer spelers van dezelfde club in je elftal"],
-  ["zuinig", "Eerste keer goed", "Voltooi de draft zonder rerolls"],
-  ["machine", "Doelpuntenmachine", "Scoor 100 of meer goals in een seizoen"],
-  ["fort", "Het Fort", "Krijg hooguit 15 tegengoals in een seizoen"]
-];
+const ACHIEVEMENTS = ["kampioen","perfect","underdog","tijdmachine","clubliefde","zuinig","machine","fort"];
 let lastOrder = null, lastMe = null, lastPos = 0;
 function loadRecords(){
   try { return JSON.parse(localStorage.getItem(RKEY)); } catch(e){ return null; }
@@ -602,7 +724,7 @@ function updateRecords(me, myPos){
   const grant = id => {
     if(r.ach[id]) return;
     r.ach[id] = true;
-    nieuw.push(ACHIEVEMENTS.find(a => a[0] === id)[1]);
+    nieuw.push(achName(id));
   };
   const xi = picks.filter(Boolean);
   if(myPos === 1) grant("kampioen");
@@ -627,14 +749,14 @@ function renderRecords(){
   panel.style.display = "block";
   const row = (l, v, gold) => '<div class="recrow'+(gold ? " gold" : "")+'"><span>'+l+'</span><span class="v">'+v+'</span></div>';
   $("recrows").innerHTML =
-      row("Seizoenen gespeeld", r.seasons)
-    + row("Landstitels", r.titles)
-    + row("Perfecte seizoenen", r.perfects, r.perfects > 0)
-    + (r.bestRec ? row("Beste record", r.bestRec + " (" + r.bestSeason + ")") : "")
-    + (r.bestPos < 99 ? row("Beste eindpositie", r.bestPos + "e") : "");
+      row(t("rec_seasons"), r.seasons)
+    + row(t("rec_titles"), r.titles)
+    + row(t("rec_perfect"), r.perfects, r.perfects > 0)
+    + (r.bestRec ? row(t("rec_best"), r.bestRec + " (" + r.bestSeason + ")") : "")
+    + (r.bestPos < 99 ? row(t("rec_finish"), ord(r.bestPos)) : "");
   const ach = r.ach || {};
-  $("achgrid").innerHTML = ACHIEVEMENTS.map(a =>
-    "<span class='badge" + (ach[a[0]] ? " earned" : "") + "' title=\"" + a[2] + "\">" + a[1] + "</span>"
+  $("achgrid").innerHTML = ACHIEVEMENTS.map(id =>
+    "<span class='badge" + (ach[id] ? " earned" : "") + "' title=\"" + achDesc(id) + "\">" + achName(id) + "</span>"
   ).join("");
 }
 
@@ -657,13 +779,13 @@ function pushHistory(me, myPos){
 function renderHistory(){
   const h = loadHistory();
   const grid = $("histgrid");
-  grid.innerHTML = h.length ? "" : "<p class='eyebrow'>Nog geen seizoenen gespeeld.</p>";
-  h.forEach(t => {
+  grid.innerHTML = h.length ? "" : "<p class='eyebrow'>" + t("no_history") + "</p>";
+  h.forEach(tm => {
     const card = document.createElement("div");
     card.className = "dbclub";
-    card.innerHTML = "<div class='dbclubhead'><div class='dbclubinfo'><div class='dbname'>" + esc(t.team) + " · " + t.season + "</div>"
-      + "<div class='dbmeta'>" + t.pos + "e · " + t.rec + " · " + t.pts + " ptn · " + t.formation + " · " + t.stijl + " · rating " + t.rating + "</div></div></div>"
-      + t.xi.map(p => "<div class='dbrow'><span class='p'>" + p.slot + "</span><span class='n'>" + esc(p.name) + "</span><span class='c'>" + p.clubA + " " + p.season.slice(2) + "</span><span class='r'>" + p.rating + "</span></div>").join("");
+    card.innerHTML = "<div class='dbclubhead'><div class='dbclubinfo'><div class='dbname'>" + esc(tm.team) + " · " + tm.season + "</div>"
+      + "<div class='dbmeta'>" + t("hist_meta", tm) + "</div></div></div>"
+      + tm.xi.map(p => "<div class='dbrow'><span class='p'>" + p.slot + "</span><span class='n'>" + esc(p.name) + "</span><span class='c'>" + p.clubA + " " + p.season.slice(2) + "</span><span class='r'>" + p.rating + "</span></div>").join("");
     grid.appendChild(card);
   });
 }
@@ -675,11 +797,11 @@ function shareSeason(){
   const rows = [];
   for(let i = 0; i < sq.length; i += 17) rows.push(sq.slice(i, i + 17).join(""));
   const txt = "34–0–0 · " + teamName + " (" + season + ")\n"
-    + lastPos + "e plaats · " + lastMe.w + "–" + lastMe.d + "–" + lastMe.l + " · " + lastMe.pts + " punten\n"
+    + t("share_line2", lastPos, lastMe) + "\n"
     + rows.join("\n");
   const done = () => {
-    $("sharebtn").textContent = "Gekopieerd!";
-    setTimeout(() => { $("sharebtn").textContent = "Deel je seizoen"; }, 1600);
+    $("sharebtn").textContent = t("copied");
+    setTimeout(() => { $("sharebtn").textContent = t("share"); }, 1600);
   };
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(txt).then(done, () => fallbackCopy(txt, done));
@@ -710,10 +832,8 @@ function resetAll(){
   $("resetbtn").style.display = "none";
   disarmRig();
   $("rollbtn").disabled = false;
-  $("rollbtn").innerHTML = "Rol &#127922;";
-  $("phaseline").textContent = "Fase: seizoen en opstelling kiezen";
-  $("hint").textContent = "Rol elke ronde een club uit een willekeurig seizoen, kies een speler en zet hem zelf op een oplichtende positie.";
   refreshSetup();
+  setPhaseUI();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 $("rollbtn").onclick = roll;
@@ -741,6 +861,11 @@ logoEl.onclick = () => {
   }
 };
 $("sharebtn").onclick = shareSeason;
+$("langbtn").onclick = () => {
+  LANG = LANG === "nl" ? "en" : "nl";
+  try { localStorage.setItem("e3400_lang", LANG); } catch(e){}
+  applyLang();
+};
 $("mutebtn").onclick = () => {
   muted = !muted;
   try { localStorage.setItem("e3400_muted", muted ? "1" : "0"); } catch(e){}
@@ -779,12 +904,12 @@ function renderDb(s){
     card.className = "dbclub" + (mis.length ? "" : " done");
     card.innerHTML = "<div class='dbclubhead'>" + shirtSVG(c.a, 34)
       + "<div class='dbclubinfo'><div class='dbname'>" + esc(c.n) + "</div>"
-      + "<div class='dbmeta'>" + real.length + " spelers · "
-      + (mis.length ? "<span class='mis'>mist " + mis.join(", ") + "</span>" : "<span class='ok'>compleet</span>")
+      + "<div class='dbmeta'>" + real.length + " " + t("players") + " · "
+      + (mis.length ? "<span class='mis'>" + t("missing") + " " + mis.join(", ") + "</span>" : "<span class='ok'>" + t("complete") + "</span>")
       + "</div></div></div>" + rows;
     grid.appendChild(card);
   });
-  $("dbstats").textContent = s + " · " + compleet + "/" + SEASONS[s].length + " clubs compleet · " + totaal + " spelers";
+  $("dbstats").textContent = s + " · " + t("db_stats", compleet, SEASONS[s].length, totaal);
 }
 (function initDb(){
   const sel = $("dbseason");
@@ -803,7 +928,7 @@ function renderDbSearch(q){
   hits.sort((a, b) => a.pl[0].localeCompare(b.pl[0]) || a.s.localeCompare(b.s));
   const grid = $("dbgrid");
   grid.innerHTML = "";
-  $("dbstats").textContent = hits.length + (hits.length === 1 ? " resultaat" : " resultaten") + " in alle seizoenen";
+  $("dbstats").textContent = hits.length + " " + (hits.length === 1 ? t("res1") : t("resN")) + " " + t("in_all");
   if(!hits.length) return;
   const card = document.createElement("div");
   card.className = "dbclub dbsearchresults";
@@ -828,8 +953,6 @@ $("histclose").onclick = closeHist;
 $("histmodal").onclick = e => { if(e.target === $("histmodal")) closeHist(); };
 document.addEventListener("keydown", e => { if(e.key === "Escape"){ closeDb(); closeHist(); } });
 
-refreshSetup();
-setMuteIcon();
-renderRecords();
+applyLang();
 if("serviceWorker" in navigator && location.protocol !== "file:")
   navigator.serviceWorker.register("sw.js").catch(() => {});

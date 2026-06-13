@@ -2,12 +2,13 @@
    Formaat: {n: clubnaam, a: afkorting, p: [[naam, positie, rating], ...]}
    Posities: GK RB CB LB DM CM AM LW RW ST
    Selecties 2012/13-2025/26 aangevuld uit transfermarkt-datasets (tools/build-db.js);
-   ratings (65-99) van aangevulde spelers afgeleid uit marktwaarde. Ontbrekende
-   posities worden in app.js automatisch aangevuld met jeugdspelers. */
+   2010/11-2011/12 aangevuld uit geplakte Transfermarkt-kaders (tools/parse-tm-paste.js);
+   ratings (65-99) afgeleid uit marktwaarde. Ontbrekende posities worden in app.js
+   automatisch aangevuld met jeugdspelers. */
 const SEASONS = {
 
 "2010/11":[
-{n:"Ajax",a:"AJA",p:[["Maarten Stekelenburg","GK",90],["Gregory van der Wiel","RB",86],["Jan Vertonghen","CB",90],["Toby Alderweireld","CB",86],["Vurnon Anita","LB",80],["Demy de Zeeuw","CM",78],["Christian Eriksen","AM",92],["Siem de Jong","AM",84],["Urby Emanuelson","LW",81],["Miralem Sulejmani","RW",80],["Luis Suarez","ST",99],["Mounir El Hamdaoui","ST",84]]},
+{n:"Ajax",a:"AJA",p:[["Maarten Stekelenburg","GK",90],["Gregory van der Wiel","RB",86],["Jan Vertonghen","CB",90],["Toby Alderweireld","CB",86],["Vurnon Anita","LB",80],["Demy de Zeeuw","CM",78],["Christian Eriksen","AM",92],["Siem de Jong","AM",84],["Urby Emanuelson","LW",81],["Miralem Sulejmani","RW",80],["Luis Suarez","ST",99],["Mounir El Hamdaoui","ST",84],["Kenneth Vermeer","GK",70],["Jeroen Verhoeven","GK",66],["Ronald Graafland","GK",66],["Rasmus Lindgren","CB",69],["Daley Blind","CB",68],["André Ooijer","CB",68],["Oleguer","CB",68],["Johan Kappelhof","CB",67],["Nicolai Boilesen","LB",68],["Thimothée Atouba","LB",68],["Marvin Zeegelaar","LB",67],["Bruno Silva","RB",66],["Ruben Ligeon","RB",67],["Eyong Enoh","DM",70],["Teemu Tainio","DM",69],["Mitchell Donald","CM",67],["Roly Bonevacia","CM",65],["Tom Overtoom","CM",65],["Rodney Sneijder","CM",67],["Jeffrey Sarpong","RW",68],["Ismail Aissati","AM",70],["Lorenzo Ebecilio","AM",69],["Nicolás Lodeiro","AM",68],["Aras Özbiliz","RW",67],["Florian Jozefzoon","RW",66],["Jody Lukoki","RW",65],["Darko Bodul","ST",66],["Darío Cvitanich","ST",69],["Mido","ST",69],["Hyun-jun Suk","ST",66],["Geoffrey Castillion","ST",65]]},
 {n:"PSV",a:"PSV",p:[["Andreas Isaksson","GK",83],["Stanislav Manolev","RB",77],["Marcelo","CB",83],["Wilfred Bouma","CB",80],["Erik Pieters","LB",81],["Orlando Engelaar","DM",80],["Ibrahim Afellay","AM",89],["Ola Toivonen","AM",86],["Balazs Dzsudzsak","LW",90],["Jeremain Lens","RW",86],["Marcus Berg","ST",78]]},
 {n:"Feyenoord",a:"FEY",p:[["Erwin Mulder","GK",77],["Kelvin Leerdam","RB",75],["Ron Vlaar","CB",83],["Stefan de Vrij","CB",76],["Bruno Martins Indi","LB",77],["Karim El Ahmadi","DM",80],["Leroy Fer","CM",81],["Georginio Wijnaldum","AM",86],["Ryo Miyaichi","LW",77],["Diego Biseswar","RW",77],["Luc Castaignos","ST",78],["Sekou Cisse","ST",75]]},
 {n:"AZ",a:"AZ",p:[["Sergio Romero","GK",83],["Niklas Moisander","CB",83],["Kew Jaliens","CB",77],["Simon Poulsen","LB",77],["Rasmus Elm","CM",81],["Pontus Wernbloom","CM",81],["Brett Holman","AM",80],["Maarten Martens","LW",80],["Kolbeinn Sigthorsson","ST",80],["Graziano Pelle","ST",77]]},

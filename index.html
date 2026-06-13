@@ -20,15 +20,16 @@
 <header class="anim-fadeup">
   <div class="logo disp">34–0–0</div>
   <div class="wordmark">
-    <h1>De Eredivisie<br>draft challenge</h1>
-    <p class="eyebrow">Rol · Kies · Simuleer</p>
+    <h1 data-i18n-html="apptitle">De Eredivisie<br>draft challenge</h1>
+    <p class="eyebrow" data-i18n="tagline">Rol · Kies · Simuleer</p>
   </div>
   <div class="header-status">
     <p class="eyebrow" id="configline">—</p>
-    <p class="eyebrow" id="phaseline">Fase: seizoen en opstelling kiezen</p>
+    <p class="eyebrow" id="phaseline"></p>
   </div>
-  <button class="mutebtn" id="dbbtn" title="Spelersdatabase">&#128203;</button>
-  <button class="mutebtn" id="mutebtn" title="Geluid">&#128266;</button>
+  <button class="mutebtn" id="langbtn" title="Language">EN</button>
+  <button class="mutebtn" id="dbbtn" data-i18n-title="db_title">&#128203;</button>
+  <button class="mutebtn" id="mutebtn" data-i18n-title="sound_title">&#128266;</button>
 </header>
 
 <!-- databaseviewer -->
@@ -36,12 +37,12 @@
   <div class="dbcard">
     <div class="dbhead">
       <div class="dbtitle">
-        <h2 class="disp">Spelersdatabase</h2>
+        <h2 class="disp" data-i18n="db_heading">Spelersdatabase</h2>
         <p class="eyebrow" id="dbstats">&mdash;</p>
       </div>
-      <input type="text" id="dbsearch" placeholder="Zoek speler in alle seizoenen..." autocomplete="off">
+      <input type="text" id="dbsearch" data-i18n-ph="db_search" placeholder="Zoek speler in alle seizoenen..." autocomplete="off">
       <select id="dbseason"></select>
-      <button class="smallbtn" id="dbclose">Sluiten &#10005;</button>
+      <button class="smallbtn" id="dbclose" data-i18n="close">Sluiten &#10005;</button>
     </div>
     <div class="dbgrid" id="dbgrid"></div>
   </div>
@@ -52,10 +53,10 @@
   <div class="dbcard">
     <div class="dbhead">
       <div class="dbtitle">
-        <h2 class="disp">Jouw teams</h2>
-        <p class="eyebrow">De laatste 10 gespeelde seizoenen</p>
+        <h2 class="disp" data-i18n="hist_heading">Jouw teams</h2>
+        <p class="eyebrow" data-i18n="hist_sub">De laatste 10 gespeelde seizoenen</p>
       </div>
-      <button class="smallbtn" id="histclose">Sluiten &#10005;</button>
+      <button class="smallbtn" id="histclose" data-i18n="close">Sluiten &#10005;</button>
     </div>
     <div class="dbgrid" id="histgrid"></div>
   </div>
@@ -66,24 +67,22 @@
   <!-- instellingen -->
   <div class="col anim-fadeup" style="animation-delay:.05s">
     <div class="panel" id="setuppanel">
-      <h2>Teamnaam</h2>
-      <input type="text" id="teamname" maxlength="24" placeholder="Mijn XI" autocomplete="off">
-      <h2>Seizoen</h2>
-      <p class="seasonnote">Elke ronde een willekeurige club uit een willekeurig seizoen (2010/11 t/m 2025/26)</p>
-      <h2>Formatie</h2>
+      <h2 data-i18n="teamname">Teamnaam</h2>
+      <input type="text" id="teamname" maxlength="24" data-i18n-ph="teamname_ph" placeholder="Mijn XI" autocomplete="off">
+      <h2 data-i18n="formation">Formatie</h2>
       <div class="optgrid" id="formaties"></div>
-      <h2>Speelstijl</h2>
+      <h2 data-i18n="playstyle">Speelstijl</h2>
       <div class="optgrid" id="stijlen"></div>
     </div>
-    <div class="hint" id="hint">Rol elke ronde een club uit een willekeurig seizoen, kies een speler en zet hem zelf op een oplichtende positie.</div>
-    <button class="rollbtn" id="rollbtn">Rol &#127922;</button>
-    <button class="smallbtn" id="resetbtn" style="display:none;width:100%;margin-top:12px">Opnieuw beginnen</button>
+    <div class="hint" id="hint"></div>
+    <button class="rollbtn" id="rollbtn"></button>
+    <button class="smallbtn" id="resetbtn" data-i18n="restart" style="display:none;width:100%;margin-top:12px">Opnieuw beginnen</button>
     <div class="panel recpanel" id="recordspanel" style="display:none">
-      <h2>Jouw records</h2>
+      <h2 data-i18n="your_records">Jouw records</h2>
       <div id="recrows"></div>
-      <h2>Badges</h2>
+      <h2 data-i18n="badges">Badges</h2>
       <div class="achgrid" id="achgrid"></div>
-      <button class="smallbtn" id="histbtn" style="width:100%;margin-top:14px">Bekijk je teams</button>
+      <button class="smallbtn" id="histbtn" data-i18n="view_teams" style="width:100%;margin-top:14px">Bekijk je teams</button>
     </div>
   </div>
 
@@ -92,10 +91,10 @@
     <div class="pitchwrap">
       <div class="placebar" id="placebar">
         <div class="pb-info">
-          <span class="eyebrow">Kies een positie op het veld</span>
+          <span class="eyebrow" data-i18n="pick_position">Kies een positie op het veld</span>
           <span class="pb-player" id="pbplayer"></span>
         </div>
-        <button class="smallbtn" id="pbback">&#8592; Terug naar selectie</button>
+        <button class="smallbtn" id="pbback" data-i18n="back_squad">&#8592; Terug naar selectie</button>
       </div>
       <div class="pitch" id="pitch">
         <div class="pl pl-mid"></div>
@@ -111,7 +110,7 @@
           <div class="spinname" id="spinname">&nbsp;</div>
           <p class="eyebrow needline" id="ovneed"></p>
           <div id="choices"></div>
-          <button class="rerollbtn" id="rerollbtn">Opnieuw rollen <span id="rerollcount">(3)</span></button>
+          <button class="rerollbtn" id="rerollbtn"><span data-i18n="reroll">Opnieuw rollen</span> <span id="rerollcount">(3)</span></button>
         </div>
       </div>
     </div>
@@ -120,26 +119,26 @@
   <!-- box score -->
   <div class="col col-right anim-fadeup" style="animation-delay:.15s">
     <div class="bs-head">
-      <span class="eyebrow">Box score</span>
+      <span class="eyebrow" data-i18n="box_score">Box score</span>
       <span class="count" id="bscount">0/11</span>
     </div>
     <div class="legend">
-      <span class="att"><i></i>Aanval</span>
-      <span class="def"><i></i>Verdediging</span>
+      <span class="att"><i></i><span data-i18n="attack">Aanval</span></span>
+      <span class="def"><i></i><span data-i18n="defense">Verdediging</span></span>
     </div>
     <div id="bsrows"></div>
     <div class="teamstats" id="teamstats">
-      <div class="bar att"><div class="lbl"><span>Aanval</span><span id="attval">—</span></div><div class="track"><div class="fill" id="attbar"></div></div></div>
-      <div class="bar def"><div class="lbl"><span>Verdediging</span><span id="defval">—</span></div><div class="track"><div class="fill" id="defbar"></div></div></div>
-      <div class="bar tot"><div class="lbl"><span>Teamrating</span><span id="totval">—</span></div><div class="track"><div class="fill" id="totbar"></div></div></div>
+      <div class="bar att"><div class="lbl"><span data-i18n="attack">Aanval</span><span id="attval">—</span></div><div class="track"><div class="fill" id="attbar"></div></div></div>
+      <div class="bar def"><div class="lbl"><span data-i18n="defense">Verdediging</span><span id="defval">—</span></div><div class="track"><div class="fill" id="defbar"></div></div></div>
+      <div class="bar tot"><div class="lbl"><span data-i18n="team_rating">Teamrating</span><span id="totval">—</span></div><div class="track"><div class="fill" id="totbar"></div></div></div>
     </div>
-    <button class="simbtn disp" id="simbtn">Simuleer het seizoen</button>
+    <button class="simbtn disp" id="simbtn" data-i18n="simulate">Simuleer het seizoen</button>
   </div>
 </div>
 
 <section id="season">
   <div class="head">
-    <h2>Het seizoen van <em id="seasonteam"></em> <span class="yr" id="seasonyear"></span></h2>
+    <h2><span data-i18n="season_of">Het seizoen van</span> <em id="seasonteam"></em> <span class="yr" id="seasonyear"></span></h2>
     <p class="eyebrow" id="seasonsub"></p>
   </div>
   <div class="fixgrid" id="fixgrid"></div>
@@ -147,7 +146,7 @@
     <div class="statgrid" id="statgrid"></div>
     <div class="resultwrap">
       <div class="tablecard">
-        <p class="eyebrow" style="margin-bottom:10px">Eindstand Eredivisie <span id="tableyear"></span></p>
+        <p class="eyebrow" style="margin-bottom:10px"><span data-i18n="final_table">Eindstand Eredivisie</span> <span id="tableyear"></span></p>
         <table class="standings" id="standings"></table>
       </div>
       <div class="verdictcol">
@@ -156,9 +155,9 @@
           <span class="msg" id="verdicttxt"></span>
         </div>
         <div class="seasonactions">
-          <button class="smallbtn" id="againbtn">Opnieuw draften</button>
-          <button class="smallbtn" id="rerunbtn">Zelfde team, nieuw seizoen</button>
-          <button class="smallbtn" id="sharebtn">Deel je seizoen</button>
+          <button class="smallbtn" id="againbtn" data-i18n="draft_again">Opnieuw draften</button>
+          <button class="smallbtn" id="rerunbtn" data-i18n="same_team">Zelfde team, nieuw seizoen</button>
+          <button class="smallbtn" id="sharebtn" data-i18n="share">Deel je seizoen</button>
         </div>
       </div>
     </div>
@@ -167,7 +166,7 @@
 
 <footer>
   <span class="tag disp">34–0–0</span>
-  <span>Onofficieel fanproject, niet gelieerd aan de Eredivisie of clubs. Selecties zijn gecureerde kernselecties per seizoen (2010/11–2025/26), bij benadering.</span>
+  <span data-i18n="footer">Onofficieel fanproject, niet gelieerd aan de Eredivisie of clubs. Selecties zijn gecureerde kernselecties per seizoen (2010/11–2025/26), bij benadering.</span>
 </footer>
 
 <script src="js/data.js"></script>

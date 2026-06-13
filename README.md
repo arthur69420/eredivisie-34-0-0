@@ -34,6 +34,7 @@ Zelf hosten kan natuurlijk ook (Nginx-container op een NAS, of elke andere stati
 - **Delen**: na een seizoen kopieert "Deel je seizoen" een tekst met je record en alle 34 uitslagen als 🟩🟨🟥-raster naar het klembord.
 - **Geluid**: de trommel, het plaatsen van spelers en een titel of perfect seizoen hebben geluidseffecten (uit te zetten met de knop rechtsboven). Bij een kampioenschap valt er confetti; bij 34–0–0 in het goud.
 - **App**: de site is een PWA — op je telefoon te installeren via "Toevoegen aan beginscherm" en daarna ook offline speelbaar.
+- **Taal**: met de knop rechtsboven schakel je de hele interface tussen Nederlands en Engels (keuze wordt onthouden).
 
 ## Database
 
@@ -57,6 +58,14 @@ node tools/build-db.js
 # 3. voortgang bekijken (genereert DATABASE.md)
 node tools/analyse-db.js
 ```
+
+Voor 2010/11 en 2011/12 (niet in de dataset) kun je een van Transfermarkt geplakte kaderpagina (Nederlandstalig) verwerken. Zet de plak in een tekstbestand en draai:
+
+```bash
+node tools/parse-tm-paste.js "2010/11" "Ajax" tools/paste/ajax.txt
+```
+
+De parser leest naam, positie en marktwaarde, leidt daar de rating uit af en voegt ontbrekende spelers toe aan die club (bestaande spelers blijven ongemoeid). Plak-bestanden in `tools/paste/` staan buiten git.
 
 Handmatig uitbreiden kan ook: voeg regels toe in het formaat `["Spelersnaam","POS",74]`.
 

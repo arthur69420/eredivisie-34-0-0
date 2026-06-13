@@ -2,7 +2,7 @@
 
 Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities die het spel nu opvult met jeugdspelers (rating 62). Een club is pas “compleet” bij minimaal 1× GK/RB/LB/LW/RW/ST en 2× CB/CM.
 
-## 2010/11 — 0/18 clubs compleet
+## 2010/11 — 1/18 clubs compleet
 
 | Club | Spelers | Ontbrekend |
 |---|---|---|
@@ -22,8 +22,8 @@ Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities 
 | FC Twente | 10 | LB, CM, RW |
 | FC Utrecht | 10 | RB, CM |
 | PSV | 11 | 2× CM |
-| Ajax | 12 | CM |
 | Feyenoord | 12 | CM |
+| Ajax | 43 | — compleet |
 
 ## 2011/12 — 2/18 clubs compleet
 
@@ -373,5 +373,5 @@ Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities 
 ## Totaal
 
 - Clubs in database: 288 (over 16 seizoenen)
-- Spelers in database: 4711
-- Clubs compleet: 216 / 288
+- Spelers in database: 4742
+- Clubs compleet: 217 / 288
