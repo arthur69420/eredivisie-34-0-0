@@ -2,51 +2,51 @@
 
 Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities die het spel nu opvult met jeugdspelers (rating 62). Een club is pas “compleet” bij minimaal 1× GK/RB/LB/LW/RW/ST en 2× CB/CM.
 
-## 2010/11 — 1/18 clubs compleet
+## 2010/11 — 13/18 clubs compleet
 
 | Club | Spelers | Ontbrekend |
 |---|---|---|
-| Excelsior | 3 | GK, RB, 2× CB, 2× CM, LW, RW |
-| De Graafschap | 3 | GK, 2× CB, LB, 2× CM, LW |
-| Heracles Almelo | 4 | GK, RB, CB, LB, CM, LW, RW |
-| VVV-Venlo | 4 | GK, RB, CB, LB, CM, RW, ST |
-| Willem II | 4 | RB, CB, LB, CM, LW, ST |
-| Roda JC | 5 | GK, RB, 2× CB, LB, LW |
-| NAC Breda | 5 | RB, CB, LB, 2× CM, LW, RW |
-| NEC | 5 | RB, CB, LB, CM, LW, RW |
-| Vitesse | 5 | RB, CB, LB, CM, LW |
-| sc Heerenveen | 6 | RB, CB, LB, CM |
-| ADO Den Haag | 6 | RB, CB, CM, LW |
-| FC Groningen | 7 | GK, RB, CB, CM, LW |
-| AZ | 10 | RB, RW |
-| FC Twente | 10 | LB, CM, RW |
-| FC Utrecht | 10 | RB, CM |
-| PSV | 11 | 2× CM |
-| Feyenoord | 12 | CM |
-| Ajax | 43 | — compleet |
+| Ajax | 18 | — compleet |
+| PSV | 18 | — compleet |
+| Feyenoord | 18 | — compleet |
+| AZ | 18 | — compleet |
+| FC Twente | 18 | — compleet |
+| FC Utrecht | 18 | — compleet |
+| sc Heerenveen | 18 | — compleet |
+| FC Groningen | 18 | LW |
+| Roda JC | 18 | — compleet |
+| NAC Breda | 18 | RB, CM |
+| ADO Den Haag | 18 | — compleet |
+| Heracles Almelo | 18 | — compleet |
+| NEC | 18 | — compleet |
+| Vitesse | 18 | — compleet |
+| VVV-Venlo | 18 | — compleet |
+| Excelsior | 18 | LW |
+| De Graafschap | 18 | LW |
+| Willem II | 18 | LB |
 
-## 2011/12 — 2/18 clubs compleet
+## 2011/12 — 15/18 clubs compleet
 
 | Club | Spelers | Ontbrekend |
 |---|---|---|
-| Excelsior | 3 | GK, RB, 2× CB, 2× CM, LW, RW |
-| De Graafschap | 3 | GK, 2× CB, LB, 2× CM, LW, ST |
-| NAC Breda | 5 | RB, CB, 2× CM, LW, RW |
-| Heracles Almelo | 5 | RB, CB, LB, CM, LW, RW |
-| NEC | 5 | RB, CB, LB, 2× CM, RW |
-| VVV-Venlo | 5 | GK, RB, CB, LB, CM, RW |
-| RKC Waalwijk | 5 | RB, CB, LB, CM, LW, RW |
-| sc Heerenveen | 6 | RB, CB, LB, 2× CM |
-| Roda JC | 6 | RB, 2× CB, LB, LW |
-| ADO Den Haag | 6 | RB, CB, CM, LW |
-| FC Groningen | 7 | RB, CB, LB, CM, ST |
-| Vitesse | 7 | RB, LB, LW |
-| FC Utrecht | 8 | RB, CM, LW |
-| PSV | 11 | CM |
-| Feyenoord | 11 | — compleet |
-| AZ | 11 | — compleet |
-| Ajax | 12 | CM |
-| FC Twente | 12 | LB |
+| Ajax | 18 | — compleet |
+| PSV | 18 | — compleet |
+| Feyenoord | 18 | — compleet |
+| AZ | 18 | — compleet |
+| FC Twente | 18 | — compleet |
+| FC Utrecht | 18 | — compleet |
+| sc Heerenveen | 18 | CM |
+| FC Groningen | 18 | — compleet |
+| Roda JC | 18 | — compleet |
+| NAC Breda | 18 | RB, LW |
+| ADO Den Haag | 18 | — compleet |
+| Heracles Almelo | 18 | — compleet |
+| NEC | 18 | — compleet |
+| Vitesse | 18 | — compleet |
+| VVV-Venlo | 18 | — compleet |
+| Excelsior | 18 | — compleet |
+| De Graafschap | 18 | — compleet |
+| RKC Waalwijk | 18 | CM |
 
 ## 2012/13 — 12/18 clubs compleet
 
@@ -373,5 +373,5 @@ Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities 
 ## Totaal
 
 - Clubs in database: 288 (over 16 seizoenen)
-- Spelers in database: 4742
-- Clubs compleet: 217 / 288
+- Spelers in database: 5109
+- Clubs compleet: 242 / 288

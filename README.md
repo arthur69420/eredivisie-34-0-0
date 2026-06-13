@@ -59,13 +59,13 @@ node tools/build-db.js
 node tools/analyse-db.js
 ```
 
-Voor 2010/11 en 2011/12 (niet in de dataset) kun je een van Transfermarkt geplakte kaderpagina (Nederlandstalig) verwerken. Zet de plak in een tekstbestand en draai:
+Voor 2010/11 en 2011/12 (niet in de dataset) zijn de selecties opgebouwd uit van Transfermarkt geplakte kaders. Een heel seizoensbestand met alle 18 clubs (clubs gescheiden door een regel `BREAK`, clubnaam bovenaan elk blok) verwerk je met:
 
 ```bash
-node tools/parse-tm-paste.js "2010/11" "Ajax" tools/paste/ajax.txt
+node tools/parse-tm-file.js "2010/11" "C:/pad/eredivisie10-11.txt"
 ```
 
-De parser leest naam, positie en marktwaarde, leidt daar de rating uit af en voegt ontbrekende spelers toe aan die club (bestaande spelers blijven ongemoeid). Plak-bestanden in `tools/paste/` staan buiten git.
+Dit zet de clubs van dat seizoen eerst terug naar de gecureerde basis en vult ze dan aan tot een cap van 18 spelers: eerst de verplichte posities, daarna de hoogst gewaardeerde spelers. Ratings volgen uit de marktwaarde van dat seizoen; bestaande handmatige ratings blijven behouden. Voor één losse club is er `tools/parse-tm-paste.js`. Plak-bestanden staan buiten git.
 
 Handmatig uitbreiden kan ook: voeg regels toe in het formaat `["Spelersnaam","POS",74]`.
 
