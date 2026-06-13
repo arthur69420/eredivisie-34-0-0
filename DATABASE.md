@@ -2,7 +2,7 @@
 
 Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities die het spel nu opvult met jeugdspelers (rating 62). Een club is pas “compleet” bij minimaal 1× GK/RB/LB/LW/RW/ST en 2× CB/CM.
 
-## 2010/11 — 13/18 clubs compleet
+## 2010/11 — 18/18 clubs compleet
 
 | Club | Spelers | Ontbrekend |
 |---|---|---|
@@ -13,19 +13,19 @@ Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities 
 | FC Twente | 18 | — compleet |
 | FC Utrecht | 18 | — compleet |
 | sc Heerenveen | 18 | — compleet |
-| FC Groningen | 18 | LW |
+| FC Groningen | 18 | — compleet |
 | Roda JC | 18 | — compleet |
-| NAC Breda | 18 | RB, CM |
+| NAC Breda | 18 | — compleet |
 | ADO Den Haag | 18 | — compleet |
 | Heracles Almelo | 18 | — compleet |
 | NEC | 18 | — compleet |
 | Vitesse | 18 | — compleet |
 | VVV-Venlo | 18 | — compleet |
-| Excelsior | 18 | LW |
-| De Graafschap | 18 | LW |
-| Willem II | 18 | LB |
+| Excelsior | 18 | — compleet |
+| De Graafschap | 18 | — compleet |
+| Willem II | 18 | — compleet |
 
-## 2011/12 — 15/18 clubs compleet
+## 2011/12 — 18/18 clubs compleet
 
 | Club | Spelers | Ontbrekend |
 |---|---|---|
@@ -35,10 +35,10 @@ Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities 
 | AZ | 18 | — compleet |
 | FC Twente | 18 | — compleet |
 | FC Utrecht | 18 | — compleet |
-| sc Heerenveen | 18 | CM |
+| sc Heerenveen | 18 | — compleet |
 | FC Groningen | 18 | — compleet |
 | Roda JC | 18 | — compleet |
-| NAC Breda | 18 | RB, LW |
+| NAC Breda | 18 | — compleet |
 | ADO Den Haag | 18 | — compleet |
 | Heracles Almelo | 18 | — compleet |
 | NEC | 18 | — compleet |
@@ -46,7 +46,7 @@ Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities 
 | VVV-Venlo | 18 | — compleet |
 | Excelsior | 18 | — compleet |
 | De Graafschap | 18 | — compleet |
-| RKC Waalwijk | 18 | CM |
+| RKC Waalwijk | 18 | — compleet |
 
 ## 2012/13 — 12/18 clubs compleet
 
@@ -374,4 +374,4 @@ Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities 
 
 - Clubs in database: 288 (over 16 seizoenen)
 - Spelers in database: 5109
-- Clubs compleet: 242 / 288
+- Clubs compleet: 250 / 288

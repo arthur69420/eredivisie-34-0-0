@@ -112,7 +112,29 @@ SEASONS[seasonKey].forEach(club => {
   cand.forEach(p => { if(club.p.length < CAP && need(p.pos) && !have.has(norm(p.name))) addOne(p); });
   // 2) hoogste marktwaarde tot CAP
   cand.forEach(p => { if(club.p.length < CAP && !have.has(norm(p.name))) addOne(p); });
-  report.push(club.n + ": " + baseN + " gecureerd + " + added + " toegevoegd = " + club.p.length);
+  // 3) ontbrekende verplichte posities: een echte speler uit een verwante
+  //    positie met overschot ompositioneren (geen jeugdspeler)
+  const reqOf = p => (REQ.find(r => r[0] === p) || [0,0])[1];
+  const DONOR = {
+    RB:["LB","RW","CB","DM","CM"], LB:["RB","LW","CB","DM","CM"],
+    CB:["DM","CM","LB","RB"], CM:["DM","AM","RW","LW"],
+    LW:["RW","AM","ST","CM"], RW:["LW","AM","ST","CM"], ST:["AM","RW","LW","CM"]
+  };
+  let converted = 0;
+  REQ.forEach(([pos, n]) => {
+    while((cnt[pos] || 0) < n){
+      let did = false;
+      for(const dp of (DONOR[pos] || [])){
+        if((cnt[dp] || 0) > reqOf(dp)){
+          let idx = -1, lo = 999;
+          club.p.forEach((pl, k) => { if(pl[1] === dp && pl[2] < lo){ lo = pl[2]; idx = k; } });
+          if(idx >= 0){ club.p[idx][1] = pos; cnt[dp]--; cnt[pos] = (cnt[pos]||0)+1; converted++; did = true; break; }
+        }
+      }
+      if(!did) break;
+    }
+  });
+  report.push(club.n + ": " + baseN + " gecureerd + " + added + " toegevoegd" + (converted ? " + " + converted + " omgezet" : "") + " = " + club.p.length);
 });
 
 /* ---- serialiseren ---- */
