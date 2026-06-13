@@ -53,7 +53,7 @@ const PAD_REQ = [["GK",1],["RB",1],["CB",2],["LB",1],["CM",2],["LW",1],["RW",1],
 Object.values(SEASONS).forEach(clubsArr => clubsArr.forEach(c => {
   PAD_REQ.forEach(([pos, n]) => {
     const have = c.p.filter(pl => pl[1] === pos).length;
-    for(let k = have; k < n; k++) c.p.push(["Jeugdspeler ("+c.a+")", pos, 62]);
+    for(let k = have; k < n; k++) c.p.push(["Jeugdspeler ("+c.a+")", pos, 65]);
   });
   const avg = arr => arr.length ? arr.reduce((s,pl) => s + pl[2], 0) / arr.length : 64;
   c.s   = avg(c.p);

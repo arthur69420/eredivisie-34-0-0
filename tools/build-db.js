@@ -58,16 +58,36 @@ const seasonKey = y => y + "/" + String((+y + 1) % 100).padStart(2, "0");
 const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
   .replace(/[^a-z0-9]+/g, " ").trim();
 
-/* ---- rating uit marktwaarde (alleen voor nieuwe spelers) ---- */
-function rating(mv){
+/* ---- rating uit marktwaarde (alleen voor nieuwe spelers) ----
+   rawRating geeft een interne schaal 60-88; scaleRating rekt die uit naar
+   de speelschaal 65-99 met een lichte machtscurve, zodat de middenmoot
+   realistisch blijft (65-80) maar toppers richting de 90 gaan. */
+function scaleRating(r){
+  const n = Math.max(0, Math.min(1, (r - 60) / 28));
+  return Math.round(65 + Math.pow(n, 1.5) * 34);
+}
+function rawRating(mv){
   if(!mv || mv < 50000) return 64;
   const r = Math.round(62 + 6 * Math.log10(mv / 250000));
   return Math.max(60, Math.min(88, r));
 }
+function rating(mv){ return scaleRating(rawRating(mv)); }
 
 /* ================= bestaande data inladen ================= */
 const dataSrc = fs.readFileSync(path.join(ROOT, "js", "data.js"), "utf8");
 const SEASONS = new Function(dataSrc + "; return SEASONS;")();
+
+/* ---- eenmalige herijking van alle bestaande ratings naar de 65-99 schaal ---- */
+if(process.argv.includes("--rescale")){
+  let max = 0;
+  Object.values(SEASONS).forEach(arr => arr.forEach(c => c.p.forEach(pl => { if(pl[2] > max) max = pl[2]; })));
+  if(max > 90){ console.error("data.js lijkt al op de 65-99 schaal (max " + max + ") - niets gedaan."); process.exit(0); }
+  let n = 0;
+  Object.values(SEASONS).forEach(arr => arr.forEach(c => c.p.forEach(pl => { pl[2] = scaleRating(pl[2]); n++; })));
+  fs.writeFileSync(path.join(ROOT, "js", "data.js"), serializeAll());
+  console.error(n + " ratings herijkt naar 65-99 en js/data.js geschreven.");
+  process.exit(0);
+}
 
 /* ================= games: game_id -> seizoen ================= */
 console.error("games inlezen...");
@@ -186,15 +206,18 @@ function serClub(c){
 function serSeason(skey){
   return '"' + skey + '":[\n' + SEASONS[skey].map(serClub).join(",\n") + '\n]';
 }
-const out = "/* Gecureerde kernselecties per Eredivisie-seizoen (2010/11 - 2025/26).\n"
-  + "   Formaat: {n: clubnaam, a: afkorting, p: [[naam, positie, rating], ...]}\n"
-  + "   Posities: GK RB CB LB DM CM AM LW RW ST\n"
-  + "   Selecties 2012/13-2025/26 aangevuld uit transfermarkt-datasets (tools/build-db.js);\n"
-  + "   ratings van aangevulde spelers afgeleid uit marktwaarde. Ontbrekende posities\n"
-  + "   worden in app.js automatisch aangevuld met jeugdspelers. */\n"
-  + "const SEASONS = {\n\n"
-  + Object.keys(SEASONS).map(serSeason).join(",\n\n")
-  + "\n};\n";
+function serializeAll(){
+  return "/* Gecureerde kernselecties per Eredivisie-seizoen (2010/11 - 2025/26).\n"
+    + "   Formaat: {n: clubnaam, a: afkorting, p: [[naam, positie, rating], ...]}\n"
+    + "   Posities: GK RB CB LB DM CM AM LW RW ST\n"
+    + "   Selecties 2012/13-2025/26 aangevuld uit transfermarkt-datasets (tools/build-db.js);\n"
+    + "   ratings (65-99) van aangevulde spelers afgeleid uit marktwaarde. Ontbrekende\n"
+    + "   posities worden in app.js automatisch aangevuld met jeugdspelers. */\n"
+    + "const SEASONS = {\n\n"
+    + Object.keys(SEASONS).map(serSeason).join(",\n\n")
+    + "\n};\n";
+}
+const out = serializeAll();
 
 console.error("\nnieuwe spelers toegevoegd: " + added);
 if(DRY){ console.error("(dry run - niets geschreven)"); }
