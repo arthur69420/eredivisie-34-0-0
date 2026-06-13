@@ -48,330 +48,330 @@ Automatisch gegenereerd met `node tools/analyse-db.js`. *Ontbrekend* = posities 
 | Ajax | 12 | CM |
 | FC Twente | 12 | LB |
 
-## 2012/13 — 2/18 clubs compleet
+## 2012/13 — 12/18 clubs compleet
 
 | Club | Spelers | Ontbrekend |
 |---|---|---|
-| VVV-Venlo | 4 | GK, RB, CB, LB, CM, RW |
-| RKC Waalwijk | 4 | RB, CB, LB, 2× CM, LW |
-| Willem II | 4 | RB, CB, LB, CM, LW, RW |
-| Roda JC | 5 | RB, 2× CB, LB, LW |
-| NAC Breda | 5 | RB, 2× CB, CM, LW, RW |
-| NEC | 5 | RB, CB, LB, CM, RW |
-| sc Heerenveen | 6 | RB, 2× CB, LB, 2× CM, LW |
-| FC Groningen | 6 | CB, LB, CM, LW, RW |
-| ADO Den Haag | 6 | RB, CB, CM, RW |
-| Heracles Almelo | 6 | RB, CB, LB, LW, RW |
-| PEC Zwolle | 6 | LB, 2× CM, LW |
-| Vitesse | 8 | RB, LW |
-| FC Utrecht | 9 | RB, 2× CM, LW |
-| AZ | 10 | — compleet |
-| FC Twente | 10 | LB, CM |
-| PSV | 11 | RB, CM |
-| Ajax | 12 | — compleet |
-| Feyenoord | 12 | CM |
-
-## 2013/14 — 0/18 clubs compleet
-
-| Club | Spelers | Ontbrekend |
-|---|---|---|
-| RKC Waalwijk | 4 | RB, CB, LB, 2× CM, LW |
-| SC Cambuur | 4 | RB, 2× CB, LB, CM, LW, RW |
-| Roda JC | 5 | RB, 2× CB, LB, LW, ST |
-| NAC Breda | 5 | RB, 2× CB, CM, RW |
-| Go Ahead Eagles | 5 | RB, CB, LB, CM, LW, ST |
-| sc Heerenveen | 6 | RB, 2× CB, LB, CM, LW |
-| FC Groningen | 6 | 2× CB, LB, 2× CM, LW, RW |
-| ADO Den Haag | 6 | RB, CB, CM, LW, RW |
-| Heracles Almelo | 6 | RB, CB, LB, LW, ST |
-| NEC | 6 | RB, CB, LB, CM, RW |
-| PEC Zwolle | 7 | LB, CM, LW |
-| FC Twente | 9 | CB, LB |
-| FC Utrecht | 9 | LB, 2× CM |
-| AZ | 10 | RW |
-| Vitesse | 10 | CM |
-| Feyenoord | 11 | LB, CM |
-| Ajax | 12 | LB, RW |
-| PSV | 12 | CM |
-
-## 2014/15 — 2/18 clubs compleet
-
-| Club | Spelers | Ontbrekend |
-|---|---|---|
-| FC Dordrecht | 4 | RB, 2× CB, LB, 2× CM, LW |
-| NAC Breda | 5 | RB, CB, LB, 2× CM, RW, ST |
-| SC Cambuur | 5 | RB, 2× CB, LB, CM, LW, RW |
-| Go Ahead Eagles | 5 | RB, CB, LB, CM, LW, ST |
-| Excelsior | 5 | RB, CB, LB, 2× CM, RW |
-| sc Heerenveen | 6 | RB, 2× CB, LB, CM, RW |
-| FC Groningen | 6 | 2× CB, LB, 2× CM, RW |
-| ADO Den Haag | 6 | RB, CB, CM, LW, RW |
-| Heracles Almelo | 6 | RB, CB, LB, LW |
-| Willem II | 6 | RB, LB, 2× CM, RW |
-| PEC Zwolle | 7 | CB, LB, CM, LW, RW |
-| FC Twente | 9 | LB, CM |
-| FC Utrecht | 9 | CB, LB, CM, RW |
-| Vitesse | 9 | LB, RW |
-| AZ | 11 | — compleet |
-| Ajax | 12 | — compleet |
-| PSV | 12 | CM |
-| Feyenoord | 12 | CM |
-
-## 2015/16 — 2/18 clubs compleet
-
-| Club | Spelers | Ontbrekend |
-|---|---|---|
-| Roda JC | 5 | RB, LB, 2× CM, LW |
-| NEC | 5 | RB, CB, LB, CM, RW |
-| SC Cambuur | 5 | RB, 2× CB, LW, RW |
-| De Graafschap | 5 | RB, CB, LB, CM, LW, RW |
-| Willem II | 6 | CB, LB, 2× CM, RW, ST |
-| Excelsior | 6 | RB, CB, 2× CM, RW |
-| sc Heerenveen | 7 | 2× CB, LB, CM |
-| FC Groningen | 7 | RB, CB, LB, CM, RW |
-| ADO Den Haag | 7 | RB, CM, LW |
-| Heracles Almelo | 7 | RB, CB, LW |
-| PEC Zwolle | 7 | CB, LB, CM, RW |
-| FC Twente | 9 | LB, 2× CM, RW |
-| Vitesse | 9 | LB, 2× CM, RW |
-| Feyenoord | 11 | CM |
-| AZ | 11 | — compleet |
-| FC Utrecht | 11 | LB, RW |
-| PSV | 12 | — compleet |
-| Ajax | 13 | CM |
-
-## 2016/17 — 2/18 clubs compleet
-
-| Club | Spelers | Ontbrekend |
-|---|---|---|
-| Go Ahead Eagles | 5 | RB, CB, LB, CM, RW |
-| Roda JC | 6 | RB, LB, CM, LW, RW |
-| NEC | 6 | RB, CB, LB, CM |
-| sc Heerenveen | 7 | RB, 2× CB, LB, CM |
-| FC Groningen | 7 | RB, CB, LB, LW, RW |
-| ADO Den Haag | 7 | RB, CM, LW, RW |
-| Heracles Almelo | 7 | RB, CB, CM, LW, RW |
-| Sparta Rotterdam | 7 | CB, LB, CM, RW |
-| Willem II | 7 | CB, LB, CM, RW |
-| Excelsior | 7 | RB, CB, CM, RW |
-| PEC Zwolle | 8 | CB, LB, CM |
-| FC Twente | 9 | LB, CM, RW |
-| Vitesse | 9 | LB, CM, RW |
-| AZ | 11 | — compleet |
-| FC Utrecht | 11 | LB |
-| Ajax | 12 | CM |
-| PSV | 12 | CM |
-| Feyenoord | 12 | — compleet |
-
-## 2017/18 — 1/18 clubs compleet
-
-| Club | Spelers | Ontbrekend |
-|---|---|---|
-| Roda JC | 6 | RB, CB, LB, CM, RW, ST |
-| VVV-Venlo | 6 | RB, CB, LB, LW |
-| FC Groningen | 7 | RB, CB, LB, CM, LW, RW |
-| Heracles Almelo | 7 | CB, LB, CM |
-| Sparta Rotterdam | 7 | CB, LB, CM, RW |
-| NAC Breda | 7 | RB, CB, 2× CM, LW, RW |
-| Willem II | 7 | CB, LB, CM, RW |
-| Excelsior | 7 | RB, CB, LB, RW |
-| sc Heerenveen | 8 | CB, LB, 2× CM, RW |
-| ADO Den Haag | 8 | RB, CM, LW |
-| PEC Zwolle | 8 | CB, LB, CM, RW |
-| FC Twente | 9 | LB, CM, RW |
-| Vitesse | 9 | LB, CM, RW |
-| AZ | 11 | CM |
-| FC Utrecht | 11 | LB, CM |
-| Ajax | 12 | CM |
-| PSV | 12 | 2× CM |
-| Feyenoord | 12 | — compleet |
-
-## 2018/19 — 1/18 clubs compleet
-
-| Club | Spelers | Ontbrekend |
-|---|---|---|
-| De Graafschap | 6 | RB, CB, LB, CM, LW, RW |
-| Excelsior | 6 | RB, CB, LB, CM, LW, RW |
-| NAC Breda | 6 | RB, LB, 2× CM, LW, RW |
-| VVV-Venlo | 7 | RB, CB, LB, LW |
-| Fortuna Sittard | 7 | RB, LB, CM, LW |
-| FC Emmen | 7 | RB, 2× CB, LW, RW |
-| sc Heerenveen | 8 | CB, LB, CM, RW |
-| FC Groningen | 8 | RB, CB, CM, LW, RW |
-| ADO Den Haag | 8 | RB, CM, LW |
-| Heracles Almelo | 8 | CB, LB, CM |
-| PEC Zwolle | 8 | CB, LB, CM, RW |
-| Willem II | 8 | CB, LB, 2× CM, RW |
-| Vitesse | 10 | CM, RW |
-| FC Utrecht | 11 | CM, LW |
-| Ajax | 12 | CM, LW |
-| PSV | 12 | 2× CM |
-| Feyenoord | 12 | — compleet |
-| AZ | 12 | CM |
-
-## 2019/20 — 1/18 clubs compleet
-
-| Club | Spelers | Ontbrekend |
-|---|---|---|
-| RKC Waalwijk | 6 | RB, CB, LB, LW, RW |
-| Willem II | 7 | CB, LB, 2× CM, LW |
-| ADO Den Haag | 7 | RB, CB, CM, LW |
-| Heracles Almelo | 7 | 2× CB, CM, LW |
-| VVV-Venlo | 7 | RB, CB, LB, LW |
-| Fortuna Sittard | 7 | LB, CM, LW |
-| FC Emmen | 7 | RB, CB, 2× CM, LW, RW |
-| Sparta Rotterdam | 7 | RB, CB, LB, LW |
-| FC Twente | 8 | RB, CB, LB, 2× CM, ST |
-| sc Heerenveen | 8 | CB, LB |
-| FC Groningen | 8 | LB, CM, LW, RW |
-| PEC Zwolle | 8 | CB, LB, CM, RW |
-| Vitesse | 9 | RB, CM, LW, RW |
-| AZ | 11 | CM |
-| FC Utrecht | 11 | LB |
-| Ajax | 12 | 2× CM |
-| PSV | 12 | 2× CM |
-| Feyenoord | 12 | — compleet |
-
-## 2020/21 — 1/18 clubs compleet
-
-| Club | Spelers | Ontbrekend |
-|---|---|---|
-| VVV-Venlo | 7 | RB, CB, LB, LW |
-| ADO Den Haag | 7 | 2× CB, CM, LW, RW |
-| FC Emmen | 7 | RB, CB, LW, RW |
-| RKC Waalwijk | 7 | RB, LB, CM, LW, RW |
-| sc Heerenveen | 8 | CB, LB, LW |
-| Heracles Almelo | 8 | 2× CB, LB, CM, RW |
-| PEC Zwolle | 8 | LB, CM, RW |
-| Fortuna Sittard | 8 | RB, LB, CM, LW |
-| Sparta Rotterdam | 8 | RB, CB, LW, RW |
-| Willem II | 8 | CB, LB, CM, LW |
-| FC Groningen | 9 | CB, 2× CM |
-| FC Twente | 10 | LB, 2× CM |
-| Vitesse | 10 | CM, LW, RW |
-| FC Utrecht | 11 | RB, LW |
-| Ajax | 12 | CM |
-| PSV | 12 | CM |
-| Feyenoord | 12 | CM |
-| AZ | 12 | — compleet |
-
-## 2021/22 — 2/18 clubs compleet
-
-| Club | Spelers | Ontbrekend |
-|---|---|---|
-| Go Ahead Eagles | 7 | RB, CB, CM, RW |
-| SC Cambuur | 7 | RB, CB, LB, LW |
-| PEC Zwolle | 7 | LB, CM, RW |
-| RKC Waalwijk | 7 | CB, LB, 2× CM, LW, RW |
-| Heracles Almelo | 8 | RB, CB, CM, RW |
-| Fortuna Sittard | 8 | CB, LB, 2× CM, RW |
-| NEC | 8 | CB, LB, 2× CM, LW |
-| Willem II | 8 | CB, LB, CM, LW |
-| FC Groningen | 9 | CB, CM |
-| Sparta Rotterdam | 9 | RB, CB, CM, LW |
-| sc Heerenveen | 10 | LW, RW |
-| Vitesse | 11 | LW, RW |
-| Ajax | 12 | CM |
-| PSV | 12 | CM |
-| Feyenoord | 12 | — compleet |
-| AZ | 12 | CM |
-| FC Twente | 12 | CM |
-| FC Utrecht | 12 | — compleet |
-
-## 2022/23 — 0/18 clubs compleet
-
-| Club | Spelers | Ontbrekend |
-|---|---|---|
-| SC Cambuur | 7 | RB, CB, LB, CM, LW |
-| FC Emmen | 7 | RB, CB, LB, CM, RW |
-| Go Ahead Eagles | 8 | CB, 2× CM, RW |
-| Excelsior | 8 | CB, LB, CM |
-| Fortuna Sittard | 8 | CB, LB, CM, LW, RW |
-| RKC Waalwijk | 8 | CB, LB, CM, LW |
-| sc Heerenveen | 9 | LB, 2× CM |
-| FC Groningen | 9 | CM, LW |
-| Vitesse | 9 | CB, LB, LW, ST |
-| NEC | 9 | CB, LB, CM, LW |
-| FC Volendam | 9 | RB, CM, LW |
-| Sparta Rotterdam | 10 | LB, CM |
-| FC Utrecht | 11 | RW |
-| Ajax | 12 | CM, RW |
-| PSV | 12 | CM |
-| Feyenoord | 12 | CM |
-| AZ | 12 | CM, RW |
-| FC Twente | 12 | CM |
-
-## 2023/24 — 1/18 clubs compleet
-
-| Club | Spelers | Ontbrekend |
-|---|---|---|
-| RKC Waalwijk | 8 | CB, LB, LW |
-| Almere City | 8 | CB, LB, CM |
-| sc Heerenveen | 9 | RB, LB, RW |
-| Vitesse | 9 | CB, LB, LW |
-| PEC Zwolle | 9 | LB, CM, LW |
-| Go Ahead Eagles | 9 | CB, CM, RW |
-| Heracles Almelo | 9 | LB, RW |
-| Fortuna Sittard | 9 | CB, LB, RW |
-| Excelsior | 9 | CM, LW |
-| FC Volendam | 9 | RB, LW, RW |
-| NEC | 10 | RB, CM, LW |
-| Sparta Rotterdam | 10 | LB |
-| FC Utrecht | 11 | RW |
-| PSV | 12 | CM |
-| Feyenoord | 12 | CM |
-| AZ | 12 | CM |
-| FC Twente | 12 | CM |
-| Ajax | 13 | — compleet |
-
-## 2024/25 — 6/18 clubs compleet
-
-| Club | Spelers | Ontbrekend |
-|---|---|---|
-| Almere City | 6 | RB, LB, 2× CM, LW |
-| RKC Waalwijk | 7 | CB, LB, 2× CM |
-| Heracles Almelo | 8 | CB, LB, LW, RW |
-| PEC Zwolle | 8 | RB, LB, CM, LW |
-| Fortuna Sittard | 8 | GK, CB, CM, RW |
-| Willem II | 8 | CB, LB, LW |
-| NAC Breda | 9 | RB, LW, RW |
-| NEC | 10 | RB |
-| sc Heerenveen | 11 | RB, LB, LW |
-| FC Groningen | 11 | RB, RW |
-| Sparta Rotterdam | 11 | LB |
-| Go Ahead Eagles | 12 | CB, LW |
-| FC Twente | 14 | — compleet |
-| FC Utrecht | 14 | — compleet |
-| Feyenoord | 15 | — compleet |
-| AZ | 15 | — compleet |
-| PSV | 16 | — compleet |
-| Ajax | 18 | — compleet |
-
-## 2025/26 — 6/18 clubs compleet
-
-| Club | Spelers | Ontbrekend |
-|---|---|---|
-| Telstar | 6 | RB, CB, LB, CM |
-| Fortuna Sittard | 7 | GK, 2× CB, CM, RW |
-| NAC Breda | 7 | RB, CM, LW, RW |
-| Excelsior | 7 | RB, LB, CM, LW, RW |
-| FC Groningen | 8 | RB, LB, CM, RW |
-| Go Ahead Eagles | 8 | CB, CM, LW, RW |
-| PEC Zwolle | 8 | RB, LB, LW, RW |
-| Heracles Almelo | 8 | CB, LB, LW, RW |
-| FC Volendam | 8 | RB, LB, CM, LW |
-| sc Heerenveen | 9 | RB, LB, LW, RW |
-| NEC | 10 | RB, RW |
-| Sparta Rotterdam | 10 | LB |
-| FC Utrecht | 12 | — compleet |
-| FC Twente | 13 | — compleet |
-| AZ | 15 | — compleet |
-| Feyenoord | 16 | — compleet |
+| Vitesse | 16 | — compleet |
+| Ajax | 17 | — compleet |
+| Feyenoord | 17 | — compleet |
+| AZ | 17 | — compleet |
 | PSV | 18 | — compleet |
+| FC Twente | 18 | — compleet |
+| FC Utrecht | 18 | 2× CM |
+| sc Heerenveen | 18 | CM |
+| FC Groningen | 18 | — compleet |
+| Roda JC | 18 | — compleet |
+| NAC Breda | 18 | CM, LW |
+| ADO Den Haag | 18 | RB |
+| Heracles Almelo | 18 | — compleet |
+| NEC | 18 | RW |
+| VVV-Venlo | 18 | RW |
+| RKC Waalwijk | 18 | — compleet |
+| Willem II | 18 | — compleet |
+| PEC Zwolle | 18 | — compleet |
+
+## 2013/14 — 14/18 clubs compleet
+
+| Club | Spelers | Ontbrekend |
+|---|---|---|
+| Feyenoord | 16 | — compleet |
+| FC Twente | 16 | — compleet |
+| ADO Den Haag | 17 | RB |
+| Vitesse | 17 | — compleet |
+| Ajax | 18 | — compleet |
+| PSV | 18 | — compleet |
+| AZ | 18 | — compleet |
+| FC Utrecht | 18 | — compleet |
+| sc Heerenveen | 18 | — compleet |
+| FC Groningen | 18 | CM, RW |
+| Roda JC | 18 | LW |
+| NAC Breda | 18 | — compleet |
+| Heracles Almelo | 18 | — compleet |
+| NEC | 18 | — compleet |
+| RKC Waalwijk | 18 | — compleet |
+| PEC Zwolle | 18 | — compleet |
+| SC Cambuur | 18 | — compleet |
+| Go Ahead Eagles | 18 | CM |
+
+## 2014/15 — 16/18 clubs compleet
+
+| Club | Spelers | Ontbrekend |
+|---|---|---|
+| sc Heerenveen | 16 | — compleet |
+| PSV | 17 | — compleet |
+| PEC Zwolle | 17 | — compleet |
+| SC Cambuur | 17 | CM |
+| Willem II | 17 | — compleet |
+| Ajax | 18 | — compleet |
+| Feyenoord | 18 | — compleet |
+| AZ | 18 | — compleet |
+| FC Twente | 18 | — compleet |
+| FC Utrecht | 18 | — compleet |
+| FC Groningen | 18 | — compleet |
+| NAC Breda | 18 | — compleet |
+| ADO Den Haag | 18 | — compleet |
+| Heracles Almelo | 18 | — compleet |
+| Vitesse | 18 | — compleet |
+| Go Ahead Eagles | 18 | CM |
+| FC Dordrecht | 18 | — compleet |
+| Excelsior | 18 | — compleet |
+
+## 2015/16 — 14/18 clubs compleet
+
+| Club | Spelers | Ontbrekend |
+|---|---|---|
+| Heracles Almelo | 14 | — compleet |
+| PSV | 17 | — compleet |
+| Feyenoord | 17 | — compleet |
+| Ajax | 18 | — compleet |
+| AZ | 18 | — compleet |
+| FC Twente | 18 | CM |
+| FC Utrecht | 18 | — compleet |
+| sc Heerenveen | 18 | — compleet |
+| FC Groningen | 18 | — compleet |
+| Roda JC | 18 | — compleet |
+| ADO Den Haag | 18 | — compleet |
+| NEC | 18 | — compleet |
+| Vitesse | 18 | CM |
+| PEC Zwolle | 18 | RW |
+| SC Cambuur | 18 | — compleet |
+| De Graafschap | 18 | RW |
+| Willem II | 18 | — compleet |
+| Excelsior | 18 | — compleet |
+
+## 2016/17 — 15/18 clubs compleet
+
+| Club | Spelers | Ontbrekend |
+|---|---|---|
+| Feyenoord | 15 | — compleet |
+| Ajax | 18 | — compleet |
+| PSV | 18 | CM |
+| AZ | 18 | — compleet |
+| FC Twente | 18 | CM |
+| FC Utrecht | 18 | — compleet |
+| sc Heerenveen | 18 | — compleet |
+| FC Groningen | 18 | — compleet |
+| Roda JC | 18 | — compleet |
+| ADO Den Haag | 18 | — compleet |
+| Heracles Almelo | 18 | — compleet |
+| NEC | 18 | — compleet |
+| Vitesse | 18 | — compleet |
+| PEC Zwolle | 18 | — compleet |
+| Sparta Rotterdam | 18 | CM |
+| Go Ahead Eagles | 18 | — compleet |
+| Willem II | 18 | — compleet |
+| Excelsior | 18 | — compleet |
+
+## 2017/18 — 16/18 clubs compleet
+
+| Club | Spelers | Ontbrekend |
+|---|---|---|
+| PSV | 16 | CM |
+| AZ | 16 | — compleet |
+| VVV-Venlo | 16 | — compleet |
+| ADO Den Haag | 17 | — compleet |
+| PEC Zwolle | 17 | — compleet |
+| Ajax | 18 | — compleet |
+| Feyenoord | 18 | — compleet |
+| FC Twente | 18 | CM |
+| FC Utrecht | 18 | — compleet |
+| sc Heerenveen | 18 | — compleet |
+| FC Groningen | 18 | — compleet |
+| Roda JC | 18 | — compleet |
+| Heracles Almelo | 18 | — compleet |
+| Vitesse | 18 | — compleet |
+| Sparta Rotterdam | 18 | — compleet |
+| NAC Breda | 18 | — compleet |
+| Willem II | 18 | — compleet |
+| Excelsior | 18 | — compleet |
+
+## 2018/19 — 15/18 clubs compleet
+
+| Club | Spelers | Ontbrekend |
+|---|---|---|
+| PSV | 14 | — compleet |
+| Ajax | 16 | — compleet |
+| AZ | 17 | — compleet |
+| Feyenoord | 18 | — compleet |
+| FC Utrecht | 18 | CM |
+| sc Heerenveen | 18 | — compleet |
+| FC Groningen | 18 | — compleet |
+| De Graafschap | 18 | — compleet |
+| ADO Den Haag | 18 | — compleet |
+| Heracles Almelo | 18 | — compleet |
+| VVV-Venlo | 18 | — compleet |
+| Vitesse | 18 | — compleet |
+| PEC Zwolle | 18 | — compleet |
+| Fortuna Sittard | 18 | — compleet |
+| FC Emmen | 18 | — compleet |
+| Excelsior | 18 | LW |
+| NAC Breda | 18 | — compleet |
+| Willem II | 18 | CM |
+
+## 2019/20 — 16/18 clubs compleet
+
+| Club | Spelers | Ontbrekend |
+|---|---|---|
+| sc Heerenveen | 14 | — compleet |
+| AZ | 15 | — compleet |
+| Heracles Almelo | 15 | — compleet |
+| Willem II | 16 | CM, LW |
+| Ajax | 17 | — compleet |
+| FC Utrecht | 17 | — compleet |
+| PSV | 18 | — compleet |
+| Feyenoord | 18 | — compleet |
+| FC Twente | 18 | — compleet |
+| FC Groningen | 18 | — compleet |
+| ADO Den Haag | 18 | LW |
+| VVV-Venlo | 18 | — compleet |
+| Vitesse | 18 | — compleet |
+| PEC Zwolle | 18 | — compleet |
+| Fortuna Sittard | 18 | — compleet |
+| FC Emmen | 18 | — compleet |
+| Sparta Rotterdam | 18 | — compleet |
+| RKC Waalwijk | 18 | — compleet |
+
+## 2020/21 — 14/18 clubs compleet
+
+| Club | Spelers | Ontbrekend |
+|---|---|---|
+| Fortuna Sittard | 11 | LB |
+| FC Twente | 16 | 2× CM |
+| Vitesse | 17 | — compleet |
+| Ajax | 18 | — compleet |
+| PSV | 18 | — compleet |
+| Feyenoord | 18 | — compleet |
+| AZ | 18 | — compleet |
+| FC Utrecht | 18 | — compleet |
+| sc Heerenveen | 18 | — compleet |
+| FC Groningen | 18 | — compleet |
+| VVV-Venlo | 18 | — compleet |
+| ADO Den Haag | 18 | — compleet |
+| Heracles Almelo | 18 | — compleet |
+| PEC Zwolle | 18 | — compleet |
+| FC Emmen | 18 | — compleet |
+| Sparta Rotterdam | 18 | RW |
+| RKC Waalwijk | 18 | — compleet |
+| Willem II | 18 | LW |
+
+## 2021/22 — 14/18 clubs compleet
+
+| Club | Spelers | Ontbrekend |
+|---|---|---|
+| Feyenoord | 16 | — compleet |
+| AZ | 16 | — compleet |
+| SC Cambuur | 17 | — compleet |
+| Ajax | 18 | — compleet |
+| PSV | 18 | — compleet |
+| FC Twente | 18 | CM |
+| FC Utrecht | 18 | — compleet |
+| sc Heerenveen | 18 | — compleet |
+| FC Groningen | 18 | CM |
+| Go Ahead Eagles | 18 | — compleet |
+| Heracles Almelo | 18 | — compleet |
+| Vitesse | 18 | — compleet |
+| PEC Zwolle | 18 | — compleet |
+| Fortuna Sittard | 18 | — compleet |
+| NEC | 18 | CM |
+| Sparta Rotterdam | 18 | CM |
+| Willem II | 18 | — compleet |
+| RKC Waalwijk | 18 | — compleet |
+
+## 2022/23 — 17/18 clubs compleet
+
+| Club | Spelers | Ontbrekend |
+|---|---|---|
+| FC Twente | 17 | — compleet |
+| Sparta Rotterdam | 17 | — compleet |
+| Ajax | 18 | — compleet |
+| PSV | 18 | — compleet |
+| Feyenoord | 18 | — compleet |
+| AZ | 18 | — compleet |
+| FC Utrecht | 18 | — compleet |
+| sc Heerenveen | 18 | — compleet |
+| FC Groningen | 18 | — compleet |
+| Go Ahead Eagles | 18 | — compleet |
+| SC Cambuur | 18 | — compleet |
+| FC Emmen | 18 | — compleet |
+| Vitesse | 18 | — compleet |
+| Excelsior | 18 | — compleet |
+| Fortuna Sittard | 18 | — compleet |
+| NEC | 18 | CM |
+| RKC Waalwijk | 18 | — compleet |
+| FC Volendam | 18 | — compleet |
+
+## 2023/24 — 18/18 clubs compleet
+
+| Club | Spelers | Ontbrekend |
+|---|---|---|
+| PSV | 17 | — compleet |
+| Ajax | 18 | — compleet |
+| Feyenoord | 18 | — compleet |
+| AZ | 18 | — compleet |
+| FC Twente | 18 | — compleet |
+| FC Utrecht | 18 | — compleet |
+| sc Heerenveen | 18 | — compleet |
+| Vitesse | 18 | — compleet |
+| PEC Zwolle | 18 | — compleet |
+| Go Ahead Eagles | 18 | — compleet |
+| Heracles Almelo | 18 | — compleet |
+| NEC | 18 | — compleet |
+| Sparta Rotterdam | 18 | — compleet |
+| Fortuna Sittard | 18 | — compleet |
+| RKC Waalwijk | 18 | — compleet |
+| Excelsior | 18 | — compleet |
+| Almere City | 18 | — compleet |
+| FC Volendam | 18 | — compleet |
+
+## 2024/25 — 17/18 clubs compleet
+
+| Club | Spelers | Ontbrekend |
+|---|---|---|
+| Go Ahead Eagles | 17 | — compleet |
+| Ajax | 18 | — compleet |
+| PSV | 18 | — compleet |
+| Feyenoord | 18 | — compleet |
+| AZ | 18 | — compleet |
+| FC Twente | 18 | — compleet |
+| FC Utrecht | 18 | — compleet |
+| sc Heerenveen | 18 | — compleet |
+| FC Groningen | 18 | RB |
+| Heracles Almelo | 18 | — compleet |
+| NEC | 18 | — compleet |
+| PEC Zwolle | 18 | — compleet |
+| Sparta Rotterdam | 18 | — compleet |
+| Fortuna Sittard | 18 | — compleet |
+| RKC Waalwijk | 18 | — compleet |
+| Willem II | 18 | — compleet |
+| NAC Breda | 18 | — compleet |
+| Almere City | 18 | — compleet |
+
+## 2025/26 — 16/18 clubs compleet
+
+| Club | Spelers | Ontbrekend |
+|---|---|---|
+| FC Groningen | 16 | — compleet |
+| PSV | 18 | — compleet |
+| Feyenoord | 18 | — compleet |
+| AZ | 18 | — compleet |
+| FC Twente | 18 | — compleet |
+| FC Utrecht | 18 | — compleet |
+| sc Heerenveen | 18 | — compleet |
+| NEC | 18 | RB |
+| Go Ahead Eagles | 18 | — compleet |
+| Sparta Rotterdam | 18 | — compleet |
+| Fortuna Sittard | 18 | — compleet |
+| PEC Zwolle | 18 | — compleet |
+| NAC Breda | 18 | — compleet |
+| Heracles Almelo | 18 | — compleet |
+| Excelsior | 18 | — compleet |
+| FC Volendam | 18 | — compleet |
+| Telstar | 18 | LB |
 | Ajax | 19 | — compleet |
 
 ## Totaal
 
 - Clubs in database: 288 (over 16 seizoenen)
-- Spelers in database: 2481
-- Clubs compleet: 29 / 288
+- Spelers in database: 4711
+- Clubs compleet: 216 / 288

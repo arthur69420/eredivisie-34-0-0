@@ -37,13 +37,28 @@ Zelf hosten kan natuurlijk ook (Nginx-container op een NAS, of elke andere stati
 
 ## Database
 
-`js/data.js` bevat gecureerde kernselecties per seizoen: de juiste 18 clubs per jaargang met bekende spelers per positie (`GK RB CB LB DM CM AM LW RW ST`) en een rating. De database is **bij benadering en niet uitputtend** — ontbrekende posities vult het spel automatisch aan met jeugdspelers. Uitbreiden is simpel: voeg regels toe in het formaat
+`js/data.js` bevat de selecties per seizoen: de juiste 18 clubs per jaargang met spelers per positie (`GK RB CB LB DM CM AM LW RW ST`) en een rating. De seizoenen 2012/13 t/m 2025/26 zijn aangevuld met echte selecties uit de [transfermarkt-datasets](https://github.com/dcaribou/transfermarkt-datasets); ratings van aangevulde spelers zijn afgeleid uit hun marktwaarde rond dat seizoen. 2010/11 en 2011/12 zitten niet in die dataset en zijn handmatig gecureerd. Ontbrekende posities vult het spel automatisch aan met jeugdspelers.
 
-```js
-["Spelersnaam","POS",74],
+### Database (her)opbouwen
+
+`tools/build-db.js` voegt echte selecties toe vanuit de transfermarkt-datasets. Bestaande, handmatig gezette spelers en ratings blijven daarbij ongemoeid; alleen ontbrekende posities en diepte worden bijgevuld. Werkwijze:
+
+```bash
+# 1. CSV's ophalen naar tools/tmdata/ (niet in git; ~100 MB)
+base="https://pub-e682421888d945d684bcae8890b0ec20.r2.dev/data"
+mkdir -p tools/tmdata
+for f in games appearances players player_valuations; do
+  curl -s "$base/$f.csv.gz" -o "tools/tmdata/$f.csv.gz"
+done
+
+# 2. data.js (her)opbouwen — gebruik --dry om eerst alleen statistieken te zien
+node tools/build-db.js
+
+# 3. voortgang bekijken (genereert DATABASE.md)
+node tools/analyse-db.js
 ```
 
-Goede bronnen om selecties compleet te maken: Transfermarkt, FBref of het Voetbal International-archief.
+Handmatig uitbreiden kan ook: voeg regels toe in het formaat `["Spelersnaam","POS",74]`.
 
 ## Structuur
 
