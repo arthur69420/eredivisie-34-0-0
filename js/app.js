@@ -72,6 +72,7 @@ let currentClub = null;
 let currentSeason = null;
 let pendingPick = null;
 let rigArmed = false;
+let draftSeason = "", draftClub = "";
 let spinTimer = null, revealTimer = null, tableTimer = null, replacedClub = null;
 
 const $ = id => document.getElementById(id);
@@ -116,10 +117,12 @@ const I18N = {
     no_history:"Nog geen seizoenen gespeeld.",
     missing:"mist", complete:"compleet", incomplete:"onvolledig", players:"spelers",
     all_seasons:"Alle seizoenen", all_clubs:"Alle clubs", help_title:"Uitleg",
+    draft_filter:"Draftfilter", draft_filter_note:"Beperk de draft tot een seizoen en/of club. Standaard: alles willekeurig.",
+    filter_empty:"Geen spelers meer in dit filter voor je open posities. Pas het filter aan of begin opnieuw.",
     help_heading:"Hoe werkt het?",
     help_html:"<p><b>Doel:</b> stel een elftal samen en jaag op het perfecte seizoen: 34 gewonnen, 0 gelijk, 0 verloren — <b>34–0–0</b>.</p>"
       + "<p><b>1. Instellen.</b> Kies een teamnaam, formatie en speelstijl. De speelstijl (verdedigend / gebalanceerd / aanvallend) verschuift je linies op het veld én weegt mee in de uitslagen.</p>"
-      + "<p><b>2. Draften.</b> 11 rondes lang rol je een willekeurige club uit een willekeurig seizoen (2010/11–2025/26). Kies een speler uit die selectie en zet hem zelf op een oplichtende, passende positie. Maximaal 3 rerolls per draft.</p>"
+      + "<p><b>2. Draften.</b> 11 rondes lang rol je een willekeurige club uit een willekeurig seizoen (2010/11–2025/26). Kies een speler uit die selectie en zet hem zelf op een oplichtende, passende positie. Maximaal 3 rerolls per draft. Met het <b>draftfilter</b> kun je je beperken tot één seizoen en/of club.</p>"
       + "<p><b>3. Simuleren.</b> Je elftal speelt een volledig seizoen van 34 wedstrijden tegen de 18 clubs van een geloot seizoen. De ratings bepalen de kansen; daarna volgt de eindstand.</p>"
       + "<p><b>Records &amp; badges</b> worden lokaal bewaard. Met <b>\u{1F4CB}</b> bekijk je de spelersdatabase, met de <b>taalknop</b> wissel je tussen Nederlands en Engels, en met <b>\u{1F50A}</b> zet je het geluid aan/uit.</p>",
     res1:"resultaat", resN:"resultaten", in_all:"in alle seizoenen",
@@ -173,10 +176,12 @@ const I18N = {
     no_history:"No seasons played yet.",
     missing:"missing", complete:"complete", incomplete:"incomplete", players:"players",
     all_seasons:"All seasons", all_clubs:"All clubs", help_title:"How to play",
+    draft_filter:"Draft filter", draft_filter_note:"Limit the draft to a season and/or club. Default: all random.",
+    filter_empty:"No more players in this filter for your open positions. Change the filter or start over.",
     help_heading:"How does it work?",
     help_html:"<p><b>Goal:</b> build an XI and chase the perfect season: 34 won, 0 drawn, 0 lost — <b>34–0–0</b>.</p>"
       + "<p><b>1. Set up.</b> Pick a team name, formation and play style. The play style (defensive / balanced / attacking) shifts your lines on the pitch and weighs into the results.</p>"
-      + "<p><b>2. Draft.</b> For 11 rounds you roll a random club from a random season (2010/11–2025/26). Pick a player from that squad and place him on a highlighted, matching position. Max 3 rerolls per draft.</p>"
+      + "<p><b>2. Draft.</b> For 11 rounds you roll a random club from a random season (2010/11–2025/26). Pick a player from that squad and place him on a highlighted, matching position. Max 3 rerolls per draft. Use the <b>draft filter</b> to limit yourself to one season and/or club.</p>"
       + "<p><b>3. Simulate.</b> Your XI plays a full 34-match season against the 18 clubs of a drawn season. Ratings drive the odds; then comes the final table.</p>"
       + "<p><b>Records &amp; badges</b> are stored locally. Use <b>\u{1F4CB}</b> for the player database, the <b>language button</b> to switch between Dutch and English, and <b>\u{1F50A}</b> to toggle sound.</p>",
     res1:"result", resN:"results", in_all:"across all seasons",
@@ -223,6 +228,7 @@ function applyLang(){
   renderRecords();
   if($("dbseason") && $("dbseason").options.length) $("dbseason").options[0].textContent = t("all_seasons");
   if($("dbclubsel") && $("dbclubsel").options.length) $("dbclubsel").options[0].textContent = t("all_clubs");
+  if($("draftseasonsel") && $("draftseasonsel").options.length){ $("draftseasonsel").options[0].textContent = t("all_seasons"); fillDraftClubs(); }
   if($("dbmodal").classList.contains("show")) refreshDb();
   if($("histmodal").classList.contains("show")) renderHistory();
   if($("helpmodal").classList.contains("show")) $("helpbody").innerHTML = t("help_html");
@@ -250,6 +256,8 @@ function refreshSetup(){
 function setLocked(lock){
   $("setuppanel").classList.toggle("locked", lock);
   $("teamname").disabled = lock;
+  $("draftseasonsel").disabled = lock;
+  $("draftclubsel").disabled = lock;
 }
 function getTeamName(){
   const v = $("teamname").value.trim();
@@ -351,17 +359,29 @@ function nextRoll(){
   $("rollbtn").innerHTML = t("roll");
 }
 function rollSeasonClub(excludeClubName){
-  const seasons = Object.keys(SEASONS);
-  for(let tries = 0; tries < 80; tries++){
+  const seasons = draftSeason ? [draftSeason] : Object.keys(SEASONS);
+  for(let tries = 0; tries < 120; tries++){
     const s = rnd(seasons);
-    const pool = SEASONS[s].filter(c => eligiblePlayers(s, c).length > 0 && (tries >= 40 || c.n !== excludeClubName));
+    const pool = SEASONS[s].filter(c =>
+      (!draftClub || c.n === draftClub) &&
+      eligiblePlayers(s, c).length > 0 &&
+      (tries >= 60 || c.n !== excludeClubName));
     if(pool.length) return { s, club: rnd(pool) };
   }
   return null;
 }
 function spinTo(excludeClubName){
   const tc = rollSeasonClub(excludeClubName);
-  if(!tc) return;
+  if(!tc){
+    clearInterval(spinTimer);
+    const sn = $("spinname");
+    sn.className = "spinname"; sn.textContent = "—";
+    $("spinshirt").innerHTML = "";
+    $("ovneed").textContent = t("filter_empty");
+    $("choices").innerHTML = "";
+    $("rerollbtn").classList.remove("show");
+    return;
+  }
   currentClub = tc.club;
   currentSeason = tc.s;
   $("choices").innerHTML = "";
@@ -511,7 +531,7 @@ function simulate(rig){
   phase = "season";
   if(rig) disarmRig();
   $("phaseline").textContent = t("phase_season") + (rig ? " · " + t("demo") : "");
-  season = rnd(Object.keys(SEASONS));
+  season = draftSeason || rnd(Object.keys(SEASONS));
   replacedClub = rnd(clubs());
   const r = ratings();
   const mods = styleMods();
@@ -969,6 +989,26 @@ $("helpbtn").onclick = () => { $("helpbody").innerHTML = t("help_html"); $("help
 $("helpclose").onclick = closeHelp;
 $("helpmodal").onclick = e => { if(e.target === $("helpmodal")) closeHelp(); };
 document.addEventListener("keydown", e => { if(e.key === "Escape"){ closeDb(); closeHist(); closeHelp(); } });
+
+/* ================= draftfilter ================= */
+function fillDraftClubs(){
+  const csel = $("draftclubsel");
+  const prev = csel.value;
+  const list = draftSeason ? SEASONS[draftSeason].map(c => c.n).slice().sort()
+                           : [...new Set(Object.values(SEASONS).flatMap(a => a.map(c => c.n)))].sort();
+  csel.innerHTML = "";
+  const all = document.createElement("option"); all.value = ""; all.textContent = t("all_clubs"); csel.appendChild(all);
+  list.forEach(n => { const o = document.createElement("option"); o.value = n; o.textContent = n; csel.appendChild(o); });
+  if(prev && list.includes(prev)) csel.value = prev; else { csel.value = ""; draftClub = ""; }
+}
+(function initDraftFilter(){
+  const ssel = $("draftseasonsel");
+  const allS = document.createElement("option"); allS.value = ""; allS.textContent = t("all_seasons"); ssel.appendChild(allS);
+  Object.keys(SEASONS).slice().reverse().forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; ssel.appendChild(o); });
+  ssel.onchange = () => { if(phase !== "setup"){ ssel.value = draftSeason; return; } draftSeason = ssel.value; fillDraftClubs(); };
+  $("draftclubsel").onchange = () => { if(phase !== "setup"){ $("draftclubsel").value = draftClub; return; } draftClub = $("draftclubsel").value; };
+  fillDraftClubs();
+})();
 
 applyLang();
 if("serviceWorker" in navigator && location.protocol !== "file:")

@@ -546,6 +546,7 @@ button{touch-action:manipulation}
 .dbrow .c,.dbrow .s{font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--muted);flex:none}
 #dbsearch{width:auto;flex:1;min-width:150px;max-width:280px;text-transform:none;font-family:"Inter",sans-serif;font-size:13.5px}
 #dbsearch::placeholder{text-transform:none;font-family:"Inter",sans-serif}
+.filtergrid{display:flex;flex-direction:column;gap:8px}
 .dbsearchresults{grid-column:1/-1}
 .dbdiv{grid-column:1/-1;font-family:"Oswald",sans-serif;font-weight:600;font-size:17px;letter-spacing:.06em;color:#fff;border-bottom:2px solid var(--red);padding-bottom:4px;margin-top:8px}
 .dbdiv:first-child{margin-top:0}
