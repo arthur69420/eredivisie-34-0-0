@@ -1,16 +1,39 @@
 "use strict";
 
 /* ================= configuratie ================= */
-const FORMATIONS = {
-"4-3-3":[["GK",50,90],["LB",15,73],["CB",37,77],["CB",63,77],["RB",85,73],["CM",28,52],["CDM",50,58],["CM",72,52],["LW",18,27],["ST",50,18],["RW",82,27]],
+/* Balanced-basis per formatie; de speelstijl past hieronder de centrale
+   middenvelder(s) aan: aanvallend -> CAM (hoger), verdedigend -> CDM (dieper). */
+const FORMATIONS_BASE = {
+"4-3-3":[["GK",50,90],["LB",15,73],["CB",37,77],["CB",63,77],["RB",85,73],["CM",28,52],["CM",50,55],["CM",72,52],["LW",18,27],["ST",50,18],["RW",82,27]],
 "4-4-2":[["GK",50,90],["LB",15,73],["CB",37,77],["CB",63,77],["RB",85,73],["LM",15,46],["CM",38,51],["CM",62,51],["RM",85,46],["ST",38,20],["ST",62,20]],
-"4-2-3-1":[["GK",50,90],["LB",15,73],["CB",37,77],["CB",63,77],["RB",85,73],["CDM",38,59],["CDM",62,59],["LM",17,38],["CAM",50,41],["RM",83,38],["ST",50,17]],
+"4-2-3-1":[["GK",50,90],["LB",15,73],["CB",37,77],["CB",63,77],["RB",85,73],["CM",38,58],["CM",62,58],["LM",17,38],["CAM",50,41],["RM",83,38],["ST",50,17]],
 "4-2-4":[["GK",50,90],["LB",15,73],["CB",37,77],["CB",63,77],["RB",85,73],["CM",38,52],["CM",62,52],["LW",15,25],["ST",38,18],["ST",62,18],["RW",85,25]],
-"3-5-2":[["GK",50,90],["CB",27,76],["CB",50,79],["CB",73,76],["LWB",10,50],["CM",32,54],["CDM",50,60],["CM",68,54],["RWB",90,50],["ST",38,20],["ST",62,20]],
-"5-3-2":[["GK",50,90],["LWB",10,68],["CB",30,77],["CB",50,80],["CB",70,77],["RWB",90,68],["CM",30,51],["CDM",50,57],["CM",70,51],["ST",38,20],["ST",62,20]],
-"4-5-1":[["GK",50,90],["LB",15,73],["CB",37,77],["CB",63,77],["RB",85,73],["LM",12,44],["CM",32,52],["CDM",50,58],["CM",68,52],["RM",88,44],["ST",50,18]],
+"3-5-2":[["GK",50,90],["CB",27,76],["CB",50,79],["CB",73,76],["LWB",10,50],["CM",32,54],["CM",50,57],["CM",68,54],["RWB",90,50],["ST",38,20],["ST",62,20]],
+"5-3-2":[["GK",50,90],["LWB",10,68],["CB",30,77],["CB",50,80],["CB",70,77],["RWB",90,68],["CM",30,51],["CM",50,54],["CM",70,51],["ST",38,20],["ST",62,20]],
+"4-5-1":[["GK",50,90],["LB",15,73],["CB",37,77],["CB",63,77],["RB",85,73],["LM",12,44],["CM",32,52],["CM",50,55],["CM",68,52],["RM",88,44],["ST",50,18]],
 "3-4-3":[["GK",50,90],["CB",27,76],["CB",50,79],["CB",73,76],["LM",12,48],["CM",38,55],["CM",62,55],["RM",88,48],["LW",18,25],["ST",50,16],["RW",82,25]]
 };
+/* per formatie en stijl: [slotindex, nieuwe positie, dy, optioneel nieuwe x] */
+const STYLE_RULES = {
+"4-3-3":   { Aanvallend:[[6,"CAM",-11]],            Verdedigend:[[6,"CDM",5]] },
+"4-4-2":   { Aanvallend:[[6,"CAM",-9,50]],          Verdedigend:[[6,"CDM",6,50]] },
+"4-2-3-1": { Aanvallend:[[6,"CAM",-15,62]],         Verdedigend:[[5,"CDM",4],[6,"CDM",4]] },
+"4-2-4":   { Aanvallend:[[6,"CAM",-9,50]],          Verdedigend:[[6,"CDM",6,50]] },
+"3-5-2":   { Aanvallend:[[6,"CAM",-12]],            Verdedigend:[[6,"CDM",5]] },
+"5-3-2":   { Aanvallend:[[7,"CAM",-12]],            Verdedigend:[[7,"CDM",5]] },
+"4-5-1":   { Aanvallend:[[7,"CAM",-12]],            Verdedigend:[[7,"CDM",5]] },
+"3-4-3":   { Aanvallend:[[5,"CAM",-11,50]],         Verdedigend:[[5,"CDM",6,50]] }
+};
+function getFormation(name, style){
+  const base = FORMATIONS_BASE[name].map(s => s.slice());
+  ((STYLE_RULES[name] || {})[style] || []).forEach(([i, code, dy, nx]) => {
+    base[i][0] = code;
+    if(nx != null) base[i][1] = nx;
+    base[i][2] = Math.max(8, Math.min(92, base[i][2] + (dy || 0)));
+  });
+  return base;
+}
+function curForm(){ return getFormation(formation, stijl); }
 const COMPAT = {
   GK:["GK"],
   RB:["RB"], LB:["LB"], RWB:["RB"], LWB:["LB"], CB:["CB"],
@@ -67,6 +90,7 @@ let teamName = "Mijn XI";
 let picks = Array(11).fill(null);
 let pickedCount = 0;
 let picked = new Set();
+let pickedNames = new Set();
 let rerolls = MAX_REROLLS;
 let currentClub = null;
 let currentSeason = null;
@@ -79,6 +103,7 @@ const $ = id => document.getElementById(id);
 const rnd = a => a[Math.floor(Math.random()*a.length)];
 const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
 const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const normName = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g," ").trim();
 const clubs = () => SEASONS[season];
 
 /* ================= taal / i18n ================= */
@@ -247,7 +272,7 @@ function buildOptions(containerId, items, current, onpick, label){
   });
 }
 function refreshSetup(){
-  buildOptions("formaties", Object.keys(FORMATIONS), formation, v => formation = v);
+  buildOptions("formaties", Object.keys(FORMATIONS_BASE), formation, v => formation = v);
   buildOptions("stijlen", STIJLEN, stijl, v => stijl = v, styleLabel);
   $("configline").textContent = formation + " \u00B7 " + styleLabel(stijl);
   drawPitchSlots();
@@ -267,14 +292,13 @@ function getTeamName(){
 /* ================= veld ================= */
 function drawPitchSlots(){
   document.querySelectorAll(".slot").forEach(e => e.remove());
-  // speelstijl verschuift de veldspelers: aanvallend hoger, verdedigend dieper
-  const shift = stijl === "Aanvallend" ? -4 : (stijl === "Verdedigend" ? 4 : 0);
-  FORMATIONS[formation].forEach((p,i) => {
+  // de speelstijl bepaalt de posities zelf (zie STYLE_RULES)
+  curForm().forEach((p,i) => {
     const d = document.createElement("div");
     d.className = "slot";
     d.id = "slot"+i;
     d.style.left = p[1] + "%";
-    d.style.top = (p[0] === "GK" ? p[2] : Math.max(8, Math.min(92, p[2] + shift))) + "%";
+    d.style.top = p[2] + "%";
     d.textContent = p[0];
     $("pitch").appendChild(d);
   });
@@ -290,7 +314,7 @@ function fillSlot(i, pick){
 function drawBoxScore(){
   const rows = $("bsrows");
   rows.innerHTML = "";
-  FORMATIONS[formation].forEach((p,i) => {
+  curForm().forEach((p,i) => {
     const pk = picks[i];
     const div = document.createElement("div");
     div.className = "bsrow" + (pk ? " filled" : "");
@@ -304,7 +328,8 @@ function drawBoxScore(){
 }
 function isDefSlot(slotPos){ return ["GK","CB","RB","LB","RWB","LWB","CDM"].includes(slotPos); }
 function ratings(){
-  const arr = picks.map((p,i) => p ? {p, slot: FORMATIONS[formation][i][0]} : null).filter(Boolean);
+  const F = curForm();
+  const arr = picks.map((p,i) => p ? {p, slot: F[i][0]} : null).filter(Boolean);
   const att = arr.filter(x => !isDefSlot(x.slot)).map(x => x.p);
   const def = arr.filter(x => isDefSlot(x.slot)).map(x => x.p);
   const avg = a => a.length ? a.reduce((s,p) => s + p.rating, 0) / a.length : 64;
@@ -327,17 +352,17 @@ function showTeamStats(){
 
 /* ================= draft ================= */
 function openSlotsFor(playerPos){
-  return FORMATIONS[formation].map((p,i) => ({pos: p[0], i}))
+  return curForm().map((p,i) => ({pos: p[0], i}))
     .filter(o => !picks[o.i] && COMPAT[o.pos].includes(playerPos));
 }
 function eligiblePlayers(s, club){
   return club.p.map((pl,i) => ({pl, i}))
-    .filter(o => !picked.has(s+"#"+club.n+"#"+o.i) && openSlotsFor(o.pl[1]).length > 0);
+    .filter(o => !picked.has(s+"#"+club.n+"#"+o.i) && !pickedNames.has(normName(o.pl[0])) && openSlotsFor(o.pl[1]).length > 0);
 }
 function startDraft(){
   phase = "draft";
   teamName = getTeamName();
-  picks = Array(11).fill(null); pickedCount = 0; picked = new Set(); replacedClub = null;
+  picks = Array(11).fill(null); pickedCount = 0; picked = new Set(); pickedNames = new Set(); replacedClub = null;
   rerolls = MAX_REROLLS;
   pendingPick = null; clearPlacement();
   clearInterval(revealTimer); clearInterval(tableTimer);
@@ -441,12 +466,12 @@ function showSquad(s, club){
   GROUPS.forEach(([label, poss]) => {
     const members = club.p.map((pl,i) => ({pl,i})).filter(o => poss.includes(o.pl[1]));
     if(!members.length) return;
-    const anyOpen = members.some(o => openSlotsFor(o.pl[1]).length > 0 && !picked.has(s+"#"+club.n+"#"+o.i));
+    const anyOpen = members.some(o => openSlotsFor(o.pl[1]).length > 0 && !picked.has(s+"#"+club.n+"#"+o.i) && !pickedNames.has(normName(o.pl[0])));
     const g = document.createElement("div");
     g.className = "sg";
     g.innerHTML = "<h3>" + grpLabel(label) + (anyOpen ? "" : " <span class='full'>\u00B7 " + t("closed") + "</span>") + "</h3>";
     members.forEach(o => {
-      const used = picked.has(s+"#"+club.n+"#"+o.i);
+      const used = picked.has(s+"#"+club.n+"#"+o.i) || pickedNames.has(normName(o.pl[0]));
       const fits = openSlotsFor(o.pl[1]).length > 0;
       const b = document.createElement("button");
       b.className = "pchoice";
@@ -485,6 +510,7 @@ function placeAt(slotIdx){
   pendingPick = null;
   clearPlacement();
   picked.add(s+"#"+club.n+"#"+idx);
+  pickedNames.add(normName(pl[0]));
   picks[slotIdx] = { pos: pl[1], name: pl[0], rating: pl[2], clubN: club.n, clubA: club.a, season: s };
   fillSlot(slotIdx, picks[slotIdx]);
   pickedCount++;
@@ -805,7 +831,7 @@ function pushHistory(me, myPos){
     team: teamName, season, formation, stijl,
     pos: myPos, rec: me.w + "–" + me.d + "–" + me.l, pts: me.pts,
     rating: Math.round(ratings().tot * 10) / 10,
-    xi: picks.map((p, i) => ({ slot: FORMATIONS[formation][i][0], name: p.name, clubA: p.clubA, season: p.season, rating: p.rating }))
+    xi: picks.map((p, i) => ({ slot: curForm()[i][0], name: p.name, clubA: p.clubA, season: p.season, rating: p.rating }))
   });
   if(h.length > 10) h.length = 10;
   try { localStorage.setItem(HKEY, JSON.stringify(h)); } catch(e){}
@@ -854,7 +880,7 @@ function fallbackCopy(txt, done){
 function resetAll(){
   clearInterval(spinTimer); clearInterval(revealTimer); clearInterval(tableTimer);
   phase = "setup";
-  picks = Array(11).fill(null); pickedCount = 0; picked = new Set();
+  picks = Array(11).fill(null); pickedCount = 0; picked = new Set(); pickedNames = new Set();
   rerolls = MAX_REROLLS;
   pendingPick = null; clearPlacement();
   setLocked(false);
