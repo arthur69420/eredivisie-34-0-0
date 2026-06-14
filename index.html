@@ -27,10 +27,24 @@
     <p class="eyebrow" id="configline">—</p>
     <p class="eyebrow" id="phaseline"></p>
   </div>
+  <button class="mutebtn" id="helpbtn" data-i18n-title="help_title">?</button>
   <button class="mutebtn" id="langbtn" title="Language">EN</button>
   <button class="mutebtn" id="dbbtn" data-i18n-title="db_title">&#128203;</button>
   <button class="mutebtn" id="mutebtn" data-i18n-title="sound_title">&#128266;</button>
 </header>
+
+<!-- uitleg -->
+<div class="dbmodal" id="helpmodal">
+  <div class="dbcard helpcard">
+    <div class="dbhead">
+      <div class="dbtitle">
+        <h2 class="disp" data-i18n="help_heading">Hoe werkt het?</h2>
+      </div>
+      <button class="smallbtn" id="helpclose" data-i18n="close">Sluiten &#10005;</button>
+    </div>
+    <div class="helpbody" id="helpbody"></div>
+  </div>
+</div>
 
 <!-- databaseviewer -->
 <div class="dbmodal" id="dbmodal">
@@ -41,6 +55,7 @@
         <p class="eyebrow" id="dbstats">&mdash;</p>
       </div>
       <input type="text" id="dbsearch" data-i18n-ph="db_search" placeholder="Zoek speler in alle seizoenen..." autocomplete="off">
+      <select id="dbclubsel"></select>
       <select id="dbseason"></select>
       <button class="smallbtn" id="dbclose" data-i18n="close">Sluiten &#10005;</button>
     </div>

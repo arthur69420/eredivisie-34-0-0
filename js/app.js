@@ -48,13 +48,10 @@ function clubDot(abbr){
   return '<i class="clubdot" style="background:'+c[0]+';box-shadow:inset 0 -3px 0 '+c[1]+'"></i>';
 }
 
-/* ================= data voorbereiden ================= */
-const PAD_REQ = [["GK",1],["RB",1],["CB",2],["LB",1],["CM",2],["LW",1],["RW",1],["ST",1]];
+/* ================= data voorbereiden =================
+   Geen jeugdspeler-opvulling meer: clubs gebruiken hun echte selectie.
+   Niet elke club hoeft elke positie te hebben. */
 Object.values(SEASONS).forEach(clubsArr => clubsArr.forEach(c => {
-  PAD_REQ.forEach(([pos, n]) => {
-    const have = c.p.filter(pl => pl[1] === pos).length;
-    for(let k = have; k < n; k++) c.p.push(["Jeugdspeler ("+c.a+")", pos, 65]);
-  });
   const avg = arr => arr.length ? arr.reduce((s,pl) => s + pl[2], 0) / arr.length : 64;
   c.s   = avg(c.p);
   c.att = avg(c.p.filter(pl => ATTPOS.includes(pl[1])));
@@ -117,7 +114,14 @@ const I18N = {
     rec_best:"Beste record", rec_finish:"Beste eindpositie",
     new_badge:" 🏅 Nieuwe badge: ", copied:"Gekopieerd!",
     no_history:"Nog geen seizoenen gespeeld.",
-    missing:"mist", complete:"compleet", players:"spelers",
+    missing:"mist", complete:"compleet", incomplete:"onvolledig", players:"spelers",
+    all_seasons:"Alle seizoenen", all_clubs:"Alle clubs", help_title:"Uitleg",
+    help_heading:"Hoe werkt het?",
+    help_html:"<p><b>Doel:</b> stel een elftal samen en jaag op het perfecte seizoen: 34 gewonnen, 0 gelijk, 0 verloren — <b>34–0–0</b>.</p>"
+      + "<p><b>1. Instellen.</b> Kies een teamnaam, formatie en speelstijl. De speelstijl (verdedigend / gebalanceerd / aanvallend) verschuift je linies op het veld én weegt mee in de uitslagen.</p>"
+      + "<p><b>2. Draften.</b> 11 rondes lang rol je een willekeurige club uit een willekeurig seizoen (2010/11–2025/26). Kies een speler uit die selectie en zet hem zelf op een oplichtende, passende positie. Maximaal 3 rerolls per draft.</p>"
+      + "<p><b>3. Simuleren.</b> Je elftal speelt een volledig seizoen van 34 wedstrijden tegen de 18 clubs van een geloot seizoen. De ratings bepalen de kansen; daarna volgt de eindstand.</p>"
+      + "<p><b>Records &amp; badges</b> worden lokaal bewaard. Met <b>\u{1F4CB}</b> bekijk je de spelersdatabase, met de <b>taalknop</b> wissel je tussen Nederlands en Engels, en met <b>\u{1F50A}</b> zet je het geluid aan/uit.</p>",
     res1:"resultaat", resN:"resultaten", in_all:"in alle seizoenen",
     demo_note:" (Demo — telt niet mee voor je records.)", demo_tag:" · DEMO",
     round_of:n=>"Ronde "+n+" van 11", season_label:s=>"Seizoen "+s,
@@ -167,7 +171,14 @@ const I18N = {
     rec_best:"Best record", rec_finish:"Best finish",
     new_badge:" 🏅 New badge: ", copied:"Copied!",
     no_history:"No seasons played yet.",
-    missing:"missing", complete:"complete", players:"players",
+    missing:"missing", complete:"complete", incomplete:"incomplete", players:"players",
+    all_seasons:"All seasons", all_clubs:"All clubs", help_title:"How to play",
+    help_heading:"How does it work?",
+    help_html:"<p><b>Goal:</b> build an XI and chase the perfect season: 34 won, 0 drawn, 0 lost — <b>34–0–0</b>.</p>"
+      + "<p><b>1. Set up.</b> Pick a team name, formation and play style. The play style (defensive / balanced / attacking) shifts your lines on the pitch and weighs into the results.</p>"
+      + "<p><b>2. Draft.</b> For 11 rounds you roll a random club from a random season (2010/11–2025/26). Pick a player from that squad and place him on a highlighted, matching position. Max 3 rerolls per draft.</p>"
+      + "<p><b>3. Simulate.</b> Your XI plays a full 34-match season against the 18 clubs of a drawn season. Ratings drive the odds; then comes the final table.</p>"
+      + "<p><b>Records &amp; badges</b> are stored locally. Use <b>\u{1F4CB}</b> for the player database, the <b>language button</b> to switch between Dutch and English, and <b>\u{1F50A}</b> to toggle sound.</p>",
     res1:"result", resN:"results", in_all:"across all seasons",
     demo_note:" (Demo — does not count towards your records.)", demo_tag:" · DEMO",
     round_of:n=>"Round "+n+" of 11", season_label:s=>"Season "+s,
@@ -210,8 +221,11 @@ function applyLang(){
   refreshSetup();
   setPhaseUI();
   renderRecords();
+  if($("dbseason") && $("dbseason").options.length) $("dbseason").options[0].textContent = t("all_seasons");
+  if($("dbclubsel") && $("dbclubsel").options.length) $("dbclubsel").options[0].textContent = t("all_clubs");
   if($("dbmodal").classList.contains("show")) refreshDb();
   if($("histmodal").classList.contains("show")) renderHistory();
+  if($("helpmodal").classList.contains("show")) $("helpbody").innerHTML = t("help_html");
 }
 
 /* ================= setup UI ================= */
@@ -874,51 +888,56 @@ $("mutebtn").onclick = () => {
 };
 
 /* ================= databaseviewer ================= */
-const DB_REQ = [["GK",1],["RB",1],["CB",2],["LB",1],["CM",2],["LW",1],["RW",1],["ST",1]];
+const MIN_SQUAD = 11; // genoeg echte spelers voor een basiself = compleet
 const POSORDER = ["GK","RB","CB","LB","DM","CM","AM","LW","RW","ST"];
 const isJeugd = pl => String(pl[0]).indexOf("Jeugdspeler") === 0;
-function dbMissing(realP){
-  const cnt = {};
-  realP.forEach(pl => { cnt[pl[1]] = (cnt[pl[1]] || 0) + 1; });
-  const mis = [];
-  DB_REQ.forEach(([pos, n]) => {
-    const t = n - (cnt[pos] || 0);
-    if(t > 0) mis.push(t > 1 ? t + "× " + pos : pos);
-  });
-  return mis;
+function clubCardHTML(c, seasonLabel){
+  const real = c.p.filter(pl => !isJeugd(pl));
+  const ok = real.length >= MIN_SQUAD;
+  const rows = real.slice()
+    .sort((a, b) => POSORDER.indexOf(a[1]) - POSORDER.indexOf(b[1]) || b[2] - a[2])
+    .map(pl => "<div class='dbrow'><span class='p'>" + pl[1] + "</span><span class='n'>" + esc(pl[0]) + "</span><span class='r'>" + pl[2] + "</span></div>")
+    .join("");
+  const html = "<div class='dbclub" + (ok ? " done" : "") + "'><div class='dbclubhead'>" + shirtSVG(c.a, 34)
+    + "<div class='dbclubinfo'><div class='dbname'>" + esc(c.n) + (seasonLabel ? " <span class='dbcs'>" + seasonLabel + "</span>" : "") + "</div>"
+    + "<div class='dbmeta'>" + real.length + " " + t("players") + " · "
+    + (ok ? "<span class='ok'>" + t("complete") + "</span>" : "<span class='mis'>" + t("incomplete") + "</span>")
+    + "</div></div></div>" + rows + "</div>";
+  return { ok, n: real.length, html };
 }
-function renderDb(s){
-  const grid = $("dbgrid");
-  grid.innerHTML = "";
-  let compleet = 0, totaal = 0;
-  SEASONS[s].forEach(c => {
-    const real = c.p.filter(pl => !isJeugd(pl));
-    const mis = dbMissing(real);
-    if(!mis.length) compleet++;
-    totaal += real.length;
-    const rows = real.slice()
-      .sort((a, b) => POSORDER.indexOf(a[1]) - POSORDER.indexOf(b[1]) || b[2] - a[2])
-      .map(pl => "<div class='dbrow'><span class='p'>" + pl[1] + "</span><span class='n'>" + esc(pl[0]) + "</span><span class='r'>" + pl[2] + "</span></div>")
-      .join("");
-    const card = document.createElement("div");
-    card.className = "dbclub" + (mis.length ? "" : " done");
-    card.innerHTML = "<div class='dbclubhead'>" + shirtSVG(c.a, 34)
-      + "<div class='dbclubinfo'><div class='dbname'>" + esc(c.n) + "</div>"
-      + "<div class='dbmeta'>" + real.length + " " + t("players") + " · "
-      + (mis.length ? "<span class='mis'>" + t("missing") + " " + mis.join(", ") + "</span>" : "<span class='ok'>" + t("complete") + "</span>")
-      + "</div></div></div>" + rows;
-    grid.appendChild(card);
+function renderDb(){
+  const fc = $("dbclubsel").value;   // "" = alle clubs
+  const fseason = $("dbseason").value; // "" = alle seizoenen
+  const seasons = fseason ? [fseason] : Object.keys(SEASONS).slice().reverse();
+  const showDivider = !fc && !fseason;
+  const showSeasonInCard = fc && !fseason;
+  let html = "", compleet = 0, totaal = 0, clubs = 0;
+  seasons.forEach(s => {
+    const inSeason = SEASONS[s].filter(c => !fc || c.n === fc);
+    if(!inSeason.length) return;
+    if(showDivider) html += "<div class='dbdiv'>" + s + "</div>";
+    inSeason.forEach(c => {
+      const r = clubCardHTML(c, showSeasonInCard ? s : "");
+      if(r.ok) compleet++;
+      totaal += r.n; clubs++;
+      html += r.html;
+    });
   });
-  $("dbstats").textContent = s + " · " + t("db_stats", compleet, SEASONS[s].length, totaal);
+  $("dbgrid").innerHTML = html;
+  const label = (fc || t("all_clubs")) + " · " + (fseason || t("all_seasons"));
+  $("dbstats").textContent = label + " · " + t("db_stats", compleet, clubs, totaal);
 }
 (function initDb(){
-  const sel = $("dbseason");
-  Object.keys(SEASONS).slice().reverse().forEach(s => {
-    const o = document.createElement("option");
-    o.value = s; o.textContent = s;
-    sel.appendChild(o);
-  });
-  sel.onchange = () => { $("dbsearch").value = ""; renderDb(sel.value); };
+  const allClubs = [...new Set(Object.values(SEASONS).flatMap(arr => arr.map(c => c.n)))].sort();
+  const sel = $("dbseason"), csel = $("dbclubsel");
+  const opt = (v, txt) => { const o = document.createElement("option"); o.value = v; o.textContent = txt; return o; };
+  sel.appendChild(opt("", t("all_seasons")));
+  Object.keys(SEASONS).slice().reverse().forEach(s => sel.appendChild(opt(s, s)));
+  csel.appendChild(opt("", t("all_clubs")));
+  allClubs.forEach(n => csel.appendChild(opt(n, n)));
+  const onFilter = () => { $("dbsearch").value = ""; renderDb(); };
+  sel.onchange = onFilter;
+  csel.onchange = onFilter;
 })();
 function renderDbSearch(q){
   const hits = [];
@@ -926,21 +945,15 @@ function renderDbSearch(q){
     if(!isJeugd(pl) && pl[0].toLowerCase().includes(q)) hits.push({ s, c, pl });
   })));
   hits.sort((a, b) => a.pl[0].localeCompare(b.pl[0]) || a.s.localeCompare(b.s));
-  const grid = $("dbgrid");
-  grid.innerHTML = "";
   $("dbstats").textContent = hits.length + " " + (hits.length === 1 ? t("res1") : t("resN")) + " " + t("in_all");
-  if(!hits.length) return;
-  const card = document.createElement("div");
-  card.className = "dbclub dbsearchresults";
-  card.innerHTML = hits.slice(0, 250).map(h =>
+  $("dbgrid").innerHTML = hits.length ? "<div class='dbclub dbsearchresults'>" + hits.slice(0, 250).map(h =>
     "<div class='dbrow'><span class='p'>" + h.pl[1] + "</span><span class='n'>" + esc(h.pl[0]) + "</span><span class='c'>" + h.c.a + "</span><span class='s'>" + h.s + "</span><span class='r'>" + h.pl[2] + "</span></div>"
-  ).join("");
-  grid.appendChild(card);
+  ).join("") + "</div>" : "";
 }
 function refreshDb(){
   const q = $("dbsearch").value.trim().toLowerCase();
   if(q.length >= 2) renderDbSearch(q);
-  else renderDb($("dbseason").value);
+  else renderDb();
 }
 $("dbsearch").oninput = refreshDb;
 function closeDb(){ $("dbmodal").classList.remove("show"); }
@@ -951,7 +964,11 @@ function closeHist(){ $("histmodal").classList.remove("show"); }
 $("histbtn").onclick = () => { $("histmodal").classList.add("show"); renderHistory(); };
 $("histclose").onclick = closeHist;
 $("histmodal").onclick = e => { if(e.target === $("histmodal")) closeHist(); };
-document.addEventListener("keydown", e => { if(e.key === "Escape"){ closeDb(); closeHist(); } });
+function closeHelp(){ $("helpmodal").classList.remove("show"); }
+$("helpbtn").onclick = () => { $("helpbody").innerHTML = t("help_html"); $("helpmodal").classList.add("show"); };
+$("helpclose").onclick = closeHelp;
+$("helpmodal").onclick = e => { if(e.target === $("helpmodal")) closeHelp(); };
+document.addEventListener("keydown", e => { if(e.key === "Escape"){ closeDb(); closeHist(); closeHelp(); } });
 
 applyLang();
 if("serviceWorker" in navigator && location.protocol !== "file:")

@@ -38,7 +38,7 @@ Zelf hosten kan natuurlijk ook (Nginx-container op een NAS, of elke andere stati
 
 ## Database
 
-`js/data.js` bevat de selecties per seizoen: de juiste 18 clubs per jaargang met spelers per positie (`GK RB CB LB DM CM AM LW RW ST`) en een rating. De seizoenen 2012/13 t/m 2025/26 zijn aangevuld met echte selecties uit de [transfermarkt-datasets](https://github.com/dcaribou/transfermarkt-datasets); ratings van aangevulde spelers zijn afgeleid uit hun marktwaarde rond dat seizoen. 2010/11 en 2011/12 zitten niet in die dataset en zijn handmatig gecureerd. Ontbrekende posities vult het spel automatisch aan met jeugdspelers.
+`js/data.js` bevat de selecties per seizoen: de juiste 18 clubs per jaargang met spelers per positie (`GK RB CB LB DM CM AM LW RW ST`) en een rating. De seizoenen 2012/13 t/m 2025/26 zijn aangevuld met echte selecties uit de [transfermarkt-datasets](https://github.com/dcaribou/transfermarkt-datasets); ratings van aangevulde spelers zijn afgeleid uit hun marktwaarde rond dat seizoen. 2010/11 en 2011/12 zitten niet in die dataset en zijn uit geplakte Transfermarkt-kaders opgebouwd. Elke club gebruikt zijn echte selectie (cap 18); een club telt als compleet bij minimaal 11 spelers en hoeft niet elke positie gevuld te hebben.
 
 ### Database (her)opbouwen
 
