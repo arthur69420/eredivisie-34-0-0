@@ -45,25 +45,82 @@ const GROUPS = [["Keeper",["GK"]],["Verdediging",["RB","CB","LB"]],["Middenveld"
 const STIJLEN = ["Verdedigend","Gebalanceerd","Aanvallend"];
 const ATTPOS = ["AM","LW","RW","ST"], DEFPOS = ["GK","RB","CB","LB","DM"];
 const MAX_REROLLS = 3;
-const CLUBCOLORS = {
-  AJA:["#FFFFFF","#D2122E"], PSV:["#ED1C24","#FFFFFF"], FEY:["#E60000","#FFFFFF"],
-  AZ:["#DD0000","#FFFFFF"], TWE:["#E2001A","#FFFFFF"], UTR:["#E30613","#FFFFFF"],
-  HEE:["#1D5BA4","#FFFFFF"], GRO:["#009B58","#FFFFFF"], ROD:["#FFD400","#1A1A1A"],
-  NAC:["#FFD700","#1A1A1A"], ADO:["#F9E300","#006A38"], HER:["#1A1A1A","#FFFFFF"],
-  NEC:["#C8102E","#006837"], VIT:["#FFDD00","#1A1A1A"], VVV:["#FFE100","#1A1A1A"],
-  EXC:["#E30613","#1A1A1A"], GRA:["#0053A0","#FFFFFF"], WIL:["#E30613","#1D4F9F"],
-  RKC:["#FFD500","#004A99"], PEC:["#0069B4","#FFFFFF"], CAM:["#FFDD00","#003C7D"],
-  GAE:["#D50032","#FFD700"], DOR:["#FFFFFF","#007A3D"], SPA:["#E30613","#FFFFFF"],
-  FOR:["#F9D616","#007A53"], EMM:["#E30613","#FFFFFF"], VOL:["#F36C21","#1A1A1A"],
-  ALM:["#D50000","#1A1A1A"], TEL:["#FFFFFF","#0095D8"]
+/* Per club een vereenvoudigd thuisshirt: patroon + kleuren, afgeleid van
+   echte shirts (zie /shirts). p = patroon, c = kleuren (c[0] = basis). */
+const KITS = {
+  AJA:{p:"band",    c:["#FFFFFF","#C8102E"]},
+  PSV:{p:"stripes", c:["#FFFFFF","#ED1C24"]},
+  FEY:{p:"halves",  c:["#E2001A","#FFFFFF"]},
+  AZ: {p:"sleeves", c:["#DD0000","#FFFFFF"]},
+  TWE:{p:"solid",   c:["#E2001A","#FFFFFF"]},
+  UTR:{p:"diagonal",c:["#FFFFFF","#FB4F14"]},
+  HEE:{p:"stripes", c:["#FFFFFF","#1D5BA4"]},
+  GRO:{p:"stripes", c:["#FFFFFF","#0A8A4F"]},
+  VIT:{p:"stripes", c:["#FFD200","#1A1A1A"]},
+  ROD:{p:"solid",   c:["#FFD400","#1A1A1A"]},
+  NAC:{p:"sash",    c:["#FFD200","#1A1A1A"]},
+  ADO:{p:"stripes", c:["#F4D000","#0A7A3D"]},
+  HER:{p:"stripes", c:["#FFFFFF","#1A1A1A"]},
+  NEC:{p:"halves",  c:["#E2001A","#00803D"]},
+  VVV:{p:"solid",   c:["#FFE100","#1A1A1A"]},
+  EXC:{p:"solid",   c:["#1A1A1A","#E30613"]},
+  GRA:{p:"hoops",   c:["#FFFFFF","#1A4F9F"]},
+  WIL:{p:"stripes3",c:["#FFFFFF","#E30613","#16285A"]},
+  RKC:{p:"stripes", c:["#FFD500","#0066B3"]},
+  PEC:{p:"hoops",   c:["#FFFFFF","#1C6FC0"]},
+  CAM:{p:"sleeves", c:["#FFDD00","#1A2C7B"]},
+  GAE:{p:"band",    c:["#E2001A","#FFD200"]},
+  DOR:{p:"band",    c:["#FFFFFF","#0A7A3D"]},
+  SPA:{p:"stripes", c:["#FFFFFF","#E30613"]},
+  FOR:{p:"sleeves", c:["#F4D616","#1B6A3C"]},
+  EMM:{p:"band",    c:["#E30613","#FFFFFF"]},
+  VOL:{p:"solid",   c:["#F36C21","#1A1A1A"]},
+  ALM:{p:"solid",   c:["#D50000","#1A1A1A"]},
+  TEL:{p:"solid",   c:["#FFFFFF","#0095D8"]}
 };
-function clubColors(abbr){ return CLUBCOLORS[abbr] || ["#16285A","#FFFFFF"]; }
+function clubKit(abbr){ return KITS[abbr] || {p:"band", c:["#16285A","#FFFFFF"]}; }
+function clubColors(abbr){ const c = clubKit(abbr).c; return [c[0], c[1]||c[0]]; }
+
+let _kitSeq = 0;
 function shirtSVG(abbr, size){
-  const c = clubColors(abbr);
+  const k = clubKit(abbr), c = k.c;
+  const id = "kit"+(_kitSeq++);
+  const BODY = "M13 1 L2 7 L6.5 15 L10.5 12.5 L10.5 34 L29.5 34 L29.5 12.5 L33.5 15 L38 7 L27 1 Q20 6.5 13 1 Z";
+  const SLV_L = "M13 1 L2 7 L6.5 15 L10.5 12.5 Z";
+  const SLV_R = "M27 1 L38 7 L33.5 15 L29.5 12.5 Z";
+  let inner = '<rect x="0" y="0" width="40" height="36" fill="'+c[0]+'"/>';
+  switch(k.p){
+    case "sleeves":
+      inner += '<path d="'+SLV_L+'" fill="'+c[1]+'"/><path d="'+SLV_R+'" fill="'+c[1]+'"/>';
+      break;
+    case "band":
+      inner += '<rect x="15.5" y="0" width="9" height="36" fill="'+c[1]+'"/>';
+      break;
+    case "halves":
+      inner += '<rect x="20" y="0" width="20" height="36" fill="'+c[1]+'"/>';
+      break;
+    case "stripes":
+      inner += [4,11,18,25,32].map(x=>'<rect x="'+x+'" y="0" width="3.4" height="36" fill="'+c[1]+'"/>').join("");
+      break;
+    case "stripes3":
+      inner += [[4,1],[11,2],[18,1],[25,2],[32,1]].map(s=>'<rect x="'+s[0]+'" y="0" width="3.4" height="36" fill="'+c[s[1]]+'"/>').join("");
+      break;
+    case "hoops":
+      inner += [5,12,19,26,33].map(y=>'<rect x="0" y="'+y+'" width="40" height="3.6" fill="'+c[1]+'"/>').join("");
+      break;
+    case "sash":
+      inner += '<rect x="-8" y="13.5" width="56" height="7" fill="'+c[1]+'" transform="rotate(33 20 18)"/>';
+      break;
+    case "diagonal":
+      inner += '<polygon points="0,2 27,36 0,36" fill="'+c[1]+'"/>';
+      break;
+    /* solid: alleen de basiskleur */
+  }
   return '<svg class="shirt" width="'+size+'" height="'+Math.round(size*0.9)+'" viewBox="0 0 40 36" aria-hidden="true">'
-    + '<path d="M13 1 L2 7 L6.5 15 L10.5 12.5 L10.5 34 L29.5 34 L29.5 12.5 L33.5 15 L38 7 L27 1 Q20 6.5 13 1 Z" fill="'+c[0]+'" stroke="rgba(0,0,0,.45)" stroke-width="1.2"/>'
-    + '<path d="M16 6.8 H24 V33 H16 Z" fill="'+c[1]+'"/>'
-    + '<path d="M13 1 Q20 6.5 27 1 L25.3 2.2 Q20 6 14.7 2.2 Z" fill="rgba(0,0,0,.35)"/>'
+    + '<defs><clipPath id="'+id+'"><path d="'+BODY+'"/></clipPath></defs>'
+    + '<g clip-path="url(#'+id+')">'+inner+'</g>'
+    + '<path d="'+BODY+'" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="1.2"/>'
+    + '<path d="M13 1 Q20 6.5 27 1 L25.3 2.2 Q20 6 14.7 2.2 Z" fill="rgba(0,0,0,.30)"/>'
     + '</svg>';
 }
 function clubDot(abbr){
