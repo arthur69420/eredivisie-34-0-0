@@ -589,3 +589,15 @@ button{touch-action:manipulation}
   .statgrid{grid-template-columns:repeat(3,1fr)}
   .stat .v{font-size:26px}
 }
+
+/* ---------- scrollbars ---------- */
+*{scrollbar-width:thin;scrollbar-color:var(--navy-3) var(--navy-2)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--navy-2)}
+::-webkit-scrollbar-thumb{
+  background:var(--navy-3);
+  border:2px solid var(--navy-2);
+  border-radius:6px;
+}
+::-webkit-scrollbar-thumb:hover{background:var(--red)}
+::-webkit-scrollbar-corner{background:var(--navy-2)}

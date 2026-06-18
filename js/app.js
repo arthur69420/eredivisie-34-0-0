@@ -76,7 +76,7 @@ const KITS = {
   EMM:{p:"band",    c:["#E30613","#FFFFFF"]},
   VOL:{p:"solid",   c:["#F36C21","#1A1A1A"]},
   ALM:{p:"solid",   c:["#D50000","#1A1A1A"]},
-  TEL:{p:"solid",   c:["#FFFFFF","#0095D8"]}
+  TEL:{p:"telstar", c:["#FFFFFF","#E40428","#0095D8"]}
 };
 function clubKit(abbr){ return KITS[abbr] || {p:"band", c:["#16285A","#FFFFFF"]}; }
 function clubColors(abbr){ const c = clubKit(abbr).c; return [c[0], c[1]||c[0]]; }
@@ -88,6 +88,11 @@ function shirtSVG(abbr, size){
   const BODY = "M13 1 L2 7 L6.5 15 L10.5 12.5 L10.5 34 L29.5 34 L29.5 12.5 L33.5 15 L38 7 L27 1 Q20 6.5 13 1 Z";
   const SLV_L = "M13 1 L2 7 L6.5 15 L10.5 12.5 Z";
   const SLV_R = "M27 1 L38 7 L33.5 15 L29.5 12.5 Z";
+  // accenten (kraag, mouwuiteinden, onderrand) in kleur t
+  const trim = t => '<path d="M13 1 Q20 6.5 27 1" fill="none" stroke="'+t+'" stroke-width="1.7"/>'
+    + '<line x1="2" y1="7" x2="6.5" y2="15" stroke="'+t+'" stroke-width="2.2"/>'
+    + '<line x1="38" y1="7" x2="33.5" y2="15" stroke="'+t+'" stroke-width="2.2"/>'
+    + '<rect x="10.5" y="32.1" width="19" height="2" fill="'+t+'"/>';
   let inner = '<rect x="0" y="0" width="40" height="36" fill="'+c[0]+'"/>';
   switch(k.p){
     case "sleeves":
@@ -112,15 +117,25 @@ function shirtSVG(abbr, size){
       inner += '<rect x="-8" y="13.5" width="56" height="7" fill="'+c[1]+'" transform="rotate(33 20 18)"/>';
       break;
     case "diagonal":
-      inner += '<polygon points="0,2 27,36 0,36" fill="'+c[1]+'"/>';
+      inner += '<polygon points="0,2 38,36 0,36" fill="'+c[1]+'"/>';
       break;
-    /* solid: alleen de basiskleur */
+    case "solid":
+      if(c[1]) inner += trim(c[1]);
+      break;
+    case "telstar": // ene kant rood, andere kant blauw
+      inner += '<path d="M13 1 Q16.5 4 20 4.4" fill="none" stroke="'+c[1]+'" stroke-width="1.7"/>'
+        + '<path d="M20 4.4 Q23.5 4 27 1" fill="none" stroke="'+c[2]+'" stroke-width="1.7"/>'
+        + '<line x1="2" y1="7" x2="6.5" y2="15" stroke="'+c[1]+'" stroke-width="2.2"/>'
+        + '<line x1="38" y1="7" x2="33.5" y2="15" stroke="'+c[2]+'" stroke-width="2.2"/>'
+        + '<rect x="10.5" y="32.1" width="9.5" height="2" fill="'+c[1]+'"/>'
+        + '<rect x="20" y="32.1" width="9.5" height="2" fill="'+c[2]+'"/>';
+      break;
   }
   return '<svg class="shirt" width="'+size+'" height="'+Math.round(size*0.9)+'" viewBox="0 0 40 36" aria-hidden="true">'
     + '<defs><clipPath id="'+id+'"><path d="'+BODY+'"/></clipPath></defs>'
     + '<g clip-path="url(#'+id+')">'+inner+'</g>'
     + '<path d="'+BODY+'" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="1.2"/>'
-    + '<path d="M13 1 Q20 6.5 27 1 L25.3 2.2 Q20 6 14.7 2.2 Z" fill="rgba(0,0,0,.30)"/>'
+    + '<path d="M13 1 Q20 6.5 27 1 L25.3 2.2 Q20 6 14.7 2.2 Z" fill="rgba(0,0,0,.18)"/>'
     + '</svg>';
 }
 function clubDot(abbr){
