@@ -219,6 +219,8 @@ const I18N = {
     sandbox_pick:"Kies een speler", sandbox_search:"Zoek een speler...",
     sandbox_note:"Kies een speler uit elk seizoen voor een open positie.",
     sandbox_toggle:"Sandbox: kies zelf je elftal",
+    sandbox_demo:" (Sandbox — telt niet mee voor je records.)",
+    shared_season:"Gedeeld seizoen · zoals gesimuleerd",
     share_link:"Kopieer link",
     groups:{Keeper:"Keeper",Verdediging:"Verdediging",Middenveld:"Middenveld",Aanval:"Aanval"},
     pos:{GK:"Keeper",RB:"Rechtsback",LB:"Linksback",CB:"Centrale verdediger",DM:"Verdedigende middenvelder",CM:"Middenvelder",AM:"Aanvallende middenvelder",LW:"Linksbuiten",RW:"Rechtsbuiten",ST:"Spits"},
@@ -289,6 +291,8 @@ const I18N = {
     sandbox_pick:"Pick a player", sandbox_search:"Search a player...",
     sandbox_note:"Pick any player from any season for an open position.",
     sandbox_toggle:"Sandbox: pick your own XI",
+    sandbox_demo:" (Sandbox — does not count towards your records.)",
+    shared_season:"Shared season · as simulated",
     share_link:"Copy link",
     groups:{Keeper:"Goalkeeper",Verdediging:"Defense",Middenveld:"Midfield",Aanval:"Attack"},
     pos:{GK:"Goalkeeper",RB:"Right-back",LB:"Left-back",CB:"Centre-back",DM:"Defensive midfielder",CM:"Midfielder",AM:"Attacking midfielder",LW:"Left winger",RW:"Right winger",ST:"Striker"},
@@ -758,6 +762,7 @@ function playMatch(h, a, mods){
 function simulate(rig){
   phase = "season";
   if(rig) disarmRig();
+  $("simbtn").classList.remove("show");
   phaseKey = "phase_season"; hintKey = "ready_hint"; hintArg = teamName;
   $("phaseline").textContent = t("phase_season") + (rig ? " · " + t("demo") : "");
   season = draftSeasons.length ? rnd(draftSeasons) : rnd(Object.keys(SEASONS));
@@ -890,9 +895,13 @@ function showFinale(teams, me, myPos, rig){
   $("sharecard").style.display = rig ? "none" : "";
   if(!rig){
     lastMe = me; lastPos = myPos;
-    const nieuweBadges = updateRecords(me, myPos);
-    pushHistory(me, myPos);
-    if(nieuweBadges.length) $("verdicttxt").textContent += t("new_badge") + nieuweBadges.join(" · ");
+    if(sandbox){
+      $("verdicttxt").textContent += t("sandbox_demo");
+    } else {
+      const nieuweBadges = updateRecords(me, myPos);
+      pushHistory(me, myPos);
+      if(nieuweBadges.length) $("verdicttxt").textContent += t("new_badge") + nieuweBadges.join(" · ");
+    }
     drawShareCard();
   }
   if(perfect){
@@ -1169,13 +1178,21 @@ function _drawShareCard(){
     ctx.fillStyle = NAVY2; ctx.fillRect(x, ly - 32, colW, 42);
     ctx.fillStyle = MUT; ctx.font = "600 20px 'IBM Plex Mono', monospace";
     ctx.fillText((F[i] ? F[i][0] : pk.pos).padEnd(3), x + 10, ly);
-    ctx.fillStyle = WHITE; ctx.font = "600 25px Inter, sans-serif";
+    // rating (rechts, opvallend)
+    const rt = String(pk.rating);
+    ctx.textAlign = "right"; ctx.font = "700 23px 'IBM Plex Mono', monospace"; ctx.fillStyle = WHITE;
+    ctx.fillText(rt, x + colW - 10, ly);
+    const rtW = ctx.measureText(rt).width;
+    // club (links van de rating)
     const club = pk.clubA + " " + String(pk.season).slice(2);
-    ctx.textAlign = "right"; ctx.fillStyle = MUT; ctx.font = "500 19px 'IBM Plex Mono', monospace";
-    ctx.fillText(club, x + colW - 10, ly);
+    ctx.font = "500 18px 'IBM Plex Mono', monospace"; ctx.fillStyle = MUT;
+    const clubX = x + colW - 10 - rtW - 14;
+    ctx.fillText(club, clubX, ly);
     const clubW = ctx.measureText(club).width;
-    ctx.textAlign = "left"; ctx.fillStyle = WHITE; ctx.font = "600 25px Inter, sans-serif";
-    ctx.fillText(clipText(ctx, pk.name, colW - 78 - clubW - 16), x + 64, ly);
+    // naam (links, geclipt)
+    ctx.textAlign = "left"; ctx.fillStyle = WHITE; ctx.font = "600 24px Inter, sans-serif";
+    const nameMax = (clubX - clubW) - (x + 62) - 12;
+    ctx.fillText(clipText(ctx, pk.name, Math.max(40, nameMax)), x + 62, ly);
   }
   // footer
   ctx.textAlign = "left"; ctx.fillStyle = MUT; ctx.font = "500 22px 'IBM Plex Mono', monospace";
@@ -1215,38 +1232,73 @@ function savePng(){
 function b64e(s){ return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
 function b64d(s){ s = s.replace(/-/g, "+").replace(/_/g, "/"); return decodeURIComponent(escape(atob(s))); }
 function teamCode(){
-  const data = { tn: teamName, f: formation, st: stijl, hc: hardcore ? 1 : 0,
-    p: picks.map(pk => pk ? [pk.pos, pk.name, pk.rating, pk.clubN, pk.clubA, pk.season] : 0) };
+  if(!lastMe || !lastTeams || !lastOrder) return "";
+  const data = {
+    tn: teamName, f: formation, st: stijl, hc: hardcore ? 1 : 0, sea: season, pos: lastPos,
+    me: [lastMe.w, lastMe.d, lastMe.l, lastMe.gf, lastMe.ga, lastMe.pts],
+    ord: lastOrder.map(x => [x.opp.a, x.home ? 1 : 0, x.mg, x.og]),
+    tab: lastTeams.map(tm => [tm.name, tm.w, tm.d, tm.l, tm.gf, tm.ga, tm.pts, tm.mine ? 1 : 0]),
+    p: picks.map(pk => pk ? [pk.pos, pk.name, pk.rating, pk.clubN, pk.clubA, pk.season] : 0)
+  };
   return b64e(JSON.stringify(data));
 }
 function shareLink(){
-  const url = location.origin + location.pathname + "#t=" + teamCode();
+  const code = teamCode();
+  if(!code) return;
+  const url = location.origin + location.pathname + "#t=" + code;
   const done = () => { const b = $("linkbtn"); if(b){ b.textContent = t("copied"); setTimeout(() => { b.textContent = t("share_link"); }, 1600); } };
   if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => fallbackCopy(url, done));
   else fallbackCopy(url, done);
 }
 function loadSharedTeam(code){
   let d; try { d = JSON.parse(b64d(code)); } catch(e){ return false; }
-  if(!d || !Array.isArray(d.p)) return false;
+  if(!d || !Array.isArray(d.p) || !Array.isArray(d.tab) || !d.me) return false;
   teamName = d.tn || t("teamname_ph"); $("teamname").value = teamName;
   if(FORMATIONS_BASE[d.f]) formation = d.f;
   if(STIJLEN.includes(d.st)) stijl = d.st;
   hardcore = !!d.hc;
+  season = d.sea;
   picks = d.p.map(a => a ? { pos: a[0], name: a[1], rating: a[2], clubN: a[3], clubA: a[4], season: a[5] } : null);
   pickedCount = picks.filter(Boolean).length;
   picked = new Set(); pickedNames = new Set();
   picks.forEach(pk => { if(pk) pickedNames.add(normName(pk.name)); });
+  lastPos = d.pos;
+  lastMe = { name: teamName, mine: true, w: d.me[0], d: d.me[1], l: d.me[2], gf: d.me[3], ga: d.me[4], pts: d.me[5] };
+  lastOrder = d.ord.map(a => ({ opp: { a: a[0] }, home: !!a[1], mg: a[2], og: a[3] }));
+  lastTeams = d.tab.map(a => ({ name: a[0], w: a[1], d: a[2], l: a[3], gf: a[4], ga: a[5], pts: a[6], mine: !!a[7] }));
   refreshSetup();
   picks.forEach((pk, i) => { if(pk) fillSlot(i, pk); });
   drawBoxScore();
-  if(pickedCount === 11){
-    phase = "done"; setLocked(true);
-    $("resetbtn").style.display = "block";
-    $("rollbtn").disabled = true; $("rollbtn").innerHTML = t("squad_complete");
-    setPhaseLine("phase_ready"); setHint("ready_hint", teamName);
-    showTeamStats();
-  }
+  showTeamStats();
+  renderSharedSeason();
   return true;
+}
+function renderSharedSeason(){
+  phase = "done";
+  setLocked(true);
+  $("resetbtn").style.display = "block";
+  $("rollbtn").disabled = true; $("rollbtn").innerHTML = t("squad_complete");
+  $("simbtn").classList.remove("show");
+  setPhaseLine("phase_done");
+  $("season").classList.add("show");
+  $("seasonteam").textContent = teamName;
+  $("seasonyear").textContent = season; $("tableyear").textContent = season;
+  $("seasonsub").textContent = t("shared_season");
+  const grid = $("fixgrid"); grid.innerHTML = "";
+  lastOrder.forEach((x, i) => {
+    const res = x.mg > x.og ? "W" : (x.mg < x.og ? "V" : "G");
+    const div = document.createElement("div");
+    div.className = "fix " + res + " in";
+    div.innerHTML = '<div class="top"><span>R' + (i+1) + '</span><span>' + x.opp.a + ' · ' + (x.home ? t("home") : t("away")) + '</span></div><div class="sc">' + x.mg + '–' + x.og + '</div>';
+    grid.appendChild(div);
+  });
+  $("recordtxt").textContent = lastMe.w + "–" + lastMe.d + "–" + lastMe.l;
+  $("verdict").classList.toggle("perfect", lastMe.w === 34);
+  $("finale").classList.add("show");
+  relocalizeFinale();
+  $("sharecard").style.display = "";
+  drawShareCard();
+  $("season").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 /* ================= reset & events ================= */
@@ -1275,7 +1327,6 @@ $("pbback").onclick = backToSquad;
 $("resetbtn").onclick = resetAll;
 $("simbtn").onclick = () => { if(pickedCount === 11) simulate(rigArmed); };
 $("againbtn").onclick = resetAll;
-$("rerunbtn").onclick = () => { if(pickedCount === 11) simulate(rigArmed); };
 
 /* geheime demo-trigger: 5x snel op het 34-0-0-logo klikken wapent een
    gegarandeerd perfect seizoen (telt niet mee voor records) */
