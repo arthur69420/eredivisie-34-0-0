@@ -88,11 +88,23 @@
       <div class="optgrid" id="formaties"></div>
       <h2 data-i18n="playstyle">Speelstijl</h2>
       <div class="optgrid" id="stijlen"></div>
+      <h2 data-i18n="mode">Modus</h2>
+      <div class="optgrid" id="modes"></div>
+      <p class="note" data-i18n="mode_note">Hardcore verbergt de ratings.</p>
+      <h2 data-i18n="draftmode">Draft</h2>
+      <div class="optgrid" id="draftmodes"></div>
+      <p class="note" data-i18n="draftmode_note">Sandbox: kies zelf elke speler i.p.v. willekeurig rollen.</p>
       <h2 data-i18n="draft_filter">Draftfilter</h2>
-      <p class="seasonnote" data-i18n="draft_filter_note">Beperk de draft tot een seizoen en/of club. Standaard: alles willekeurig.</p>
-      <div class="filtergrid">
-        <select id="draftseasonsel"></select>
-        <select id="draftclubsel"></select>
+      <p class="note" data-i18n="draft_filter_note">Beperk de draft tot een of meer seizoenen en/of clubs. Niets geselecteerd = alles willekeurig.</p>
+      <p class="eyebrow flbl" data-i18n="seasons_label">Seizoenen</p>
+      <div class="msel">
+        <button class="mselbtn" id="seasonbtn" type="button"><span id="seasonsum">Alle seizoenen</span><span class="msarrow">&#9662;</span></button>
+        <div class="msmenu" id="seasonmenu"></div>
+      </div>
+      <p class="eyebrow flbl" data-i18n="clubs_label">Clubs</p>
+      <div class="msel">
+        <button class="mselbtn" id="clubbtn" type="button"><span id="clubsum">Alle clubs</span><span class="msarrow">&#9662;</span></button>
+        <div class="msmenu" id="clubmenu"></div>
       </div>
     </div>
     <div class="panel recpanel" id="recordspanel" style="display:none">
@@ -178,7 +190,16 @@
         <div class="seasonactions">
           <button class="smallbtn" id="againbtn" data-i18n="draft_again">Opnieuw draften</button>
           <button class="smallbtn" id="rerunbtn" data-i18n="same_team">Zelfde team, nieuw seizoen</button>
-          <button class="smallbtn" id="sharebtn" data-i18n="share">Deel je seizoen</button>
+        </div>
+        <div class="sharecard" id="sharecard">
+          <p class="eyebrow" data-i18n="share_heading">Deel je seizoen</p>
+          <canvas id="sharecanvas" width="1080" height="1350" aria-label="Seizoenskaart"></canvas>
+          <div class="shareactions">
+            <button class="smallbtn primary" id="shareimgbtn" data-i18n="share_image">Delen</button>
+            <button class="smallbtn" id="savepngbtn" data-i18n="save_png">Bewaar afbeelding</button>
+            <button class="smallbtn" id="linkbtn" data-i18n="share_link">Kopieer link</button>
+            <button class="smallbtn" id="sharebtn" data-i18n="share_copy">Kopieer tekst</button>
+          </div>
         </div>
       </div>
     </div>

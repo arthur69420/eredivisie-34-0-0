@@ -79,14 +79,23 @@ if(!SEASONS[seasonKey]){ console.error("onbekend seizoen: " + seasonKey); proces
 const club = SEASONS[seasonKey].find(c => c.n === clubName);
 if(!club){ console.error("club niet gevonden in " + seasonKey + ": " + clubName); process.exit(1); }
 
+const capIdx = process.argv.indexOf("--cap");
+const CAP = capIdx >= 0 ? parseInt(process.argv[capIdx + 1], 10) : Infinity;
+
 const have = new Set(club.p.filter(pl => String(pl[0]).indexOf("Jeugdspeler") !== 0).map(pl => norm(pl[0])));
 let added = 0;
-parsed.forEach(p => {
-  if(have.has(norm(p.name))) return;
+// alleen de besten: nieuwe spelers op rating gesorteerd, aanvullen tot CAP
+const candidates = parsed
+  .filter(p => !have.has(norm(p.name)))
+  .map(p => ({ name: p.name, pos: p.pos, r: rating(p.mv) }))
+  .sort((a, b) => b.r - a.r);
+for(const p of candidates){
+  if(club.p.length >= CAP) break;
+  if(have.has(norm(p.name))) continue;
   have.add(norm(p.name));
-  club.p.push([p.name, p.pos, rating(p.mv)]);
+  club.p.push([p.name, p.pos, p.r]);
   added++;
-});
+}
 
 /* ---- serialiseren (zelfde formaat als build-db.js) ---- */
 function esc(s){ return String(s).replace(/\\/g, "\\\\").replace(/"/g, '\\"'); }

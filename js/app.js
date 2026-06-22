@@ -15,14 +15,14 @@ const FORMATIONS_BASE = {
 };
 /* per formatie en stijl: [slotindex, nieuwe positie, dy, optioneel nieuwe x] */
 const STYLE_RULES = {
-"4-3-3":   { Aanvallend:[[6,"CAM",-11]],            Verdedigend:[[6,"CDM",5]] },
-"4-4-2":   { Aanvallend:[[6,"CAM",-9,50]],          Verdedigend:[[6,"CDM",6,50]] },
-"4-2-3-1": { Aanvallend:[[6,"CAM",-15,62]],         Verdedigend:[[5,"CDM",4],[6,"CDM",4]] },
-"4-2-4":   { Aanvallend:[[6,"CAM",-9,50]],          Verdedigend:[[6,"CDM",6,50]] },
-"3-5-2":   { Aanvallend:[[6,"CAM",-12]],            Verdedigend:[[6,"CDM",5]] },
-"5-3-2":   { Aanvallend:[[7,"CAM",-12]],            Verdedigend:[[7,"CDM",5]] },
-"4-5-1":   { Aanvallend:[[7,"CAM",-12]],            Verdedigend:[[7,"CDM",5]] },
-"3-4-3":   { Aanvallend:[[5,"CAM",-11,50]],         Verdedigend:[[5,"CDM",6,50]] }
+"4-3-3":   { Aanvallend:[[6,"CAM",-11]],                          Verdedigend:[[6,"CDM",5]] },
+"4-4-2":   { Aanvallend:[[6,"CAM",-9],[7,"CAM",-9]],              Verdedigend:[[6,"CDM",6],[7,"CDM",6]] },
+"4-2-3-1": { Aanvallend:[[5,"CM",-5],[6,"CM",-5],[8,"CAM",-6]],   Verdedigend:[[5,"CDM",4],[6,"CDM",4]] },
+"4-2-4":   { Aanvallend:[[5,"CAM",-8],[6,"CAM",-8]],              Verdedigend:[[5,"CDM",6],[6,"CDM",6]] },
+"3-5-2":   { Aanvallend:[[6,"CAM",-12]],                          Verdedigend:[[6,"CDM",5]] },
+"5-3-2":   { Aanvallend:[[7,"CAM",-12]],                          Verdedigend:[[7,"CDM",5]] },
+"4-5-1":   { Aanvallend:[[7,"CAM",-12]],                          Verdedigend:[[7,"CDM",5]] },
+"3-4-3":   { Aanvallend:[[5,"CAM",-9],[6,"CAM",-9]],              Verdedigend:[[5,"CDM",6],[6,"CDM",6]] }
 };
 function getFormation(name, style){
   const base = FORMATIONS_BASE[name].map(s => s.slice());
@@ -157,6 +157,10 @@ Object.values(SEASONS).forEach(clubsArr => clubsArr.forEach(c => {
 let season = "?";
 let formation = "4-3-3";
 let stijl = "Gebalanceerd";
+let hardcore = false;
+try { hardcore = localStorage.getItem("e3400_hardcore") === "1"; } catch(e){}
+let sandbox = false;
+try { sandbox = localStorage.getItem("e3400_sandbox") === "1"; } catch(e){}
 let phase = "setup";
 let teamName = "Mijn XI";
 let picks = Array(11).fill(null);
@@ -168,8 +172,11 @@ let currentClub = null;
 let currentSeason = null;
 let pendingPick = null;
 let rigArmed = false;
-let draftSeason = "", draftClub = "";
+let draftSeasons = [], draftClubs = [];
 let spinTimer = null, revealTimer = null, tableTimer = null, replacedClub = null;
+let phaseKey = "phase_setup", hintKey = "hint_setup", hintArg = null;
+function setPhaseLine(key){ phaseKey = key; $("phaseline").textContent = t(key); }
+function setHint(key, arg){ hintKey = key; hintArg = arg; $("hint").textContent = (arg != null ? t(key, arg) : t(key)); }
 
 const $ = id => document.getElementById(id);
 const rnd = a => a[Math.floor(Math.random()*a.length)];
@@ -193,7 +200,9 @@ const I18N = {
     reroll:"Opnieuw rollen", box_score:"Box score", attack:"Aanval", defense:"Verdediging",
     team_rating:"Teamrating", simulate:"Simuleer het seizoen", season_of:"Het seizoen van",
     final_table:"Eindstand Eredivisie", draft_again:"Opnieuw draften", same_team:"Zelfde team, nieuw seizoen",
-    share:"Deel je seizoen",
+    share:"Deel je seizoen", share_heading:"Deel je seizoen", share_image:"Delen", save_png:"Bewaar afbeelding",
+    share_copy:"Kopieer tekst", saved_png:"Bewaard!", card_sub:"DE EREDIVISIE DRAFT CHALLENGE",
+    card_season:"SEIZOEN", card_place:"PLAATS", card_points:"PUNTEN", card_legend:"WINST · GELIJK · VERLIES", card_squad:"ELFTAL",
     footer:"Onofficieel fanproject, niet gelieerd aan de Eredivisie of clubs. Selecties zijn gecureerde kernselecties per seizoen (2010/11–2025/26), bij benadering.",
     roll:"Rol &#127922;", squad_complete:"Elftal compleet",
     sound_on:"Geluid aanzetten", sound_off:"Geluid uitzetten",
@@ -203,6 +212,13 @@ const I18N = {
     phase_done:"Fase: seizoen afgelopen", demo:"demo",
     hint_setup:"Rol elke ronde een club uit een willekeurig seizoen, kies een speler en zet hem zelf op een oplichtende positie.",
     styles:{Verdedigend:"Verdedigend",Gebalanceerd:"Gebalanceerd",Aanvallend:"Aanvallend"},
+    modes:{Normaal:"Normaal",Hardcore:"Hardcore"}, mode:"Modus",
+    mode_note:"Hardcore verbergt de ratings.",
+    draftmode:"Draft", draftmodes:{Willekeurig:"Willekeurig",Sandbox:"Sandbox"},
+    draftmode_note:"Sandbox: kies zelf elke speler i.p.v. willekeurig rollen.",
+    sandbox_pick:"Kies een speler", sandbox_search:"Zoek een speler...",
+    sandbox_note:"Kies een speler uit elk seizoen voor een open positie.",
+    share_link:"Kopieer link",
     groups:{Keeper:"Keeper",Verdediging:"Verdediging",Middenveld:"Middenveld",Aanval:"Aanval"},
     pos:{GK:"Keeper",RB:"Rechtsback",LB:"Linksback",CB:"Centrale verdediger",DM:"Verdedigende middenvelder",CM:"Middenvelder",AM:"Aanvallende middenvelder",LW:"Linksbuiten",RW:"Rechtsbuiten",ST:"Spits"},
     home:"T", away:"U",
@@ -214,7 +230,8 @@ const I18N = {
     no_history:"Nog geen seizoenen gespeeld.",
     missing:"mist", complete:"compleet", incomplete:"onvolledig", players:"spelers",
     all_seasons:"Alle seizoenen", all_clubs:"Alle clubs", help_title:"Uitleg",
-    draft_filter:"Draftfilter", draft_filter_note:"Beperk de draft tot een seizoen en/of club. Standaard: alles willekeurig.",
+    draft_filter:"Draftfilter", draft_filter_note:"Beperk de draft tot een of meer seizoenen en/of clubs. Niets geselecteerd = alles willekeurig.",
+    seasons_label:"Seizoenen", clubs_label:"Clubs",
     filter_empty:"Geen spelers meer in dit filter voor je open posities. Pas het filter aan of begin opnieuw.",
     help_heading:"Hoe werkt het?",
     help_html:"<p><b>Doel:</b> stel een elftal samen en jaag op het perfecte seizoen: 34 gewonnen, 0 gelijk, 0 verloren — <b>34–0–0</b>.</p>"
@@ -252,7 +269,9 @@ const I18N = {
     reroll:"Reroll", box_score:"Box score", attack:"Attack", defense:"Defense",
     team_rating:"Team rating", simulate:"Simulate the season", season_of:"The season of",
     final_table:"Eredivisie final table", draft_again:"Draft again", same_team:"Same team, new season",
-    share:"Share your season",
+    share:"Share your season", share_heading:"Share your season", share_image:"Share", save_png:"Save image",
+    share_copy:"Copy text", saved_png:"Saved!", card_sub:"THE EREDIVISIE DRAFT CHALLENGE",
+    card_season:"SEASON", card_place:"PLACE", card_points:"POINTS", card_legend:"WIN · DRAW · LOSS", card_squad:"SQUAD",
     footer:"Unofficial fan project, not affiliated with the Eredivisie or its clubs. Squads are curated core selections per season (2010/11–2025/26), approximate.",
     roll:"Roll &#127922;", squad_complete:"Squad complete",
     sound_on:"Turn sound on", sound_off:"Turn sound off",
@@ -262,6 +281,13 @@ const I18N = {
     phase_done:"Phase: season finished", demo:"demo",
     hint_setup:"Each round, roll a club from a random season, pick a player and place him on a highlighted position yourself.",
     styles:{Verdedigend:"Defensive",Gebalanceerd:"Balanced",Aanvallend:"Attacking"},
+    modes:{Normaal:"Normal",Hardcore:"Hardcore"}, mode:"Mode",
+    mode_note:"Hardcore hides the ratings.",
+    draftmode:"Draft", draftmodes:{Willekeurig:"Random",Sandbox:"Sandbox"},
+    draftmode_note:"Sandbox: pick every player yourself instead of rolling random.",
+    sandbox_pick:"Pick a player", sandbox_search:"Search a player...",
+    sandbox_note:"Pick any player from any season for an open position.",
+    share_link:"Copy link",
     groups:{Keeper:"Goalkeeper",Verdediging:"Defense",Middenveld:"Midfield",Aanval:"Attack"},
     pos:{GK:"Goalkeeper",RB:"Right-back",LB:"Left-back",CB:"Centre-back",DM:"Defensive midfielder",CM:"Midfielder",AM:"Attacking midfielder",LW:"Left winger",RW:"Right winger",ST:"Striker"},
     home:"H", away:"A",
@@ -273,7 +299,8 @@ const I18N = {
     no_history:"No seasons played yet.",
     missing:"missing", complete:"complete", incomplete:"incomplete", players:"players",
     all_seasons:"All seasons", all_clubs:"All clubs", help_title:"How to play",
-    draft_filter:"Draft filter", draft_filter_note:"Limit the draft to a season and/or club. Default: all random.",
+    draft_filter:"Draft filter", draft_filter_note:"Limit the draft to one or more seasons and/or clubs. Nothing selected = all random.",
+    seasons_label:"Seasons", clubs_label:"Clubs",
     filter_empty:"No more players in this filter for your open positions. Change the filter or start over.",
     help_heading:"How does it work?",
     help_html:"<p><b>Goal:</b> build an XI and chase the perfect season: 34 won, 0 drawn, 0 lost — <b>34–0–0</b>.</p>"
@@ -303,14 +330,16 @@ const I18N = {
 };
 function t(k, ...a){ const v = I18N[LANG][k]; return typeof v === "function" ? v(...a) : v; }
 const styleLabel = v => I18N[LANG].styles[v] || v;
+const modeLabel = v => (I18N[LANG].modes && I18N[LANG].modes[v]) || v;
+const draftModeLabel = v => (I18N[LANG].draftmodes && I18N[LANG].draftmodes[v]) || v;
 const grpLabel = v => I18N[LANG].groups[v] || v;
 const posLabel = c => I18N[LANG].pos[c] || c;
 const ord = n => I18N[LANG].ord(n);
 const achName = id => I18N[LANG].ach[id][0];
 const achDesc = id => I18N[LANG].ach[id][1];
 function setPhaseUI(){
-  if(phase === "setup"){ $("phaseline").textContent = t("phase_setup"); $("hint").textContent = t("hint_setup"); $("rollbtn").innerHTML = t("roll"); }
-  else if(phase === "draft"){ $("phaseline").textContent = t("phase_draft"); $("hint").textContent = t("hint_draft", teamName); $("rollbtn").innerHTML = t("roll"); }
+  if(phase === "setup"){ setPhaseLine("phase_setup"); setHint("hint_setup"); $("rollbtn").innerHTML = t("roll"); }
+  else if(phase === "draft"){ setPhaseLine("phase_draft"); setHint("hint_draft", teamName); $("rollbtn").innerHTML = sandbox ? t("sandbox_pick") : t("roll"); }
 }
 function applyLang(){
   document.documentElement.lang = LANG;
@@ -325,10 +354,15 @@ function applyLang(){
   renderRecords();
   if($("dbseason") && $("dbseason").options.length) $("dbseason").options[0].textContent = t("all_seasons");
   if($("dbclubsel") && $("dbclubsel").options.length) $("dbclubsel").options[0].textContent = t("all_clubs");
-  if($("draftseasonsel") && $("draftseasonsel").options.length){ $("draftseasonsel").options[0].textContent = t("all_seasons"); fillDraftClubs(); }
+  if(phase !== "setup" && phase !== "draft"){
+    $("phaseline").textContent = t(phaseKey);
+    $("hint").textContent = (hintArg != null ? t(hintKey, hintArg) : t(hintKey));
+  }
+  if($("overlay").classList.contains("show") && currentClub && currentSeason) showSquad(currentSeason, currentClub);
   if($("dbmodal").classList.contains("show")) refreshDb();
   if($("histmodal").classList.contains("show")) renderHistory();
   if($("helpmodal").classList.contains("show")) $("helpbody").innerHTML = t("help_html");
+  if($("finale").classList.contains("show")){ relocalizeFinale(); drawShareCard(); }
 }
 
 /* ================= setup UI ================= */
@@ -346,15 +380,58 @@ function buildOptions(containerId, items, current, onpick, label){
 function refreshSetup(){
   buildOptions("formaties", Object.keys(FORMATIONS_BASE), formation, v => formation = v);
   buildOptions("stijlen", STIJLEN, stijl, v => stijl = v, styleLabel);
-  $("configline").textContent = formation + " \u00B7 " + styleLabel(stijl);
+  buildOptions("modes", ["Normaal", "Hardcore"], hardcore ? "Hardcore" : "Normaal", v => {
+    hardcore = (v === "Hardcore");
+    try { localStorage.setItem("e3400_hardcore", hardcore ? "1" : "0"); } catch(e){}
+  }, modeLabel);
+  buildOptions("draftmodes", ["Willekeurig", "Sandbox"], sandbox ? "Sandbox" : "Willekeurig", v => {
+    sandbox = (v === "Sandbox");
+    try { localStorage.setItem("e3400_sandbox", sandbox ? "1" : "0"); } catch(e){}
+  }, draftModeLabel);
+  document.body.classList.toggle("hardcore", hardcore);
+  $("configline").textContent = formation + " \u00B7 " + styleLabel(stijl) + (hardcore ? " \u00B7 " + modeLabel("Hardcore") : "");
   drawPitchSlots();
   drawBoxScore();
 }
 function setLocked(lock){
   $("setuppanel").classList.toggle("locked", lock);
   $("teamname").disabled = lock;
-  $("draftseasonsel").disabled = lock;
-  $("draftclubsel").disabled = lock;
+  renderDraftFilter();
+}
+
+/* ---- multi-select draftfilter (seizoenen + clubs) ---- */
+function toggleArr(arr, v){ const i = arr.indexOf(v); if(i < 0) arr.push(v); else arr.splice(i, 1); }
+function clubsForSeasons(){
+  const ss = draftSeasons.length ? draftSeasons : Object.keys(SEASONS);
+  return [...new Set(ss.flatMap(s => SEASONS[s].map(c => c.n)))].sort();
+}
+function checkRow(label, on, onclick){
+  const lb = document.createElement("label");
+  lb.className = "mscheck" + (on ? " on" : "");
+  lb.innerHTML = "<span class='msbox'>" + (on ? "✓" : "") + "</span><span class='mslbl'>" + esc(label) + "</span>";
+  lb.onclick = e => { e.preventDefault(); onclick(); };
+  return lb;
+}
+function summarize(arr, allLabel, total){
+  if(!arr.length) return allLabel;
+  if(arr.length <= 2) return arr.join(", ");
+  return arr.length + " / " + total;
+}
+function renderDraftFilter(){
+  const sm = $("seasonmenu"); if(!sm) return;
+  const locked = phase !== "setup";
+  sm.innerHTML = "";
+  Object.keys(SEASONS).forEach(s => sm.appendChild(checkRow(s, draftSeasons.includes(s), () => {
+    toggleArr(draftSeasons, s);
+    const valid = new Set(clubsForSeasons()); draftClubs = draftClubs.filter(c => valid.has(c));
+    renderDraftFilter();
+  })));
+  const cm = $("clubmenu"); cm.innerHTML = "";
+  clubsForSeasons().forEach(n => cm.appendChild(checkRow(n, draftClubs.includes(n), () => { toggleArr(draftClubs, n); renderDraftFilter(); })));
+  $("seasonsum").textContent = summarize(draftSeasons.slice().sort(), t("all_seasons"), Object.keys(SEASONS).length);
+  $("clubsum").textContent = summarize(draftClubs.slice().sort(), t("all_clubs"), clubsForSeasons().length);
+  $("seasonbtn").disabled = locked; $("clubbtn").disabled = locked;
+  if(locked){ sm.classList.remove("open"); cm.classList.remove("open"); }
 }
 function getTeamName(){
   const v = $("teamname").value.trim();
@@ -379,7 +456,7 @@ function fillSlot(i, pick){
   const d = $("slot"+i);
   d.className = "slot filled";
   d.innerHTML = shirtSVG(pick.clubA, 30)
-    + '<span class="nm">'+esc(pick.name)+'</span><span class="meta">'+pick.clubA+' \u00B7 '+pick.pos+' \u00B7 '+pick.rating+'</span>';
+    + '<span class="nm">'+esc(pick.name)+'</span><span class="meta">'+pick.clubA+' \u00B7 '+pick.pos+'<span class="r"> \u00B7 '+pick.rating+'</span></span>';
 }
 
 /* ================= box score ================= */
@@ -444,8 +521,8 @@ function startDraft(){
   $("teamstats").classList.remove("show");
   $("simbtn").classList.remove("show");
   $("resetbtn").style.display = "block";
-  $("phaseline").textContent = t("phase_draft");
-  $("hint").textContent = t("hint_draft", teamName);
+  setPhaseLine("phase_draft");
+  setHint("hint_draft", teamName);
   refreshSetup();
   nextRoll();
 }
@@ -453,14 +530,14 @@ function nextRoll(){
   drawBoxScore();
   if(pickedCount >= 11){ finishDraft(); return; }
   $("rollbtn").disabled = false;
-  $("rollbtn").innerHTML = t("roll");
+  $("rollbtn").innerHTML = sandbox ? t("sandbox_pick") : t("roll");
 }
 function rollSeasonClub(excludeClubName){
-  const seasons = draftSeason ? [draftSeason] : Object.keys(SEASONS);
+  const seasons = draftSeasons.length ? draftSeasons : Object.keys(SEASONS);
   for(let tries = 0; tries < 120; tries++){
     const s = rnd(seasons);
     const pool = SEASONS[s].filter(c =>
-      (!draftClub || c.n === draftClub) &&
+      (!draftClubs.length || draftClubs.includes(c.n)) &&
       eligiblePlayers(s, c).length > 0 &&
       (tries >= 60 || c.n !== excludeClubName));
     if(pool.length) return { s, club: rnd(pool) };
@@ -513,11 +590,56 @@ function roll(){
   audio();
   if(phase === "setup") startDraft();
   if(phase !== "draft") return;
+  if(sandbox){ openSandbox(); return; }
   $("rollbtn").disabled = true;
   $("ovstep").textContent = t("round_of", pickedCount+1);
   $("ovneed").textContent = "";
   $("overlay").classList.add("show");
   spinTo(null);
+}
+function openSandbox(){
+  $("overlay").classList.add("show");
+  $("ovstep").textContent = t("round_of", pickedCount + 1);
+  $("spinshirt").innerHTML = "";
+  $("spinname").textContent = draftModeLabel("Sandbox");
+  $("spinname").className = "spinname";
+  $("ovneed").textContent = t("sandbox_note");
+  $("rerollbtn").classList.remove("show");
+  $("choices").innerHTML = "<input class='sandsearch' id='sandsearch' placeholder='" + esc(t("sandbox_search")) + "' autocomplete='off'><div class='sandresults' id='sandresults'></div>";
+  $("sandsearch").oninput = e => renderSandbox(e.target.value);
+  renderSandbox("");
+  $("sandsearch").focus();
+}
+function renderSandbox(q){
+  const qn = q.trim().toLowerCase();
+  const res = [];
+  outer:
+  for(const s of Object.keys(SEASONS)){
+    for(const club of SEASONS[s]){
+      for(let i = 0; i < club.p.length; i++){
+        const pl = club.p[i];
+        if(isJeugd(pl) || pickedNames.has(normName(pl[0]))) continue;
+        if(!openSlotsFor(pl[1]).length) continue;
+        if(qn && !pl[0].toLowerCase().includes(qn)) continue;
+        res.push({ s, club, i, pl });
+        if(res.length > 600) break outer;
+      }
+    }
+  }
+  res.sort((a, b) => b.pl[2] - a.pl[2]);
+  const box = $("sandresults");
+  const top = res.slice(0, 80);
+  if(!top.length){ box.innerHTML = "<p class='eyebrow' style='margin-top:12px'>" + t("filter_empty") + "</p>"; return; }
+  box.innerHTML = "";
+  top.forEach(o => {
+    const b = document.createElement("button");
+    b.className = "pchoice";
+    b.innerHTML = "<span class='pp'>" + o.pl[1] + "</span><span class='nm'>" + esc(o.pl[0]) + "</span>"
+      + "<span class='sandmeta'>" + clubDot(o.club.a) + o.club.a + " " + o.s.slice(2) + "</span>"
+      + "<span class='rt'>" + o.pl[2] + "</span>";
+    b.onclick = () => choosePlayer(o.s, o.club, o.i);
+    box.appendChild(b);
+  });
 }
 function updateRerollBtn(){
   const b = $("rerollbtn");
@@ -534,7 +656,12 @@ function showSquad(s, club){
   const box = $("choices");
   box.innerHTML = "";
   const wrap = document.createElement("div");
-  wrap.className = "squadgroups";
+  wrap.className = "squadcols";
+  const col0 = document.createElement("div"); col0.className = "sgcol";
+  const col1 = document.createElement("div"); col1.className = "sgcol";
+  wrap.appendChild(col0); wrap.appendChild(col1);
+  // vaste plek per linie: keeper + verdediging links, middenveld + aanval rechts
+  const colFor = { Keeper: col0, Verdediging: col0, Middenveld: col1, Aanval: col1 };
   GROUPS.forEach(([label, poss]) => {
     const members = club.p.map((pl,i) => ({pl,i})).filter(o => poss.includes(o.pl[1]));
     if(!members.length) return;
@@ -546,13 +673,15 @@ function showSquad(s, club){
       const used = picked.has(s+"#"+club.n+"#"+o.i) || pickedNames.has(normName(o.pl[0]));
       const fits = openSlotsFor(o.pl[1]).length > 0;
       const b = document.createElement("button");
-      b.className = "pchoice";
+      b.className = "pchoice" + (used ? " used" : "");
       b.disabled = used || !fits;
-      b.innerHTML = "<span class='pp'>" + o.pl[1] + "</span><span class='nm'>" + esc(o.pl[0]) + (used ? " \u00B7 " + t("already") : "") + "</span><span class='rt'>" + o.pl[2] + "</span>";
+      b.innerHTML = "<span class='pp'>" + o.pl[1] + "</span><span class='nm'>" + esc(o.pl[0]) + "</span>"
+        + (used ? "<span class='usedtag'>" + t("already") + "</span>" : "")
+        + "<span class='rt'>" + o.pl[2] + "</span>";
       if(!b.disabled) b.onclick = () => choosePlayer(s, club, o.i);
       g.appendChild(b);
     });
-    wrap.appendChild(g);
+    (colFor[label] || col0).appendChild(g);
   });
   box.appendChild(wrap);
 }
@@ -562,7 +691,7 @@ function choosePlayer(s, club, i){
   if(!opts.length) return;
   pendingPick = { s, club, idx: i, pl };
   $("overlay").classList.remove("show");
-  $("pbplayer").innerHTML = esc(pl[0]) + ' <span class="pb-meta">' + club.a + ' ' + s + ' · ' + posLabel(pl[1]) + ' · ' + pl[2] + '</span>';
+  $("pbplayer").innerHTML = esc(pl[0]) + ' <span class="pb-meta">' + club.a + ' ' + s + ' · ' + posLabel(pl[1]) + '<span class="r"> · ' + pl[2] + '</span></span>';
   $("placebar").classList.add("show");
   $("pitch").classList.add("placing");
   opts.forEach(o => {
@@ -588,6 +717,7 @@ function placeAt(slotIdx){
   pickedCount++;
   sfx.place();
   nextRoll();
+  if(sandbox && pickedCount < 11 && phase === "draft") openSandbox();
 }
 function backToSquad(){
   if(!pendingPick) return;
@@ -599,8 +729,8 @@ function finishDraft(){
   phase = "done";
   $("rollbtn").disabled = true;
   $("rollbtn").innerHTML = t("squad_complete");
-  $("phaseline").textContent = t("phase_ready");
-  $("hint").textContent = t("ready_hint", teamName);
+  setPhaseLine("phase_ready");
+  setHint("ready_hint", teamName);
 }
 
 /* ================= seizoenssimulatie (volledige competitie) ================= */
@@ -628,8 +758,9 @@ function playMatch(h, a, mods){
 function simulate(rig){
   phase = "season";
   if(rig) disarmRig();
+  phaseKey = "phase_season"; hintKey = "ready_hint"; hintArg = teamName;
   $("phaseline").textContent = t("phase_season") + (rig ? " · " + t("demo") : "");
-  season = draftSeason || rnd(Object.keys(SEASONS));
+  season = draftSeasons.length ? rnd(draftSeasons) : rnd(Object.keys(SEASONS));
   replacedClub = rnd(clubs());
   const r = ratings();
   const mods = styleMods();
@@ -658,6 +789,7 @@ function simulate(rig){
   if(!rig) lastOrder = order;
   teams.sort((x,y) => y.pts - x.pts || (y.gf - y.ga) - (x.gf - x.ga) || y.gf - x.gf);
   const myPos = teams.indexOf(me) + 1;
+  if(!rig) lastTeams = teams;
 
   $("season").classList.add("show");
   $("finale").classList.remove("show");
@@ -688,9 +820,39 @@ function simulate(rig){
     i++;
   }, 80);
 }
+function verdictMessage(me, myPos){
+  if(me.w === 34)      return t("v_perfect");
+  if(myPos === 1)      return t("v_champion", teamName);
+  if(myPos <= 3)       return t("v_cl", myPos);
+  if(myPos <= 7)       return t("v_eur", myPos);
+  if(myPos <= 12)      return t("v_mid", myPos);
+  if(myPos <= 15)      return t("v_low", myPos);
+  return t("v_releg", myPos);
+}
+function relocalizeFinale(){
+  if(!lastTeams || !lastMe || !$("finale").classList.contains("show")) return;
+  const teams = lastTeams, me = lastMe, myPos = lastPos;
+  if(replacedClub) $("seasonsub").textContent = t("replaces", teamName, replacedClub.n);
+  const stat = (lbl, val, acc) => '<div class="stat'+(acc ? " accent" : "")+'"><div class="l">'+lbl+'</div><div class="v">'+val+'</div></div>';
+  const saldo = me.gf - me.ga;
+  $("statgrid").innerHTML = stat(t("st_pos"), ord(myPos), true) + stat(t("st_won"), me.w) + stat(t("st_draw"), me.d)
+    + stat(t("st_lost"), me.l) + stat(t("st_gd"), (saldo > 0 ? "+" : "") + saldo) + stat(t("st_pts"), me.pts, true);
+  const tbl = $("standings");
+  tbl.innerHTML = "<tr><th class='l' colspan='2'>" + t("th_club") + "</th><th>" + t("th_w") + "</th><th>" + t("th_d") + "</th><th>" + t("th_l") + "</th><th>" + t("th_gd") + "</th><th>" + t("th_pts") + "</th></tr>";
+  teams.forEach((tm, idx) => {
+    const tr = document.createElement("tr");
+    tr.className = (tm.mine ? "mine " : "") + (idx < 3 ? "cl" : (idx >= 15 ? "deg" : "")) + " in";
+    const ds = tm.gf - tm.ga;
+    tr.innerHTML = "<td class='rank'>" + (idx+1) + "</td><td class='l'>" + esc(tm.name) + "</td>"
+      + "<td>" + tm.w + "</td><td>" + tm.d + "</td><td>" + tm.l + "</td>"
+      + "<td>" + (ds > 0 ? "+" : "") + ds + "</td><td><strong>" + tm.pts + "</strong></td>";
+    tbl.appendChild(tr);
+  });
+  $("verdicttxt").textContent = verdictMessage(me, myPos);
+}
 function showFinale(teams, me, myPos, rig){
   phase = "done";
-  $("phaseline").textContent = t("phase_done");
+  setPhaseLine("phase_done");
   const stat = (lbl, val, accent) => '<div class="stat'+(accent ? " accent" : "")+'"><div class="l">'+lbl+'</div><div class="v">'+val+'</div></div>';
   const saldo = me.gf - me.ga;
   $("statgrid").innerHTML = stat(t("st_pos"), ord(myPos), true) + stat(t("st_won"), me.w) + stat(t("st_draw"), me.d)
@@ -716,15 +878,8 @@ function showFinale(teams, me, myPos, rig){
     ri++;
   }, 60);
 
-  let msg;
   const perfect = (me.w === 34);
-  if(perfect)             msg = t("v_perfect");
-  else if(myPos === 1)    msg = t("v_champion", teamName);
-  else if(myPos <= 3)     msg = t("v_cl", myPos);
-  else if(myPos <= 7)     msg = t("v_eur", myPos);
-  else if(myPos <= 12)    msg = t("v_mid", myPos);
-  else if(myPos <= 15)    msg = t("v_low", myPos);
-  else                    msg = t("v_releg", myPos);
+  let msg = verdictMessage(me, myPos);
   if(rig) msg += t("demo_note");
 
   $("recordtxt").textContent = me.w + "\u2013" + me.d + "\u2013" + me.l;
@@ -732,12 +887,13 @@ function showFinale(teams, me, myPos, rig){
   $("verdict").classList.toggle("perfect", perfect);
   $("finale").classList.add("show");
 
-  $("sharebtn").style.display = rig ? "none" : "";
+  $("sharecard").style.display = rig ? "none" : "";
   if(!rig){
     lastMe = me; lastPos = myPos;
     const nieuweBadges = updateRecords(me, myPos);
     pushHistory(me, myPos);
     if(nieuweBadges.length) $("verdicttxt").textContent += t("new_badge") + nieuweBadges.join(" · ");
+    drawShareCard();
   }
   if(perfect){
     sfx.perfect();
@@ -948,6 +1104,151 @@ function fallbackCopy(txt, done){
   ta.remove();
 }
 
+/* ---- visuele seizoenskaart (canvas) ---- */
+function drawShareCard(){
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(_drawShareCard);
+  else _drawShareCard();
+}
+function clipText(ctx, text, maxW){
+  let s = String(text);
+  if(ctx.measureText(s).width <= maxW) return s;
+  while(s.length > 1 && ctx.measureText(s + "…").width > maxW) s = s.slice(0, -1);
+  return s + "…";
+}
+function _drawShareCard(){
+  const cv = $("sharecanvas");
+  if(!cv || !lastMe || !lastOrder) return;
+  const ctx = cv.getContext("2d");
+  const W = cv.width, H = cv.height, me = lastMe, pos = lastPos;
+  const NAVY = "#0A1430", NAVY2 = "#101D42", RED = "#E40428", MUT = "#93A0C4", WHITE = "#FFFFFF", PAD = 80;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = NAVY; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = RED;  ctx.fillRect(0, 0, W, 26);
+  ctx.textBaseline = "alphabetic"; ctx.textAlign = "left";
+  // logo-tab
+  ctx.font = "italic 600 60px Oswald, sans-serif";
+  const lg = "34–0–0", lw = ctx.measureText(lg).width;
+  ctx.fillStyle = RED; ctx.fillRect(PAD - 16, 92, lw + 40, 74);
+  ctx.fillStyle = WHITE; ctx.fillText(lg, PAD, 148);
+  ctx.font = "500 25px 'IBM Plex Mono', monospace"; ctx.fillStyle = MUT;
+  ctx.fillText(t("card_sub"), PAD, 206);
+  // teamnaam (schaalt mee)
+  let size = 96; ctx.fillStyle = WHITE;
+  const name = (teamName || "MIJN XI").toUpperCase();
+  do { ctx.font = "600 " + size + "px Oswald, sans-serif"; size -= 4; } while(ctx.measureText(name).width > W - 2 * PAD && size > 40);
+  ctx.fillText(name, PAD, 312);
+  ctx.font = "500 28px 'IBM Plex Mono', monospace"; ctx.fillStyle = MUT;
+  ctx.fillText(t("card_season") + " " + season + " · " + ord(pos).toUpperCase() + " " + t("card_place"), PAD, 360);
+  // groot record
+  ctx.font = "italic 600 170px Oswald, sans-serif"; ctx.fillStyle = WHITE;
+  ctx.fillText(me.w + "–" + me.d + "–" + me.l, PAD - 4, 532);
+  ctx.font = "600 40px Oswald, sans-serif"; ctx.fillStyle = RED;
+  ctx.fillText(me.pts + " " + t("card_points"), PAD, 590);
+  // resultatengrid
+  const cols = 17, gap = 9, gx = PAD, gy = 636, gw = W - 2 * PAD;
+  const cell = (gw - (cols - 1) * gap) / cols;
+  lastOrder.forEach((x, idx) => {
+    const r = Math.floor(idx / cols), c = idx % cols;
+    ctx.fillStyle = x.mg > x.og ? "#27AE60" : (x.mg < x.og ? RED : "#7E8BB0");
+    ctx.fillRect(gx + c * (cell + gap), gy + r * (cell + gap), cell, cell);
+  });
+  let y = gy + 2 * cell + gap + 44;
+  ctx.font = "500 22px 'IBM Plex Mono', monospace"; ctx.fillStyle = MUT;
+  ctx.fillText(t("card_legend"), PAD, y);
+  // squad (XI)
+  y += 52;
+  ctx.font = "600 26px Oswald, sans-serif"; ctx.fillStyle = WHITE;
+  ctx.fillText(t("card_squad"), PAD, y);
+  ctx.strokeStyle = RED; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(PAD, y + 12); ctx.lineTo(W - PAD, y + 12); ctx.stroke();
+  const F = curForm(), lineH = 50, colW = (W - 2 * PAD - 30) / 2, topY = y + 56;
+  for(let i = 0; i < 11; i++){
+    const pk = picks[i]; if(!pk) continue;
+    const col = i < 6 ? 0 : 1, row = i < 6 ? i : i - 6;
+    const x = PAD + col * (colW + 30), ly = topY + row * lineH;
+    ctx.fillStyle = NAVY2; ctx.fillRect(x, ly - 32, colW, 42);
+    ctx.fillStyle = MUT; ctx.font = "600 20px 'IBM Plex Mono', monospace";
+    ctx.fillText((F[i] ? F[i][0] : pk.pos).padEnd(3), x + 10, ly);
+    ctx.fillStyle = WHITE; ctx.font = "600 25px Inter, sans-serif";
+    const club = pk.clubA + " " + String(pk.season).slice(2);
+    ctx.textAlign = "right"; ctx.fillStyle = MUT; ctx.font = "500 19px 'IBM Plex Mono', monospace";
+    ctx.fillText(club, x + colW - 10, ly);
+    const clubW = ctx.measureText(club).width;
+    ctx.textAlign = "left"; ctx.fillStyle = WHITE; ctx.font = "600 25px Inter, sans-serif";
+    ctx.fillText(clipText(ctx, pk.name, colW - 78 - clubW - 16), x + 64, ly);
+  }
+  // footer
+  ctx.textAlign = "left"; ctx.fillStyle = MUT; ctx.font = "500 22px 'IBM Plex Mono', monospace";
+  ctx.fillText("34–0–0 · " + formation + " · " + styleLabel(stijl).toUpperCase() + (hardcore ? " · " + modeLabel("Hardcore").toUpperCase() : ""), PAD, H - 54);
+}
+function wrapText(ctx, text, x, y, maxW, lh){
+  const words = String(text).split(" "); let line = "", yy = y;
+  for(const w of words){
+    if(ctx.measureText(line + w + " ").width > maxW && line){ ctx.fillText(line.trim(), x, yy); line = ""; yy += lh; if(yy > y + lh * 3) return; }
+    line += w + " ";
+  }
+  ctx.fillText(line.trim(), x, yy);
+}
+function shareImage(){
+  const cv = $("sharecanvas");
+  cv.toBlob(blob => {
+    if(!blob) return;
+    const file = new File([blob], "34-0-0-" + season + ".png", { type: "image/png" });
+    if(navigator.canShare && navigator.canShare({ files: [file] })){
+      navigator.share({ files: [file], title: "34–0–0", text: teamName + " · " + season }).catch(() => {});
+    } else savePng();
+  }, "image/png");
+}
+function savePng(){
+  const cv = $("sharecanvas");
+  cv.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "34-0-0-" + (teamName || "team").replace(/[^a-z0-9]+/gi, "-") + "-" + season + ".png";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    const b = $("savepngbtn"); b.textContent = t("saved_png"); setTimeout(() => { b.textContent = t("save_png"); }, 1600);
+  }, "image/png");
+}
+
+/* ---- deelbare link (XI in de URL) ---- */
+function b64e(s){ return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+function b64d(s){ s = s.replace(/-/g, "+").replace(/_/g, "/"); return decodeURIComponent(escape(atob(s))); }
+function teamCode(){
+  const data = { tn: teamName, f: formation, st: stijl, hc: hardcore ? 1 : 0,
+    p: picks.map(pk => pk ? [pk.pos, pk.name, pk.rating, pk.clubN, pk.clubA, pk.season] : 0) };
+  return b64e(JSON.stringify(data));
+}
+function shareLink(){
+  const url = location.origin + location.pathname + "#t=" + teamCode();
+  const done = () => { const b = $("linkbtn"); if(b){ b.textContent = t("copied"); setTimeout(() => { b.textContent = t("share_link"); }, 1600); } };
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => fallbackCopy(url, done));
+  else fallbackCopy(url, done);
+}
+function loadSharedTeam(code){
+  let d; try { d = JSON.parse(b64d(code)); } catch(e){ return false; }
+  if(!d || !Array.isArray(d.p)) return false;
+  teamName = d.tn || t("teamname_ph"); $("teamname").value = teamName;
+  if(FORMATIONS_BASE[d.f]) formation = d.f;
+  if(STIJLEN.includes(d.st)) stijl = d.st;
+  hardcore = !!d.hc;
+  picks = d.p.map(a => a ? { pos: a[0], name: a[1], rating: a[2], clubN: a[3], clubA: a[4], season: a[5] } : null);
+  pickedCount = picks.filter(Boolean).length;
+  picked = new Set(); pickedNames = new Set();
+  picks.forEach(pk => { if(pk) pickedNames.add(normName(pk.name)); });
+  refreshSetup();
+  picks.forEach((pk, i) => { if(pk) fillSlot(i, pk); });
+  drawBoxScore();
+  if(pickedCount === 11){
+    phase = "done"; setLocked(true);
+    $("resetbtn").style.display = "block";
+    $("rollbtn").disabled = true; $("rollbtn").innerHTML = t("squad_complete");
+    setPhaseLine("phase_ready"); setHint("ready_hint", teamName);
+    showTeamStats();
+  }
+  return true;
+}
+
 /* ================= reset & events ================= */
 function resetAll(){
   clearInterval(spinTimer); clearInterval(revealTimer); clearInterval(tableTimer);
@@ -993,6 +1294,10 @@ logoEl.onclick = () => {
   }
 };
 $("sharebtn").onclick = shareSeason;
+$("shareimgbtn").onclick = shareImage;
+$("savepngbtn").onclick = savePng;
+$("linkbtn").onclick = shareLink;
+$("overlay").onclick = e => { if(e.target === $("overlay") && sandbox && !pendingPick) $("overlay").classList.remove("show"); };
 $("langbtn").onclick = () => {
   LANG = LANG === "nl" ? "en" : "nl";
   try { localStorage.setItem("e3400_lang", LANG); } catch(e){}
@@ -1089,25 +1394,12 @@ $("helpmodal").onclick = e => { if(e.target === $("helpmodal")) closeHelp(); };
 document.addEventListener("keydown", e => { if(e.key === "Escape"){ closeDb(); closeHist(); closeHelp(); } });
 
 /* ================= draftfilter ================= */
-function fillDraftClubs(){
-  const csel = $("draftclubsel");
-  const prev = csel.value;
-  const list = draftSeason ? SEASONS[draftSeason].map(c => c.n).slice().sort()
-                           : [...new Set(Object.values(SEASONS).flatMap(a => a.map(c => c.n)))].sort();
-  csel.innerHTML = "";
-  const all = document.createElement("option"); all.value = ""; all.textContent = t("all_clubs"); csel.appendChild(all);
-  list.forEach(n => { const o = document.createElement("option"); o.value = n; o.textContent = n; csel.appendChild(o); });
-  if(prev && list.includes(prev)) csel.value = prev; else { csel.value = ""; draftClub = ""; }
-}
-(function initDraftFilter(){
-  const ssel = $("draftseasonsel");
-  const allS = document.createElement("option"); allS.value = ""; allS.textContent = t("all_seasons"); ssel.appendChild(allS);
-  Object.keys(SEASONS).slice().reverse().forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; ssel.appendChild(o); });
-  ssel.onchange = () => { if(phase !== "setup"){ ssel.value = draftSeason; return; } draftSeason = ssel.value; fillDraftClubs(); };
-  $("draftclubsel").onchange = () => { if(phase !== "setup"){ $("draftclubsel").value = draftClub; return; } draftClub = $("draftclubsel").value; };
-  fillDraftClubs();
-})();
+$("seasonbtn").onclick = () => { if($("seasonbtn").disabled) return; $("seasonmenu").classList.toggle("open"); $("clubmenu").classList.remove("open"); };
+$("clubbtn").onclick = () => { if($("clubbtn").disabled) return; $("clubmenu").classList.toggle("open"); $("seasonmenu").classList.remove("open"); };
+document.addEventListener("click", e => { if(!e.target.closest(".msel")){ $("seasonmenu").classList.remove("open"); $("clubmenu").classList.remove("open"); } });
+renderDraftFilter();
 
 applyLang();
+if(location.hash.indexOf("#t=") === 0){ try { loadSharedTeam(location.hash.slice(3)); } catch(e){} }
 if("serviceWorker" in navigator && location.protocol !== "file:")
   navigator.serviceWorker.register("sw.js").catch(() => {});
