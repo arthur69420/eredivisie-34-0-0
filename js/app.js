@@ -218,6 +218,7 @@ const I18N = {
     draftmode_note:"Sandbox: kies zelf elke speler i.p.v. willekeurig rollen.",
     sandbox_pick:"Kies een speler", sandbox_search:"Zoek een speler...",
     sandbox_note:"Kies een speler uit elk seizoen voor een open positie.",
+    sandbox_toggle:"Sandbox: kies zelf je elftal",
     share_link:"Kopieer link",
     groups:{Keeper:"Keeper",Verdediging:"Verdediging",Middenveld:"Middenveld",Aanval:"Aanval"},
     pos:{GK:"Keeper",RB:"Rechtsback",LB:"Linksback",CB:"Centrale verdediger",DM:"Verdedigende middenvelder",CM:"Middenvelder",AM:"Aanvallende middenvelder",LW:"Linksbuiten",RW:"Rechtsbuiten",ST:"Spits"},
@@ -287,6 +288,7 @@ const I18N = {
     draftmode_note:"Sandbox: pick every player yourself instead of rolling random.",
     sandbox_pick:"Pick a player", sandbox_search:"Search a player...",
     sandbox_note:"Pick any player from any season for an open position.",
+    sandbox_toggle:"Sandbox: pick your own XI",
     share_link:"Copy link",
     groups:{Keeper:"Goalkeeper",Verdediging:"Defense",Middenveld:"Midfield",Aanval:"Attack"},
     pos:{GK:"Goalkeeper",RB:"Right-back",LB:"Left-back",CB:"Centre-back",DM:"Defensive midfielder",CM:"Midfielder",AM:"Attacking midfielder",LW:"Left winger",RW:"Right winger",ST:"Striker"},
@@ -384,10 +386,7 @@ function refreshSetup(){
     hardcore = (v === "Hardcore");
     try { localStorage.setItem("e3400_hardcore", hardcore ? "1" : "0"); } catch(e){}
   }, modeLabel);
-  buildOptions("draftmodes", ["Willekeurig", "Sandbox"], sandbox ? "Sandbox" : "Willekeurig", v => {
-    sandbox = (v === "Sandbox");
-    try { localStorage.setItem("e3400_sandbox", sandbox ? "1" : "0"); } catch(e){}
-  }, draftModeLabel);
+  if($("sandcheck")) $("sandcheck").checked = sandbox;
   document.body.classList.toggle("hardcore", hardcore);
   $("configline").textContent = formation + " \u00B7 " + styleLabel(stijl) + (hardcore ? " \u00B7 " + modeLabel("Hardcore") : "");
   drawPitchSlots();
@@ -396,6 +395,7 @@ function refreshSetup(){
 function setLocked(lock){
   $("setuppanel").classList.toggle("locked", lock);
   $("teamname").disabled = lock;
+  if($("sandtoggle")) $("sandtoggle").style.display = lock ? "none" : "flex";
   renderDraftFilter();
 }
 
@@ -989,7 +989,7 @@ function confetti(colors, count){
 /* ================= records (localStorage) ================= */
 const RKEY = "e3400_records";
 const ACHIEVEMENTS = ["kampioen","perfect","underdog","tijdmachine","clubliefde","zuinig","machine","fort"];
-let lastOrder = null, lastMe = null, lastPos = 0;
+let lastOrder = null, lastMe = null, lastPos = 0, lastTeams = null;
 function loadRecords(){
   try { return JSON.parse(localStorage.getItem(RKEY)); } catch(e){ return null; }
 }
@@ -1297,6 +1297,7 @@ $("sharebtn").onclick = shareSeason;
 $("shareimgbtn").onclick = shareImage;
 $("savepngbtn").onclick = savePng;
 $("linkbtn").onclick = shareLink;
+$("sandcheck").onchange = () => { sandbox = $("sandcheck").checked; try { localStorage.setItem("e3400_sandbox", sandbox ? "1" : "0"); } catch(e){} };
 $("overlay").onclick = e => { if(e.target === $("overlay") && sandbox && !pendingPick) $("overlay").classList.remove("show"); };
 $("langbtn").onclick = () => {
   LANG = LANG === "nl" ? "en" : "nl";

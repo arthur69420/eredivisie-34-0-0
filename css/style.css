@@ -663,6 +663,15 @@ body.hardcore .teamstats{display:none}
 .mscheck.on .msbox{background:var(--red);border-color:var(--red)}
 .mslbl{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
+/* sandbox-toggle (klein, bij de Rol-knop) */
+.sandtoggle{
+  display:flex;align-items:center;gap:8px;margin-top:14px;cursor:pointer;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);
+}
+.sandtoggle input{width:15px;height:15px;accent-color:var(--red);cursor:pointer;flex:none}
+.sandtoggle:hover{color:var(--txt)}
+
 /* sandbox-zoeker */
 .sandsearch{
   width:100%;background:var(--navy-3);color:#fff;border:1px solid var(--line-strong);
