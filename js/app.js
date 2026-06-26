@@ -259,7 +259,7 @@ const I18N = {
     db_stats:(c,tot,pl)=>c+"/"+tot+" clubs compleet · "+pl+" spelers",
     hist_meta:tm=>ord(tm.pos)+" · "+tm.rec+" · "+tm.pts+" ptn · "+tm.formation+" · "+styleLabel(tm.stijl)+" · rating "+tm.rating,
     share_line2:(pos,me)=>ord(pos)+" plaats · "+me.w+"–"+me.d+"–"+me.l+" · "+me.pts+" punten",
-    ach:{kampioen:["Kampioen","Win de landstitel"],perfect:["34–0–0","Speel een perfect seizoen"],underdog:["Underdog","Word kampioen met een teamrating onder 70"],tijdmachine:["Tijdmachine","Stel een elftal op met spelers uit 11 verschillende seizoenen"],clubliefde:["Clubliefde","Zet 4 of meer spelers van dezelfde club in je elftal"],zuinig:["Eerste keer goed","Voltooi de draft zonder rerolls"],machine:["Doelpuntenmachine","Scoor 100 of meer goals in een seizoen"],fort:["Het Fort","Krijg hooguit 15 tegengoals in een seizoen"]}
+    ach:{kampioen:["Kampioen","Win de landstitel"],perfect:["34–0–0","Speel een perfect seizoen"],ongeslagen:["Ongeslagen","Speel een heel seizoen zonder nederlaag"],honderd:["Honderd","Haal 100 of meer punten in een seizoen"],underdog:["Underdog","Word kampioen met een teamrating onder 70"],sterrenelftal:["Sterrenelftal","Stel een elftal op met teamrating 88 of hoger"],tijdmachine:["Tijdmachine","Stel een elftal op met spelers uit 11 verschillende seizoenen"],specialist:["Specialist","Stel een elftal op met spelers uit één seizoen"],clubliefde:["Clubliefde","Zet 4 of meer spelers van dezelfde club in je elftal"],zuinig:["Eerste keer goed","Voltooi de draft zonder rerolls"],machine:["Doelpuntenmachine","Scoor 100 of meer goals in een seizoen"],waterdicht:["Waterdicht","Krijg hooguit 8 tegengoals in een seizoen"],fort:["Het Fort","Krijg hooguit 15 tegengoals in een seizoen"],degradant:["Toch onderuit","Eindig in de degradatiezone (16e of lager)"]}
   },
   en: {
     apptitle:"The Eredivisie<br>draft challenge", tagline:"Roll · Pick · Simulate",
@@ -331,7 +331,7 @@ const I18N = {
     db_stats:(c,tot,pl)=>c+"/"+tot+" clubs complete · "+pl+" players",
     hist_meta:tm=>ord(tm.pos)+" · "+tm.rec+" · "+tm.pts+" pts · "+tm.formation+" · "+styleLabel(tm.stijl)+" · rating "+tm.rating,
     share_line2:(pos,me)=>ord(pos)+" place · "+me.w+"–"+me.d+"–"+me.l+" · "+me.pts+" points",
-    ach:{kampioen:["Champion","Win the league title"],perfect:["34–0–0","Play a perfect season"],underdog:["Underdog","Become champion with a team rating below 70"],tijdmachine:["Time machine","Field a XI with players from 11 different seasons"],clubliefde:["Club love","Field 4 or more players from the same club"],zuinig:["First time right","Complete the draft without rerolls"],machine:["Goal machine","Score 100 or more goals in a season"],fort:["The Fortress","Concede at most 15 goals in a season"]}
+    ach:{kampioen:["Champion","Win the league title"],perfect:["34–0–0","Play a perfect season"],ongeslagen:["Unbeaten","Go a whole season without losing"],honderd:["Century","Reach 100 or more points in a season"],underdog:["Underdog","Become champion with a team rating below 70"],sterrenelftal:["Galácticos","Field an XI rated 88 or higher"],tijdmachine:["Time machine","Field a XI with players from 11 different seasons"],specialist:["Specialist","Field an XI from a single season"],clubliefde:["Club love","Field 4 or more players from the same club"],zuinig:["First time right","Complete the draft without rerolls"],machine:["Goal machine","Score 100 or more goals in a season"],waterdicht:["Watertight","Concede at most 8 goals in a season"],fort:["The Fortress","Concede at most 15 goals in a season"],degradant:["Still relegated","Finish in the relegation zone (16th or lower)"]}
   }
 };
 function t(k, ...a){ const v = I18N[LANG][k]; return typeof v === "function" ? v(...a) : v; }
@@ -997,7 +997,7 @@ function confetti(colors, count){
 
 /* ================= records (localStorage) ================= */
 const RKEY = "e3400_records";
-const ACHIEVEMENTS = ["kampioen","perfect","underdog","tijdmachine","clubliefde","zuinig","machine","fort"];
+const ACHIEVEMENTS = ["kampioen","perfect","ongeslagen","honderd","underdog","sterrenelftal","tijdmachine","specialist","clubliefde","zuinig","machine","waterdicht","fort","degradant"];
 let lastOrder = null, lastMe = null, lastPos = 0, lastTeams = null;
 function loadRecords(){
   try { return JSON.parse(localStorage.getItem(RKEY)); } catch(e){ return null; }
@@ -1034,6 +1034,12 @@ function updateRecords(me, myPos){
   if(rerolls === MAX_REROLLS) grant("zuinig");
   if(me.gf >= 100) grant("machine");
   if(me.ga <= 15) grant("fort");
+  if(me.l === 0 && me.w > 0) grant("ongeslagen");
+  if(me.pts >= 100) grant("honderd");
+  if(ratings().tot >= 88) grant("sterrenelftal");
+  if(me.ga <= 8) grant("waterdicht");
+  if(new Set(xi.map(p => p.season)).size === 1) grant("specialist");
+  if(myPos >= 16) grant("degradant");
 
   try { localStorage.setItem(RKEY, JSON.stringify(r)); } catch(e){}
   renderRecords();
