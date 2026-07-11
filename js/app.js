@@ -224,7 +224,7 @@ const I18N = {
     share_link:"Kopieer link",
     groups:{Keeper:"Keeper",Verdediging:"Verdediging",Middenveld:"Middenveld",Aanval:"Aanval"},
     pos:{GK:"Keeper",RB:"Rechtsback",LB:"Linksback",CB:"Centrale verdediger",DM:"Verdedigende middenvelder",CM:"Middenvelder",AM:"Aanvallende middenvelder",LW:"Linksbuiten",RW:"Rechtsbuiten",ST:"Spits"},
-    home:"T", away:"U",
+    home:"Thuis", away:"Uit",
     st_pos:"Positie", st_won:"Gewonnen", st_draw:"Gelijk", st_lost:"Verloren", st_gd:"Doelsaldo", st_pts:"Punten",
     th_club:"Club", th_w:"W", th_d:"G", th_l:"V", th_gd:"DS", th_pts:"Ptn",
     rec_seasons:"Seizoenen gespeeld", rec_titles:"Landstitels", rec_perfect:"Perfecte seizoenen",
@@ -296,7 +296,7 @@ const I18N = {
     share_link:"Copy link",
     groups:{Keeper:"Goalkeeper",Verdediging:"Defense",Middenveld:"Midfield",Aanval:"Attack"},
     pos:{GK:"Goalkeeper",RB:"Right-back",LB:"Left-back",CB:"Centre-back",DM:"Defensive midfielder",CM:"Midfielder",AM:"Attacking midfielder",LW:"Left winger",RW:"Right winger",ST:"Striker"},
-    home:"H", away:"A",
+    home:"Home", away:"Away",
     st_pos:"Position", st_won:"Won", st_draw:"Drawn", st_lost:"Lost", st_gd:"Goal diff.", st_pts:"Points",
     th_club:"Club", th_w:"W", th_d:"D", th_l:"L", th_gd:"GD", th_pts:"Pts",
     rec_seasons:"Seasons played", rec_titles:"League titles", rec_perfect:"Perfect seasons",
@@ -818,7 +818,8 @@ function simulate(rig){
     const res = x.mg > x.og ? "W" : (x.mg < x.og ? "V" : "G");
     const div = document.createElement("div");
     div.className = "fix " + res;
-    div.innerHTML = '<div class="top"><span>R'+(i+1)+'</span><span>'+x.opp.a+' \u00B7 '+(x.home ? t("home") : t("away"))+'</span></div>'
+    div.innerHTML = '<div class="fr">R'+(i+1)+' \u00B7 '+(x.home ? t("home") : t("away"))+'</div>'
+      + '<div class="fo">'+x.opp.a+'</div>'
       + '<div class="sc">'+x.mg+'\u2013'+x.og+'</div>';
     grid.appendChild(div);
     requestAnimationFrame(() => div.classList.add("in"));
@@ -1295,7 +1296,7 @@ function renderSharedSeason(){
     const res = x.mg > x.og ? "W" : (x.mg < x.og ? "V" : "G");
     const div = document.createElement("div");
     div.className = "fix " + res + " in";
-    div.innerHTML = '<div class="top"><span>R' + (i+1) + '</span><span>' + x.opp.a + ' · ' + (x.home ? t("home") : t("away")) + '</span></div><div class="sc">' + x.mg + '–' + x.og + '</div>';
+    div.innerHTML = '<div class="fr">R' + (i+1) + ' · ' + (x.home ? t("home") : t("away")) + '</div><div class="fo">' + x.opp.a + '</div><div class="sc">' + x.mg + '–' + x.og + '</div>';
     grid.appendChild(div);
   });
   $("recordtxt").textContent = lastMe.w + "–" + lastMe.d + "–" + lastMe.l;
@@ -1332,7 +1333,7 @@ $("rerollbtn").onclick = reroll;
 $("pbback").onclick = backToSquad;
 $("resetbtn").onclick = resetAll;
 $("simbtn").onclick = () => { if(pickedCount === 11) simulate(rigArmed); };
-$("againbtn").onclick = resetAll;
+if($("againbtn")) $("againbtn").onclick = resetAll;
 
 /* geheime demo-trigger: 5x snel op het 34-0-0-logo klikken wapent een
    gegarandeerd perfect seizoen (telt niet mee voor records) */

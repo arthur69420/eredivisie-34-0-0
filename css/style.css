@@ -153,16 +153,17 @@ select{
 }
 .slot.filled{
   border:none;background:var(--navy);
-  width:auto;height:auto;min-width:66px;
+  width:128px;height:auto;
   border-radius:0;
   border-top:3px solid var(--red);
-  padding:5px 9px;
-  flex-direction:column;gap:1px;
+  padding:6px 8px;
+  flex-direction:column;gap:2px;align-items:center;
   font-family:"Inter",sans-serif;
   box-shadow:0 3px 0 rgba(0,0,0,.4);
 }
-.slot.filled .nm{font-size:11.5px;font-weight:700;line-height:1.15;text-align:center;max-width:100px;color:#fff}
-.slot.filled .meta{font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--muted)}
+.slot.filled .nm{font-size:11.5px;font-weight:700;line-height:1.15;text-align:center;width:100%;color:#fff;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:1.15em}
+.slot.filled .meta{font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--muted);white-space:nowrap;letter-spacing:-.01em;text-align:center}
 
 /* ---------- positie kiezen ---------- */
 .placebar{
@@ -279,19 +280,22 @@ select{
 #season .head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:18px}
 #season h2{font-family:"Oswald",sans-serif;font-weight:600;font-size:28px;text-transform:uppercase;letter-spacing:.05em}
 #season h2 em{font-style:normal;color:var(--red)}
-.fixgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.fixgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
 .fix{
   background:var(--navy-2);
   border:1px solid var(--line);
-  padding:7px 9px 6px;
+  padding:8px 10px 7px;
   opacity:0;transform:translateY(6px);
   transition:opacity .25s,transform .25s;
   position:relative;
+  display:flex;flex-direction:column;gap:2px;
+  min-height:64px;
 }
 .fix::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--draw)}
 .fix.in{opacity:1;transform:none}
-.fix .top{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--muted)}
-.fix .sc{font-family:"Oswald",sans-serif;font-weight:600;font-size:20px;margin-top:1px}
+.fix .fr{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fix .fo{font-weight:600;font-size:12.5px;line-height:1.15;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fix .sc{font-family:"Oswald",sans-serif;font-weight:600;font-size:21px;margin-top:auto;padding-top:2px}
 .fix.W::before{background:var(--win)}
 .fix.V::before{background:var(--loss)}
 #finale{display:none;margin:26px 0 10px}
@@ -579,9 +583,9 @@ button{touch-action:manipulation}
 
 @media (max-width:760px){
   .slot{width:54px;height:54px;font-size:10.5px}
-  .slot.filled{min-width:58px;padding:4px 6px}
-  .slot.filled .nm{font-size:10px;max-width:80px}
-  .slot.filled .meta{font-size:8.5px}
+  .slot.filled{width:92px;padding:4px 6px}
+  .slot.filled .nm{font-size:10px}
+  .slot.filled .meta{font-size:8px}
   .slot.filled .shirt{margin-top:-16px}
   .pchoice{padding:11px 10px;font-size:13px}
   .smallbtn{padding:11px 14px}
