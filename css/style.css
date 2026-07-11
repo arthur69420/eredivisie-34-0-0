@@ -294,7 +294,8 @@ select{
 .fix::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--draw)}
 .fix.in{opacity:1;transform:none}
 .fix .fr{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fix .fo{font-weight:600;font-size:12.5px;line-height:1.15;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fix .fo{font-weight:600;font-size:12.5px;line-height:1.15;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px}
+.fix .fo .shirt{flex:none;margin-top:-2px}
 .fix .sc{font-family:"Oswald",sans-serif;font-weight:600;font-size:21px;margin-top:auto;padding-top:2px}
 .fix.W::before{background:var(--win)}
 .fix.V::before{background:var(--loss)}
@@ -314,8 +315,9 @@ select{
 }
 .verdict .record{font-family:"Oswald",sans-serif;font-weight:600;font-size:46px;color:#fff;white-space:nowrap;font-style:italic}
 .verdict .msg{font-size:16px;font-weight:500;flex:1;min-width:200px;color:#D7DEF2}
-.verdict.perfect{background:var(--red);border-left-color:#fff}
-.verdict.perfect .msg{color:#fff}
+.verdict.perfect{background:linear-gradient(135deg,#F5C518,#E2A912);border-left-color:#fff}
+.verdict.perfect .record,
+.verdict.perfect .msg{color:#231905}
 .seasonactions{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
 
 footer{
@@ -574,7 +576,7 @@ button{touch-action:manipulation}
   border:1px solid var(--line-strong);color:var(--muted);
   padding:4px 8px;opacity:.5;cursor:help;
 }
-.badge.earned{border-color:#F5C518;color:#F5C518;opacity:1}
+.badge.earned{border-color:#F5C518;color:#F5C518;opacity:1;box-shadow:0 0 12px rgba(245,197,24,.22)}
 @media (max-width:760px){
   .dbmodal{padding:0}
   .dbcard{max-height:100vh;border-left:none;border-right:none}

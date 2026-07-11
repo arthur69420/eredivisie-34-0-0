@@ -1,6 +1,6 @@
 /* Service worker: network-first met cache-fallback, zodat het spel offline werkt
    maar updates direct doorkomen zodra er internet is. */
-const CACHE = "e3400-v4";
+const CACHE = "e3400-v5";
 const ASSETS = [
   "./",
   "./index.html",

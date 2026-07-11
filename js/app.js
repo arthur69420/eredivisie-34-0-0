@@ -819,7 +819,7 @@ function simulate(rig){
     const div = document.createElement("div");
     div.className = "fix " + res;
     div.innerHTML = '<div class="fr">R'+(i+1)+' \u00B7 '+(x.home ? t("home") : t("away"))+'</div>'
-      + '<div class="fo">'+x.opp.a+'</div>'
+      + '<div class="fo">'+shirtSVG(x.opp.a, 16)+x.opp.a+'</div>'
       + '<div class="sc">'+x.mg+'\u2013'+x.og+'</div>';
     grid.appendChild(div);
     requestAnimationFrame(() => div.classList.add("in"));
@@ -1296,7 +1296,7 @@ function renderSharedSeason(){
     const res = x.mg > x.og ? "W" : (x.mg < x.og ? "V" : "G");
     const div = document.createElement("div");
     div.className = "fix " + res + " in";
-    div.innerHTML = '<div class="fr">R' + (i+1) + ' · ' + (x.home ? t("home") : t("away")) + '</div><div class="fo">' + x.opp.a + '</div><div class="sc">' + x.mg + '–' + x.og + '</div>';
+    div.innerHTML = '<div class="fr">R' + (i+1) + ' · ' + (x.home ? t("home") : t("away")) + '</div><div class="fo">' + shirtSVG(x.opp.a, 16) + x.opp.a + '</div><div class="sc">' + x.mg + '–' + x.og + '</div>';
     grid.appendChild(div);
   });
   $("recordtxt").textContent = lastMe.w + "–" + lastMe.d + "–" + lastMe.l;
